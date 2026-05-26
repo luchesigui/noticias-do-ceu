@@ -51,9 +51,7 @@ const newsData = [
         "headline": "AS NUVENS ALMOFADAS",
         "subheadline": "Flokinho descobre que as nuvens mudam de formato conforme seu desejo.",
         "text": "<p class=\"mb-3\"><span class=\"float-left text-5xl font-serif font-black leading-none pr-2 pt-1\">D</span>urante a tarde, {nome} percebeu que ao pisar em uma nuvem, ela se moldava como o {lugar}. Ele passou horas testando diferentes formatos, decidindo que a nuvem em formato de rosquinha é a melhor.</p>\n<p class=\"mb-3\">Segundo correspondentes do paraíso, o nosso anjo de quatro patas continua mostrando que as pequenas alegrias da Terra viram festas eternas aqui em cima. O seu guia Canarinho e o Querubim da Guarda acompanham cada travessura bem de perto.</p>\n<p class=\"font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4\">\"As Nuvens Almofadas - Uma história de puro amor que aquece o peito.\"</p>",
-        "image": "https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-        "imageAlt": "nuvens fofas no céu azul",
-        "caption": "Flokinho relaxando em uma nuvem ultra-macia.",
+
         "category": "reflexao",
         "week": 1,
         "day": 4
@@ -95,9 +93,7 @@ const newsData = [
         "headline": "A ÁGUA QUE NÃO MOLHA",
         "subheadline": "A fonte de cristal refresca sem precisar de banho.",
         "text": "<p class=\"mb-3\"><span class=\"float-left text-5xl font-serif font-black leading-none pr-2 pt-1\">{</span>nome} aproximou-se de uma cachoeira brilhante. Com medo do seu terrível inimigo, o {odio}, ele hesitou. Ao tocar a água, descobriu que ela refresca, mas não molha o pelo! Uma delícia pura.</p>\n<p class=\"mb-3\">Segundo correspondentes do paraíso, o nosso anjo de quatro patas continua mostrando que as pequenas alegrias da Terra viram festas eternas aqui em cima. O seu guia Canarinho e o Querubim da Guarda acompanham cada travessura bem de perto.</p>\n<p class=\"font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4\">\"A Água que Não Molha - Uma história de puro amor que aquece o peito.\"</p>",
-        "image": "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-        "imageAlt": "cachoeira de cristal brilhante",
-        "caption": "Flokinho bebendo água fresca na cachoeira celeste.",
+
         "category": "aventura",
         "week": 2,
         "day": 2
@@ -128,9 +124,7 @@ const newsData = [
         "headline": "O ENCONTRO COM OUTROS SHIH TZUS",
         "subheadline": "Uma matilha de cãezinhos fofos saúda o novo morador.",
         "text": "<p class=\"mb-3\"><span class=\"float-left text-5xl font-serif font-black leading-none pr-2 pt-1\">{</span>nome} encontrou um grupo de Shih Tzus que faziam acrobacias aéreas nas nuvens. Eles o convidaram para o grupo e ensinaram a técnica de planar usando as orelhas como asas.</p>\n<p class=\"mb-3\">Segundo correspondentes do paraíso, o nosso anjo de quatro patas continua mostrando que as pequenas alegrias da Terra viram festas eternas aqui em cima. O seu guia Canarinho e o Querubim da Guarda acompanham cada travessura bem de perto.</p>\n<p class=\"font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4\">\"O Encontro com Outros Shih Tzus - Uma história de puro amor que aquece o peito.\"</p>",
-        "image": "https://images.unsplash.com/photo-1534361960057-19889db9621e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-        "imageAlt": "grupo de cachorrinhos Shih Tzu",
-        "caption": "Flokinho fazendo pose com seus novos amigos de raça.",
+
         "category": "amizade",
         "week": 2,
         "day": 5
@@ -3605,7 +3599,19 @@ function getSidebar(dayOfWeek) {
 
 // Substitui os placeholders {variavel} no template de string
 function renderTemplate(template, vars = petData) {
-    return template.replace(/\{([^}]+)\}/g, (match, key) => {
+    // Tratamento especial para iniciais capitulares (drop caps) que envolvem chaves
+    // ex: <span class="...">{</span>nome} -> <span class="...">F</span>lokinho
+    let rendered = template.replace(/<span([^>]*)\s*>\s*\{\s*<\/span\s*>\s*([a-zA-Z0-9_]+)\s*\}/g, (match, attrs, key) => {
+        const val = vars[key.trim()];
+        if (val !== undefined && val.length > 0) {
+            const firstChar = val.charAt(0).toUpperCase();
+            const rest = val.slice(1);
+            return `<span${attrs}>${firstChar}</span>${rest}`;
+        }
+        return match;
+    });
+
+    return rendered.replace(/\{([^}]+)\}/g, (match, key) => {
         return vars[key.trim()] !== undefined ? vars[key.trim()] : match;
     });
 }

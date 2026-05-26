@@ -576,7 +576,7 @@
 
               <div class="flex flex-col sm:flex-row gap-6 items-start">
                 <!-- Pet Image -->
-                <div class="w-full sm:w-1/2 relative">
+                <div id="news-image-container" class="w-full sm:w-1/2 relative">
                   <div class="absolute -top-3 -left-3 text-4xl text-accent/80">
                     <i class="fa-solid fa-quote-left"></i>
                   </div>
@@ -1397,6 +1397,7 @@
         const subheadlineEl = document.getElementById("news-subheadline");
         const textEl = document.getElementById("news-text");
         const imageEl = document.getElementById("news-image");
+        const imageContainerEl = document.getElementById("news-image-container");
         const captionEl = document.getElementById("news-image-caption");
         const badgeEl = document.getElementById("special-badge");
         const sundayBannerEl = document.getElementById("sunday-banner");
@@ -1468,9 +1469,19 @@
         headlineEl.innerText = newsToRender.headline;
         subheadlineEl.innerText = newsToRender.subheadline;
         textEl.innerHTML = newsToRender.text;
-        imageEl.src = newsToRender.image;
-        imageEl.alt = newsToRender.imageAlt;
-        captionEl.innerText = newsToRender.caption;
+        if (newsToRender.image) {
+          imageContainerEl.classList.remove("hidden");
+          imageEl.src = newsToRender.image;
+          imageEl.alt = newsToRender.imageAlt || "";
+          captionEl.innerText = newsToRender.caption || "";
+          textEl.className = "w-full sm:w-1/2 text-justify font-body text-sm sm:text-base columns-1";
+        } else {
+          imageContainerEl.classList.add("hidden");
+          imageEl.src = "";
+          imageEl.alt = "";
+          captionEl.innerText = "";
+          textEl.className = "w-full text-justify font-body text-sm sm:text-base columns-1 sm:columns-2 gap-6";
+        }
 
         if (isSun) {
           sidebarIconEl.className = "fa-solid fa-heart text-accent";
