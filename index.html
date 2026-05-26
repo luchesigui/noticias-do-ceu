@@ -386,25 +386,58 @@
             <i class="fa-solid fa-heart text-5xl text-accent mb-6 animate-pulse"></i>
             <h2 class="text-4xl md:text-5xl font-serif font-bold mb-6">Eternize o Seu Amor Hoje</h2>
             <p class="text-xl text-vintage/90 mb-10 max-w-2xl mx-auto">
-                Crie a página exclusiva do seu pet agora. Pagamento único. Sem mensalidades. Amor para sempre.
+                Escolha o plano ideal para eternizar a memória do seu pet.
             </p>
             
-            <div class="bg-paper text-ink rounded-3xl p-8 md:p-12 shadow-2xl max-w-2xl mx-auto transform hover:scale-105 transition-transform duration-300">
-                <h3 class="text-2xl font-serif font-bold uppercase mb-2">Plano Jornal Eterno</h3>
-                <div class="text-5xl font-black font-serif my-4">R$ 97<span class="text-lg font-normal">,00</span></div>
-                <p class="text-sm font-bold text-accent uppercase tracking-widest mb-6">Pagamento Único</p>
-                
-                <ul class="text-left space-y-4 mb-8 font-medium">
-                    <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Página Web Exclusiva (ex: noticiasdoceu.com/seu-pet)</li>
-                    <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Design de Jornal Vintage interativo</li>
-                    <li><i class="fa-solid fa-check text-green-600 mr-2"></i> <strong>NOVAS HISTÓRIAS GERADAS TODOS OS DIAS</strong></li>
-                    <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Opcional: Envio de placa em MDF com QR Code</li>
-                </ul>
-                
-                <button class="w-full bg-accent text-white py-4 rounded-xl font-serif font-bold text-xl hover:bg-ink transition-colors shadow-lg">
-                    Criar Jornal do Meu Pet
-                </button>
-                <p class="text-xs text-gray-500 mt-4"><i class="fa-solid fa-lock"></i> Pagamento 100% seguro.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch mt-12 text-ink text-left">
+                <!-- PLANO ANUAL -->
+                <div class="bg-paper rounded-3xl p-8 shadow-2xl flex flex-col justify-between transform hover:scale-[1.02] transition-transform duration-300 relative border-2 border-vintage/30">
+                    <div>
+                        <h3 class="text-xl font-serif font-bold uppercase mb-2 text-center">Plano Anual</h3>
+                        <div class="text-4xl font-black font-serif my-4 text-center">R$ 9<span class="text-2xl font-normal">,90</span><span class="text-base font-normal text-gray-600">/ano</span></div>
+                        <p class="text-xs font-bold text-accent uppercase tracking-widest mb-6 text-center">Assinatura Anual</p>
+                        
+                        <ul class="space-y-4 mb-8 font-medium text-sm">
+                            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mr-2 mt-1"></i> <span>Acesso ao webapp por 1 ano (edição do dia atual apenas)</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mr-2 mt-1"></i> <span>Compartilhamento simples (link mostra a edição do momento)</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mr-2 mt-1"></i> <span>Cartas para o Céu: R$ 2,99 cada (pay-per-use)</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <button class="w-full bg-transparent text-ink border-2 border-ink py-4 rounded-xl font-serif font-bold text-lg hover:bg-ink hover:text-paper transition-colors shadow-sm">
+                            Escolher Plano Anual
+                        </button>
+                        <p class="text-center text-xs text-gray-500 mt-4"><i class="fa-solid fa-lock"></i> Pagamento 100% seguro.</p>
+                    </div>
+                </div>
+
+                <!-- PLANO VITALÍCIO -->
+                <div class="bg-paper rounded-3xl p-8 shadow-2xl flex flex-col justify-between border-double-gold transform hover:scale-[1.04] transition-transform duration-300 relative z-10">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#C5A059] text-white font-serif font-bold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
+                        Recomendado
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-serif font-bold uppercase mb-2 mt-2 text-center">Plano Vitalício</h3>
+                        <div class="text-4xl font-black font-serif my-4 text-center text-accent">R$ 39<span class="text-2xl font-normal">,90</span></div>
+                        <p class="text-xs font-bold text-accent uppercase tracking-widest mb-6 text-center">Pagamento Único</p>
+                        
+                        <ul class="space-y-4 mb-8 font-medium text-sm">
+                            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mr-2 mt-1"></i> <span><strong>Acesso perpétuo</strong>, sem renovação</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mr-2 mt-1"></i> <span><strong>Arquivo do Jornal</strong>: navegar e reler qualquer edição passada</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mr-2 mt-1"></i> <span><strong>Compartilhamento avançado</strong>: links públicos para edições específicas</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mr-2 mt-1"></i> <span><strong>Compilado em PDF</strong>: exporta todas as edições geradas como livro digital diagramado</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mr-2 mt-1"></i> <span><strong>1 Carta para o Céu grátis</strong> por mês (extra: R$ 2,99 cada)</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <button class="w-full bg-accent text-white py-4 rounded-xl font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg">
+                            Escolher Plano Vitalício
+                        </button>
+                        <p class="text-center text-xs text-gray-500 mt-4"><i class="fa-solid fa-lock"></i> Pagamento 100% seguro.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
