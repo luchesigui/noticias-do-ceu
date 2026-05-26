@@ -16,6 +16,9 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Load the Story Database -->
+    <script src="data.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -51,6 +54,13 @@
             border-style: double;
             border-width: 6px;
             border-color: #2C1E16;
+        }
+
+        .border-double-gold {
+            border-style: double;
+            border-width: 6px;
+            border-color: #C5A059; /* vintage gold */
+            box-shadow: 0 10px 30px rgba(139, 90, 43, 0.2), inset 0 0 50px rgba(197, 160, 89, 0.2);
         }
 
         .border-y-newspaper {
@@ -207,12 +217,17 @@
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-serif font-bold text-ink mb-4">Experimente a Homenagem</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto mb-6">Veja como a página do seu pet vai funcionar. Clique no botão abaixo para simular os dias passando e ver novas notícias geradas automaticamente.</p>
+                <p class="text-gray-600 max-w-2xl mx-auto mb-6">Veja como a página do seu pet vai funcionar. Use os botões abaixo para simular os dias da jornada ou resetar a demonstração.</p>
                 
-                <button onclick="nextDay()" class="bg-ink text-white px-6 py-3 rounded-full font-serif font-bold hover:bg-accent transition-colors shadow-lg flex items-center gap-2 mx-auto">
-                    <i class="fa-solid fa-forward-step"></i> Simular Próximo Dia
-                </button>
-                <p class="text-sm text-gray-500 mt-2 font-serif italic">Atualmente exibindo: <span id="day-counter" class="font-bold text-accent">Dia 1</span></p>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <button onclick="simulateNextDay()" class="bg-ink text-white px-6 py-3 rounded-full font-serif font-bold hover:bg-accent transition-colors shadow-lg flex items-center gap-2">
+                        <i class="fa-solid fa-forward-step"></i> Avançar para Próximo Dia (Demo)
+                    </button>
+                    <button onclick="resetDemo()" class="bg-white text-ink border-2 border-ink px-6 py-3 rounded-full font-serif font-bold hover:bg-gray-100 transition-colors shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Demo
+                    </button>
+                </div>
+                <p class="text-sm text-gray-500 mt-4 font-serif italic">Atualmente exibindo: <span id="day-counter" class="font-bold text-accent">Dia 1 da Jornada</span></p>
             </div>
 
             <!-- THE NEWSPAPER PREVIEW (The Core Feature) -->
@@ -247,30 +262,42 @@
                 <!-- Main Content Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
                     
-                    <!-- Left Column: Fixed Pet Info -->
+                    <!-- Left Column: Fixed Pet Info & Obituário -->
                     <div class="md:col-span-3 border-b-2 md:border-b-0 md:border-r-2 border-ink/30 pb-6 md:pb-0 md:pr-6">
                         <div class="text-center mb-4">
-                            <h3 class="font-serif font-black text-xl uppercase border-b border-ink/50 pb-2 mb-2">Quem foi Flokinho</h3>
-                            <ul class="text-left text-sm font-body space-y-2 list-none">
-                                <li><i class="fa-solid fa-paw text-accent text-xs mr-2"></i> Raça: Shih Tzu</li>
-                                <li><i class="fa-solid fa-paw text-accent text-xs mr-2"></i> Apelido: Floquinho de Neve</li>
-                                <li><i class="fa-solid fa-paw text-accent text-xs mr-2"></i> Amava: Dormir no pé da cama</li>
-                                <li><i class="fa-solid fa-paw text-accent text-xs mr-2"></i> Odiava: Banho</li>
-                            </ul>
+                            <h3 class="font-serif font-black text-xl uppercase border-b border-ink/50 pb-2 mb-2">Obituário</h3>
+                            <p class="text-xs text-justify font-body leading-relaxed italic">
+                                <strong>FLOKINHO (2015-2024)</strong> -- Partiu deste mundo deixando patas marcadas no coração da família Luchesi. Shih Tzu de profissão, especialista em dormir no pé da cama e detentor do título de pior banhista do bairro. Sua missão na Terra foi cumprida com louvor: amar incondicionalmente.
+                            </p>
                         </div>
                         <div class="separator-line"></div>
-                        <div class="text-center mt-4">
-                            <h3 class="font-serif font-black text-lg uppercase mb-2">Mensagem do Céu</h3>
-                            <p class="text-sm italic font-body text-justify">
+                        <div class="text-center mt-4" id="sidebar-rotativa">
+                            <h3 class="font-serif font-black text-lg uppercase mb-2 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cloud text-accent" id="sidebar-icon"></i>
+                                <span id="sidebar-title">Mensagem do Céu</span>
+                            </h3>
+                            <div class="text-sm italic font-body text-justify" id="sidebar-content">
                                 "Não chore por mim. Estou feliz, livre e em paz. Espere-me um dia... vamos correr juntos de novo."
-                            </p>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Center Column: Dynamic Daily News -->
                     <div class="md:col-span-9" id="dynamic-news-content">
+                        <!-- Special Date Badge -->
+                        <div id="special-badge" class="hidden justify-center mb-4">
+                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-yellow-500/10 text-yellow-700 border border-yellow-500/30 text-xs font-bold uppercase tracking-wider">
+                                <i class="fa-solid fa-certificate text-yellow-500"></i> Edição Especial
+                            </span>
+                        </div>
+
+                        <!-- Sunday Rest Banner -->
+                        <div id="sunday-banner" class="hidden bg-accent/10 border border-accent/30 rounded-xl p-4 mb-6 text-center text-accent font-serif text-base italic">
+                            <i class="fa-solid fa-moon mr-2"></i> Domingo é dia de descanso. O Flokinho está dormindo nas nuvens. Volte amanhã para uma nova edição.
+                        </div>
+
                         <!-- Content injected via JS -->
-                        <div class="text-center mb-6 fade-in">
+                        <div class="text-center mb-6">
                             <h2 class="font-serif font-black text-3xl sm:text-4xl uppercase leading-none mb-3" id="news-headline">
                                 FLOKINHO ENCONTRA O ESTOQUE INFINITO DE PETISCOS
                             </h2>
@@ -279,7 +306,7 @@
                             </h3>
                         </div>
 
-                        <div class="flex flex-col sm:flex-row gap-6 items-start fade-in">
+                        <div class="flex flex-col sm:flex-row gap-6 items-start">
                             <!-- Pet Image -->
                             <div class="w-full sm:w-1/2 relative">
                                 <div class="absolute -top-3 -left-3 text-4xl text-accent/80"><i class="fa-solid fa-quote-left"></i></div>
@@ -402,91 +429,227 @@
 
     <!-- Interactive JS for the Demo -->
     <script>
-        // Array simulating the daily generated news
-        const dailyNews = [
-            {
-                headline: "FLOKINHO ENCONTRA O ESTOQUE INFINITO DE PETISCOS",
-                subheadline: "Uma tarde inteira de brincadeiras sem fim e a barriguinha cheia.",
-                text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">H</span>oje, nossos correspondentes celestiais avistaram Flokinho correndo a toda velocidade pelo gramado sagrado. O motivo? Ele finalmente descobriu onde os anjos guardam os bifinhos de carne.</p>
-                       <p class="mb-3">Segundo relatos, ele fez aquela carinha de coitado que ninguém resiste, e acabou ganhando petiscos em dobro. "Ele é muito esperto", disse um querubim local. "Ele sabe exatamente como pedir carinho na barriga."</p>
-                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"A saudade é grande, mas a alegria dele aqui é maior ainda!"</p>`,
-                image: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                imageAlt: "Cachorro feliz",
-                caption: "Flokinho aproveitando a vista das nuvens."
-            },
-            {
-                headline: "A GRANDE CORRIDA NAS NUVENS: TEMOS UM CAMPEÃO!",
-                subheadline: "Nosso querido amigo mostrou que ainda corre mais rápido que a luz.",
-                text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">A</span>conteceu ontem o Campeonato Anual de Caça ao Graveto Celestial, e adivinhem quem levou a medalha de ouro? Sim, o próprio Flokinho!</p>
-                       <p class="mb-3">Ele não apenas encontrou o maior graveto do céu, como ainda ajudou um amiguinho pug a alcançar o seu. Depois da corrida, todos descansaram em camas de nuvens ultra-macias.</p>
-                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Ele mandou muitos lambeijos para a família na Terra!"</p>`,
-                image: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                imageAlt: "Golden retriever",
-                caption: "Flokinho com sua medalha de ouro pós corrida."
-            },
-            {
-                headline: "MENSAGEM ESPECIAL: 'ESTOU BEM, MAMÃE!'",
-                subheadline: "Um recado direto do coração para acalmar a sua saudade hoje.",
-                text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">N</span>esta manhã ensolarada no paraíso, Flokinho sentou na beirada de uma nuvem dourada e ficou olhando para baixo. Ele balançou o rabinho fortemente ao ver você sorrir lembrando dele.</p>
-                       <p class="mb-3">A equipe de transmissão celestial captou o recado exato dele: "Não fique triste, o amor que você me deu me aquece até hoje aqui em cima. Eu estou livre de dor e muito, muito feliz."</p>
-                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"O amor não acaba, ele só muda de endereço."</p>`,
-                image: "https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                imageAlt: "Pug sorrindo",
-                caption: "Flokinho olhando do céu com carinho."
-            },
-            {
-                headline: "NOVA AMIZADE COM SÃO FRANCISCO DE ASSIS",
-                subheadline: "Parece que Flokinho arrumou um novo melhor amigo nos passeios da tarde.",
-                text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">É</span> oficial, nosso menino é popular no céu! Ele foi visto passeando lado a lado com São Francisco de Assis pelos jardins floridos do setor sul.</p>
-                       <p class="mb-3">Eles passaram horas conversando (naquela linguagem que só o coração entende) e Flokinho até ganhou uma coroa de margaridas. He prometeu guardar uma para quando vocês se reencontrarem.</p>
-                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Cada latido aqui soa como uma música de amor."</p>`,
-                image: "https://images.unsplash.com/photo-1534361960057-19889db9621e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                imageAlt: "Cachorro com flor",
-                caption: "Flokinho usando sua coroa de margaridas."
-            }
-        ];
-
+        // === SEÇÃO: ESTADO DO SISTEMA ===
         let currentDayIndex = 0;
+        let lastAccessDate = "";
+        let demoDateOffset = 0;
 
-        function nextDay() {
-            // Increment index and loop back if needed
-            currentDayIndex = (currentDayIndex + 1) % dailyNews.length;
-            const news = dailyNews[currentDayIndex];
-            
-            // Get DOM elements
-            const container = document.getElementById('dynamic-news-content');
+        // Formata data como YYYY-MM-DD local
+        function getLocalDateString(date) {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        // === SEÇÃO: INICIALIZAÇÃO E CONTROLE DE ACESSO ===
+        function initSystem() {
+            // Recupera dados do localStorage
+            currentDayIndex = parseInt(localStorage.getItem('currentDayIndex') || '0', 10);
+            lastAccessDate = localStorage.getItem('lastAccessDate') || '';
+            demoDateOffset = parseInt(localStorage.getItem('demoDateOffset') || '0', 10);
+
+            const today = new Date();
+            const todayStr = getLocalDateString(today);
+
+            // Se for primeiro acesso
+            if (!lastAccessDate) {
+                lastAccessDate = todayStr;
+                localStorage.setItem('lastAccessDate', todayStr);
+                localStorage.setItem('currentDayIndex', currentDayIndex.toString());
+            } else if (todayStr !== lastAccessDate && demoDateOffset === 0) {
+                // Se for um novo dia real de acesso (e não estamos em simulação offset)
+                // Domingos NÃO avançam o contador da jornada
+                if (!isSunday(today)) {
+                    currentDayIndex = currentDayIndex + 1;
+                    localStorage.setItem('currentDayIndex', currentDayIndex.toString());
+                }
+                lastAccessDate = todayStr;
+                localStorage.setItem('lastAccessDate', todayStr);
+            }
+
+            updateUI(false);
+        }
+
+        // === SEÇÃO: RENDERIZAÇÃO DA INTERFACE ===
+        function updateUI(animate = true) {
+            // Calcula a data de exibição (hoje + offset da simulação)
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + demoDateOffset);
+
+            // 1. Atualizar Data no Cabeçalho do Jornal
+            const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+            let formattedDate = targetDate.toLocaleDateString('pt-BR', dateOptions);
+            // Capitalizar primeiro caractere (ex: Maio)
+            formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+            document.getElementById('newspaper-date').innerText = formattedDate;
+
+            // 2. Atualizar Contador da Jornada
+            document.getElementById('day-counter').innerText = `Dia ${currentDayIndex + 1} da Jornada`;
+
+            // Obter elementos do DOM
+            const paperContainer = document.getElementById('newspaper-paper');
             const headlineEl = document.getElementById('news-headline');
             const subheadlineEl = document.getElementById('news-subheadline');
             const textEl = document.getElementById('news-text');
-            const dayCounterEl = document.getElementById('day-counter');
             const imageEl = document.getElementById('news-image');
             const captionEl = document.getElementById('news-image-caption');
-            
-            // Remove animation classes
-            headlineEl.parentElement.classList.remove('fade-in');
-            textEl.parentElement.classList.remove('fade-in');
-            
-            // Trigger reflow to restart animation
-            void container.offsetWidth; 
-            
-            // Update Content
-            headlineEl.innerText = news.headline;
-            subheadlineEl.innerText = news.subheadline;
-            textEl.innerHTML = news.text;
-            imageEl.src = news.image;
-            imageEl.alt = news.imageAlt;
-            captionEl.innerText = news.caption;
-            dayCounterEl.innerText = `Dia ${currentDayIndex + 1}`;
-            
-            // Update mock date
-            const mockDate = new Date(2026, 4, 25 + currentDayIndex); // May 25 + index
-            const options = { day: 'numeric', month: 'long', year: 'numeric' };
-            document.getElementById('newspaper-date').innerText = mockDate.toLocaleDateString('pt-BR', options);
+            const badgeEl = document.getElementById('special-badge');
+            const sundayBannerEl = document.getElementById('sunday-banner');
+            const sidebarTitleEl = document.getElementById('sidebar-title');
+            const sidebarIconEl = document.getElementById('sidebar-icon');
+            const sidebarContentEl = document.getElementById('sidebar-content');
 
-            // Add animation classes back
-            headlineEl.parentElement.classList.add('fade-in');
-            textEl.parentElement.classList.add('fade-in');
+            // Determinar o estado de exibição (Feriado, Domingo ou Dia Normal)
+            const specialDate = getSpecialDate(targetDate);
+            const isSun = isSunday(targetDate);
+
+            // Animação de fade-in
+            if (animate) {
+                const dynamicNews = document.getElementById('dynamic-news-content');
+                const sidebarRot = document.getElementById('sidebar-rotativa');
+                
+                dynamicNews.classList.remove('fade-in');
+                sidebarRot.classList.remove('fade-in');
+                
+                void dynamicNews.offsetWidth; // Força reflow
+                
+                dynamicNews.classList.add('fade-in');
+                sidebarRot.classList.add('fade-in');
+            }
+
+            let newsToRender;
+
+            if (specialDate) {
+                // A) Edição Especial (Feriado)
+                newsToRender = {
+                    headline: specialDate.title,
+                    subheadline: "UMA EDIÇÃO COMEMORATIVA DO DIÁRIO DO CÉU",
+                    text: renderTemplate(specialDate.text),
+                    image: specialDate.image,
+                    imageAlt: specialDate.imageAlt,
+                    caption: specialDate.caption
+                };
+
+                // Exibe selo e aplica borda dourada
+                badgeEl.classList.remove('hidden');
+                badgeEl.classList.add('flex');
+                sundayBannerEl.classList.add('hidden');
+                
+                paperContainer.classList.remove('border-double-thick');
+                paperContainer.classList.add('border-double-gold');
+            } else if (isSun) {
+                // B) Domingo (Descanso)
+                // Mostra a última notícia disponível da jornada (currentDayIndex)
+                const lastNews = getNews(currentDayIndex);
+                newsToRender = {
+                    headline: lastNews.headline,
+                    subheadline: lastNews.subheadline,
+                    text: renderTemplate(lastNews.text),
+                    image: lastNews.image,
+                    imageAlt: lastNews.imageAlt,
+                    caption: lastNews.caption
+                };
+
+                // Exibe banner de descanso e oculta selo dourado
+                badgeEl.classList.add('hidden');
+                badgeEl.classList.remove('flex');
+                sundayBannerEl.classList.remove('hidden');
+
+                paperContainer.classList.add('border-double-thick');
+                paperContainer.classList.remove('border-double-gold');
+            } else {
+                // C) Dia de Semana Comum
+                const news = getNews(currentDayIndex);
+                newsToRender = {
+                    headline: news.headline,
+                    subheadline: news.subheadline,
+                    text: renderTemplate(news.text),
+                    image: news.image,
+                    imageAlt: news.imageAlt,
+                    caption: news.caption
+                };
+
+                // Oculta banner e selo
+                badgeEl.classList.add('hidden');
+                badgeEl.classList.remove('flex');
+                sundayBannerEl.classList.add('hidden');
+
+                paperContainer.classList.add('border-double-thick');
+                paperContainer.classList.remove('border-double-gold');
+            }
+
+            // Injetar dados da Notícia
+            headlineEl.innerText = newsToRender.headline;
+            subheadlineEl.innerText = newsToRender.subheadline;
+            textEl.innerHTML = newsToRender.text;
+            imageEl.src = newsToRender.image;
+            imageEl.alt = newsToRender.imageAlt;
+            captionEl.innerText = newsToRender.caption;
+
+            // 3. Atualizar Barra Lateral (Sidebar)
+            if (isSun) {
+                // Poema de Domingo especial
+                sidebarIconEl.className = "fa-solid fa-heart text-accent";
+                sidebarTitleEl.innerText = "Poema do Pet";
+                sidebarContentEl.innerHTML = `<p class="text-sm italic font-body text-justify">
+                    "Se pelas nuvens eu correr,<br/>
+                    E de repente não me ver,<br/>
+                    Olhe para o céu ao anoitecer.<br/>
+                    Em cada estrela a brilhar,<br/>
+                    Estarei sempre a te cuidar,<br/>
+                    Esperando o dia de te reencontrar."
+                </p>`;
+            } else {
+                // Sidebar rotativa (Segunda a Sábado, mapeado de 0 a 5)
+                // targetDate.getDay() retorna 0 para domingo, 1 para segunda, ..., 6 para sábado.
+                // Ajustamos para que segunda-feira (1) seja index 0, e sábado (6) seja index 5.
+                const dayOfWeek = targetDate.getDay(); 
+                const sidebarIndex = dayOfWeek - 1; // 0 para Mon, 5 para Sat
+                
+                const side = getSidebar(sidebarIndex);
+                sidebarIconEl.className = `fa-solid ${side.icon} text-accent`;
+                sidebarTitleEl.innerText = side.title;
+                sidebarContentEl.innerHTML = renderTemplate(side.content);
+            }
         }
+
+        // === SEÇÃO: FUNÇÕES DE SIMULAÇÃO (DEMONSTRAÇÃO) ===
+        function simulateNextDay() {
+            // Incrementa o offset da simulação
+            demoDateOffset += 1;
+            localStorage.setItem('demoDateOffset', demoDateOffset.toString());
+
+            // Calcula o dia simulado correspondente
+            const simDate = new Date();
+            simDate.setDate(simDate.getDate() + demoDateOffset);
+
+            // Regra: Domingo não incrementa o índice da jornada
+            if (!isSunday(simDate)) {
+                currentDayIndex += 1;
+                localStorage.setItem('currentDayIndex', currentDayIndex.toString());
+            }
+
+            updateUI(true);
+        }
+
+        function resetDemo() {
+            // Reseta todos os dados da demonstração
+            currentDayIndex = 0;
+            demoDateOffset = 0;
+            
+            const today = new Date();
+            const todayStr = getLocalDateString(today);
+            
+            localStorage.setItem('currentDayIndex', '0');
+            localStorage.setItem('demoDateOffset', '0');
+            localStorage.setItem('lastAccessDate', todayStr);
+
+            updateUI(true);
+        }
+
+        // Inicializa o sistema ao carregar a página
+        window.addEventListener('DOMContentLoaded', initSystem);
     </script>
 </body>
 </html>
