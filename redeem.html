@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resgatar Presente | Notícias do Céu</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        paper: '#F4EADD',
+                        ink: '#2C1E16',
+                        accent: '#8B5A2B',
+                        vintage: '#E6D5C3'
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        body: ['"Lora"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAFAFA;
+        }
+        
+        .newspaper-container {
+            background-color: #F4EADD;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15), inset 0 0 50px rgba(139, 90, 43, 0.1);
+        }
+
+        .border-double-thick {
+            border-style: double;
+            border-width: 6px;
+            border-color: #2C1E16;
+        }
+
+        .border-double-gold {
+            border-style: double;
+            border-width: 6px;
+            border-color: #C5A059;
+            box-shadow: 0 10px 30px rgba(139, 90, 43, 0.2), inset 0 0 50px rgba(197, 160, 89, 0.2);
+        }
+
+        .separator-line {
+            height: 1px;
+            background-color: #2C1E16;
+            width: 100%;
+            position: relative;
+            margin: 1.5rem 0;
+        }
+        
+        .separator-line::after {
+            content: '♥';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #F4EADD;
+            padding: 0 10px;
+            font-size: 0.8rem;
+            color: #2C1E16;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="font-body text-ink antialiased selection:bg-accent selection:text-white min-h-screen flex flex-col justify-between">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                    <i class="fa-solid fa-cloud text-accent text-2xl"></i>
+                    <span class="font-serif font-bold text-2xl tracking-wider uppercase text-ink">Notícias do Céu</span>
+                </div>
+                <div>
+                    <a href="index.html" class="text-gray-600 hover:text-accent font-medium transition-colors">Voltar ao Início</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="flex-grow pt-32 pb-20 px-4 flex items-center justify-center bg-gradient-to-b from-paper/30 to-white">
+        <div class="w-full max-w-2xl">
+            
+            <!-- Step 1: Code Verification Form -->
+            <div id="step-input" class="newspaper-container border-double-thick p-8 fade-in text-ink">
+                <div class="text-center border-b-2 border-ink pb-4 mb-6">
+                    <p class="text-xs font-bold uppercase tracking-widest mb-1">Edição Especial de Resgate</p>
+                    <h2 class="font-serif text-3xl font-black uppercase tracking-tighter">Notícias do Céu</h2>
+                </div>
+
+                <div class="text-center mb-8">
+                    <h3 class="font-serif text-2xl font-bold mb-3 text-ink">Insira o seu Código de Presente</h3>
+                    <p class="text-sm text-gray-700 max-w-md mx-auto leading-relaxed">
+                        Se você recebeu um cartão de presente para eternizar a memória do seu querido pet, insira o código de 12 dígitos abaixo.
+                    </p>
+                </div>
+
+                <form id="code-form" onsubmit="handleCodeSubmit(event)" class="space-y-6">
+                    <div>
+                        <label for="gift-code" class="block text-xs font-bold uppercase tracking-wider mb-2">Código do Cartão</label>
+                        <input type="text" id="gift-code" name="gift-code" required placeholder="XXXX-XXXX-XXXX" 
+                            class="w-full text-center font-serif text-xl font-bold tracking-widest uppercase py-3 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl"
+                            maxlength="14" oninput="formatCodeInput(this)">
+                    </div>
+                    <div id="input-error" class="hidden text-red-700 bg-red-50 border border-red-200 px-4 py-3 rounded-xl text-sm text-center font-medium"></div>
+                    <button type="submit" id="submit-btn" class="w-full bg-accent text-white py-4 rounded-xl font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg flex justify-center items-center gap-2">
+                        <span>Verificar Cartão</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Step 2: Show Gift Card Details -->
+            <div id="step-details" class="hidden newspaper-container border-double-thick p-8 fade-in text-ink relative">
+                <!-- Design Badge & Theme Details -->
+                <div id="theme-banner" class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#C5A059] text-white font-serif font-bold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md whitespace-nowrap flex items-center gap-2">
+                    <span id="theme-icon"><i class="fa-solid fa-star"></i></span> <span id="theme-name">Design</span>
+                </div>
+
+                <div class="text-center border-b-2 border-ink pb-4 mb-6 mt-2">
+                    <p class="text-xs font-bold uppercase tracking-widest mb-1">Uma Lembrança do Coração</p>
+                    <h2 class="font-serif text-3xl font-black uppercase tracking-tighter">Notícias do Céu</h2>
+                </div>
+
+                <div class="text-center mb-6">
+                    <h3 class="font-serif text-2xl font-bold mb-1 text-accent">Uma mensagem especial espera por você</h3>
+                    <p class="text-sm font-serif italic text-gray-700">Enviada com carinho por <strong id="sender-display" class="text-ink">Remetente</strong></p>
+                </div>
+
+                <div class="separator-line"></div>
+
+                <!-- Recipient and Pet Info -->
+                <div class="my-6 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white/40 p-4 rounded-xl border border-vintage/50">
+                            <span class="block text-[10px] font-bold uppercase text-gray-500 tracking-wider">Para</span>
+                            <span id="recipient-display" class="font-serif font-bold text-lg text-ink">Destinatário</span>
+                        </div>
+                        <div id="pet-info-container" class="bg-white/40 p-4 rounded-xl border border-vintage/50">
+                            <span class="block text-[10px] font-bold uppercase text-gray-500 tracking-wider">Em memória de</span>
+                            <span id="pet-display" class="font-serif font-bold text-lg text-accent"><i class="fa-solid fa-paw mr-1"></i> Pet</span>
+                        </div>
+                    </div>
+
+                    <!-- Gifted Plan Details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white/40 p-4 rounded-xl border border-vintage/50">
+                            <span class="block text-[10px] font-bold uppercase text-gray-500 tracking-wider">Plano Presenteado</span>
+                            <span id="plan-display" class="font-serif font-bold text-lg text-ink">Plano Vitalício</span>
+                        </div>
+                        <div class="bg-white/40 p-4 rounded-xl border border-vintage/50">
+                            <span class="block text-[10px] font-bold uppercase text-gray-500 tracking-wider">Validade do Cartão</span>
+                            <span id="expires-display" class="font-body text-sm font-medium text-ink">Sem expiração</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message Quote Block -->
+                <div id="message-container" class="my-6">
+                    <div class="relative bg-white/60 p-6 rounded-xl border border-vintage/50 italic text-justify font-body text-gray-800">
+                        <i class="fa-solid fa-quote-left text-3xl text-accent/20 absolute top-2 left-2"></i>
+                        <p id="message-display" class="relative z-10 pl-6 leading-relaxed">
+                            "Mensagem"
+                        </p>
+                    </div>
+                </div>
+
+                <div class="separator-line"></div>
+
+                <!-- Error area in details block -->
+                <div id="redeem-error" class="hidden mb-6 text-red-700 bg-red-50 border border-red-200 px-4 py-3 rounded-xl text-sm text-center font-medium"></div>
+
+                <!-- Action Button -->
+                <button onclick="handleRedeemClick()" id="redeem-btn" class="w-full bg-accent text-white py-4 rounded-xl font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg flex justify-center items-center gap-2">
+                    <span>Resgatar Homenagem</span> <i class="fa-solid fa-gift"></i>
+                </button>
+
+                <p class="text-center text-xs text-gray-500 mt-4">
+                    Ao resgatar, você poderá dar início ao memorial personalizado do seu melhor amigo.
+                </p>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="loading" class="hidden text-center py-12">
+                <i class="fa-solid fa-spinner fa-spin text-4xl text-accent"></i>
+                <p class="mt-4 font-serif text-lg text-gray-600">Buscando informações nas nuvens...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8 text-center text-xs border-t border-gray-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2026 Notícias do Céu. Ajudando a manter vivas as memórias mais doces.</p>
+        </div>
+    </footer>
+
+    <!-- Logic -->
+    <script>
+        const API_BASE_URL = 'http://localhost:3000/api';
+        let currentCode = '';
+        let currentCardDetails = null;
+
+        // Automatically format input to XXXX-XXXX-XXXX
+        function formatCodeInput(input) {
+            let val = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (val.length > 8) {
+                val = val.substring(0, 4) + '-' + val.substring(4, 8) + '-' + val.substring(8, 12);
+            } else if (val.length > 4) {
+                val = val.substring(0, 4) + '-' + val.substring(4, 8);
+            }
+            input.value = val;
+        }
+
+        // Get or generate a persistent UUID user_id
+        function getOrCreateUserId() {
+            let userId = localStorage.getItem('noticias_do_ceu_user_id');
+            if (!userId) {
+                userId = crypto.randomUUID ? crypto.randomUUID() : generateUUID();
+                localStorage.setItem('noticias_do_ceu_user_id', userId);
+            }
+            return userId;
+        }
+
+        // Fallback UUID generator
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        function getThemeInfo(design) {
+            switch (design) {
+                case 'nuvens':
+                    return { name: 'Nuvens', icon: 'fa-solid fa-cloud' };
+                case 'patinhas':
+                    return { name: 'Patinhas', icon: 'fa-solid fa-paw' };
+                case 'estrelas':
+                    return { name: 'Estrelas', icon: 'fa-solid fa-star' };
+                case 'pomba':
+                    return { name: 'Pomba', icon: 'fa-solid fa-dove' };
+                default:
+                    return { name: 'Clássico', icon: 'fa-solid fa-gift' };
+            }
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('hidden', !show);
+        }
+
+        function showError(message, context = 'input') {
+            const errorEl = document.getElementById(context === 'input' ? 'input-error' : 'redeem-error');
+            errorEl.innerText = message;
+            errorEl.classList.remove('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('input-error').classList.add('hidden');
+            document.getElementById('redeem-error').classList.add('hidden');
+        }
+
+        function showDetails(show) {
+            document.getElementById('step-details').classList.toggle('hidden', !show);
+            document.getElementById('step-input').classList.toggle('hidden', show);
+        }
+
+        // Validate code with API
+        async function checkCode(code) {
+            showLoading(true);
+            hideError();
+            try {
+                const res = await fetch(`${API_BASE_URL}/gift-cards/${code}`);
+                if (res.status === 404) {
+                    showError('Este código de cartão não existe. Verifique a digitação.', 'input');
+                    showDetails(false);
+                    return;
+                }
+                if (res.status === 410) {
+                    showError('Este cartão de presente já expirou.', 'input');
+                    showDetails(false);
+                    return;
+                }
+                if (!res.ok) {
+                    showError('Erro ao validar código. Tente novamente mais tarde.', 'input');
+                    showDetails(false);
+                    return;
+                }
+
+                const card = await res.json();
+                currentCode = code;
+                currentCardDetails = card;
+
+                // If already redeemed:
+                if (card.redeemed_by) {
+                    const myUserId = getOrCreateUserId();
+                    if (card.redeemed_by === myUserId) {
+                        // Idempotent redirect: already redeemed by me
+                        goToSuccess(code, card, true);
+                        return;
+                    } else {
+                        showError('Este cartão de presente já foi utilizado por outra conta.', 'input');
+                        showDetails(false);
+                        return;
+                    }
+                }
+
+                // Populate UI fields
+                document.getElementById('sender-display').innerText = card.sender_name;
+                document.getElementById('recipient-display').innerText = card.recipient_name;
+                
+                if (card.pet_name && card.pet_name.trim() !== '') {
+                    document.getElementById('pet-display').innerText = card.pet_name;
+                    document.getElementById('pet-info-container').classList.remove('hidden');
+                } else {
+                    document.getElementById('pet-info-container').classList.add('hidden');
+                }
+
+                if (card.plan === 'lifetime') {
+                    document.getElementById('plan-display').innerText = 'Plano Vitalício';
+                    document.getElementById('expires-display').innerText = 'Acesso Perpétuo (Sem expiração)';
+                } else {
+                    document.getElementById('plan-display').innerText = 'Plano Anual';
+                    if (card.expires_at) {
+                        const date = new Date(card.expires_at);
+                        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                        document.getElementById('expires-display').innerText = `Válido até ${date.toLocaleDateString('pt-BR', options)}`;
+                    } else {
+                        document.getElementById('expires-display').innerText = '1 ano de acesso';
+                    }
+                }
+
+                const theme = getThemeInfo(card.design);
+                document.getElementById('theme-name').innerText = `Tema: ${theme.name}`;
+                document.getElementById('theme-icon').innerHTML = `<i class="${theme.icon}"></i>`;
+
+                if (card.message && card.message.trim() !== '') {
+                    document.getElementById('message-display').innerText = `"${card.message}"`;
+                    document.getElementById('message-container').classList.remove('hidden');
+                } else {
+                    document.getElementById('message-container').classList.add('hidden');
+                }
+
+                showDetails(true);
+            } catch (err) {
+                showError('Erro de conexão ao servidor. Por favor, verifique se o servidor está rodando.', 'input');
+                showDetails(false);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function handleCodeSubmit(e) {
+            e.preventDefault();
+            const code = document.getElementById('gift-code').value.trim();
+            if (/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
+                checkCode(code);
+            } else {
+                showError('O código deve conter 12 caracteres alfanuméricos formatados (XXXX-XXXX-XXXX).', 'input');
+            }
+        }
+
+        async function handleRedeemClick() {
+            if (!currentCode) return;
+            
+            const btn = document.getElementById('redeem-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Processando resgate...`;
+            
+            hideError();
+
+            try {
+                const userId = getOrCreateUserId();
+                const res = await fetch(`${API_BASE_URL}/gift-cards/${currentCode}/redeem`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
+                });
+
+                if (res.status === 409) {
+                    showError('Erro: Este cartão já foi resgatado por outra pessoa.', 'details');
+                    btn.disabled = false;
+                    btn.innerHTML = `<span>Resgatar Homenagem</span> <i class="fa-solid fa-gift"></i>`;
+                    return;
+                }
+
+                if (res.status === 410) {
+                    showError('Erro: Este cartão já está expirado e não pode ser resgatado.', 'details');
+                    btn.disabled = false;
+                    btn.innerHTML = `<span>Resgatar Homenagem</span> <i class="fa-solid fa-gift"></i>`;
+                    return;
+                }
+
+                if (!res.ok) {
+                    showError('Ocorreu um erro no servidor ao resgatar. Tente novamente.', 'details');
+                    btn.disabled = false;
+                    btn.innerHTML = `<span>Resgatar Homenagem</span> <i class="fa-solid fa-gift"></i>`;
+                    return;
+                }
+
+                // Redirect to success page
+                goToSuccess(currentCode, currentCardDetails, false);
+            } catch (err) {
+                showError('Erro ao se conectar ao servidor. Verifique a rede.', 'details');
+                btn.disabled = false;
+                btn.innerHTML = `<span>Resgatar Homenagem</span> <i class="fa-solid fa-gift"></i>`;
+            }
+        }
+
+        function goToSuccess(code, card, alreadyRedeemed = false) {
+            window.location.href = `redeem-success.html?code=${code}&sender=${encodeURIComponent(card.sender_name)}&recipient=${encodeURIComponent(card.recipient_name)}&plan=${card.plan}&pet=${encodeURIComponent(card.pet_name || '')}${alreadyRedeemed ? '&already=true' : ''}`;
+        }
+
+        // On load check for query parameter
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            if (code) {
+                const cleanCode = code.trim().toUpperCase();
+                if (/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(cleanCode)) {
+                    document.getElementById('gift-code').value = cleanCode;
+                    checkCode(cleanCode);
+                } else {
+                    showError('Formato de código inválido na URL. Use XXXX-XXXX-XXXX.', 'input');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
