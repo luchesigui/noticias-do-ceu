@@ -104,6 +104,7 @@
                 <div class="hidden md:flex space-x-8 items-center">
                     <a href="#como-funciona" class="text-gray-600 hover:text-accent font-medium transition-colors">Como Funciona</a>
                     <a href="#demonstracao" class="text-gray-600 hover:text-accent font-medium transition-colors">Demonstração</a>
+                    <a href="style-guide.html" class="text-gray-600 hover:text-accent font-medium transition-colors">Guia de Estilo</a>
                     <a href="#planos" class="bg-ink text-paper px-6 py-2 rounded-full font-serif font-semibold hover:bg-accent transition-colors shadow-md">
                         Criar Memorial
                     </a>
@@ -283,8 +284,8 @@
                             <div class="w-full sm:w-1/2 relative">
                                 <div class="absolute -top-3 -left-3 text-4xl text-accent/80"><i class="fa-solid fa-quote-left"></i></div>
                                 <div class="border-4 border-white shadow-md transform -rotate-2 relative z-10">
-                                    <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Flokinho no céu" class="w-full h-auto object-cover filter sepia-[0.2] contrast-[1.1]">
-                                    <div class="absolute bottom-0 w-full bg-black/60 text-white text-xs p-1 text-center font-serif">
+                                    <img id="news-image" src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Flokinho no céu" class="w-full h-auto object-cover filter sepia-[0.2] contrast-[1.1]">
+                                    <div id="news-image-caption" class="absolute bottom-0 w-full bg-black/60 text-white text-xs p-1 text-center font-serif">
                                         Flokinho aproveitando a vista das nuvens.
                                     </div>
                                 </div>
@@ -335,7 +336,7 @@
                             <div class="mt-1 bg-accent/20 p-2 rounded-full text-accent"><i class="fa-solid fa-share-nodes"></i></div>
                             <div>
                                 <h4 class="text-xl font-bold font-serif">Compartilhe com a Família</h4>
-                                <p class="text-gray-600">Envie o link para todos que amavam seu cãopanheiro. Todos podem se emocionar com as notícias diárias.</p>
+                                <p class="text-gray-600">Envie o link para todos que amavam seu cãopanheiro. Todos podem se emocionar com as Notícias Diárias.</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-4">
@@ -370,7 +371,6 @@
                     <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Página Web Exclusiva (ex: noticiasdoceu.com/seu-pet)</li>
                     <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Design de Jornal Vintage interativo</li>
                     <li><i class="fa-solid fa-check text-green-600 mr-2"></i> <strong>NOVAS HISTÓRIAS GERADAS TODOS OS DIAS</strong></li>
-                    <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Hospedagem vitalícia inclusa</li>
                     <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Opcional: Envio de placa em MDF com QR Code</li>
                 </ul>
                 
@@ -409,28 +409,40 @@
                 subheadline: "Uma tarde inteira de brincadeiras sem fim e a barriguinha cheia.",
                 text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">H</span>oje, nossos correspondentes celestiais avistaram Flokinho correndo a toda velocidade pelo gramado sagrado. O motivo? Ele finalmente descobriu onde os anjos guardam os bifinhos de carne.</p>
                        <p class="mb-3">Segundo relatos, ele fez aquela carinha de coitado que ninguém resiste, e acabou ganhando petiscos em dobro. "Ele é muito esperto", disse um querubim local. "Ele sabe exatamente como pedir carinho na barriga."</p>
-                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"A saudade é grande, mas a alegria dele aqui é maior ainda!"</p>`
+                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"A saudade é grande, mas a alegria dele aqui é maior ainda!"</p>`,
+                image: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                imageAlt: "Cachorro feliz",
+                caption: "Flokinho aproveitando a vista das nuvens."
             },
             {
                 headline: "A GRANDE CORRIDA NAS NUVENS: TEMOS UM CAMPEÃO!",
                 subheadline: "Nosso querido amigo mostrou que ainda corre mais rápido que a luz.",
                 text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">A</span>conteceu ontem o Campeonato Anual de Caça ao Graveto Celestial, e adivinhem quem levou a medalha de ouro? Sim, o próprio Flokinho!</p>
                        <p class="mb-3">Ele não apenas encontrou o maior graveto do céu, como ainda ajudou um amiguinho pug a alcançar o seu. Depois da corrida, todos descansaram em camas de nuvens ultra-macias.</p>
-                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Ele mandou muitos lambeijos para a família na Terra!"</p>`
+                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Ele mandou muitos lambeijos para a família na Terra!"</p>`,
+                image: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                imageAlt: "Golden retriever",
+                caption: "Flokinho com sua medalha de ouro pós corrida."
             },
             {
                 headline: "MENSAGEM ESPECIAL: 'ESTOU BEM, MAMÃE!'",
                 subheadline: "Um recado direto do coração para acalmar a sua saudade hoje.",
                 text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">N</span>esta manhã ensolarada no paraíso, Flokinho sentou na beirada de uma nuvem dourada e ficou olhando para baixo. Ele balançou o rabinho fortemente ao ver você sorrir lembrando dele.</p>
                        <p class="mb-3">A equipe de transmissão celestial captou o recado exato dele: "Não fique triste, o amor que você me deu me aquece até hoje aqui em cima. Eu estou livre de dor e muito, muito feliz."</p>
-                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"O amor não acaba, ele só muda de endereço."</p>`
+                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"O amor não acaba, ele só muda de endereço."</p>`,
+                image: "https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                imageAlt: "Pug sorrindo",
+                caption: "Flokinho olhando do céu com carinho."
             },
             {
                 headline: "NOVA AMIZADE COM SÃO FRANCISCO DE ASSIS",
                 subheadline: "Parece que Flokinho arrumou um novo melhor amigo nos passeios da tarde.",
                 text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">É</span> oficial, nosso menino é popular no céu! Ele foi visto passeando lado a lado com São Francisco de Assis pelos jardins floridos do setor sul.</p>
-                       <p class="mb-3">Eles passaram horas conversando (naquela linguagem que só o coração entende) e Flokinho até ganhou uma coroa de margaridas. Ele prometeu guardar uma para quando vocês se reencontrarem.</p>
-                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Cada latido aqui soa como uma música de amor."</p>`
+                       <p class="mb-3">Eles passaram horas conversando (naquela linguagem que só o coração entende) e Flokinho até ganhou uma coroa de margaridas. He prometeu guardar uma para quando vocês se reencontrarem.</p>
+                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Cada latido aqui soa como uma música de amor."</p>`,
+                image: "https://images.unsplash.com/photo-1534361960057-19889db9621e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                imageAlt: "Cachorro com flor",
+                caption: "Flokinho usando sua coroa de margaridas."
             }
         ];
 
@@ -447,6 +459,8 @@
             const subheadlineEl = document.getElementById('news-subheadline');
             const textEl = document.getElementById('news-text');
             const dayCounterEl = document.getElementById('day-counter');
+            const imageEl = document.getElementById('news-image');
+            const captionEl = document.getElementById('news-image-caption');
             
             // Remove animation classes
             headlineEl.parentElement.classList.remove('fade-in');
@@ -459,6 +473,9 @@
             headlineEl.innerText = news.headline;
             subheadlineEl.innerText = news.subheadline;
             textEl.innerHTML = news.text;
+            imageEl.src = news.image;
+            imageEl.alt = news.imageAlt;
+            captionEl.innerText = news.caption;
             dayCounterEl.innerText = `Dia ${currentDayIndex + 1}`;
             
             // Update mock date
