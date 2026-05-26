@@ -16,6 +16,9 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Load the Story Database -->
+    <script src="data.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -53,6 +56,13 @@
             border-color: #2C1E16;
         }
 
+        .border-double-gold {
+            border-style: double;
+            border-width: 6px;
+            border-color: #C5A059; /* vintage gold */
+            box-shadow: 0 10px 30px rgba(139, 90, 43, 0.2), inset 0 0 50px rgba(197, 160, 89, 0.2);
+        }
+
         .border-y-newspaper {
             border-top: 2px solid #2C1E16;
             border-bottom: 2px solid #2C1E16;
@@ -78,6 +88,10 @@
             color: #2C1E16;
         }
 
+        .separator-line.white-bg::after {
+            background-color: #ffffff;
+        }
+
         .fade-in {
             animation: fadeIn 0.8s ease-in-out;
         }
@@ -85,6 +99,33 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Floating clouds animation */
+        .animate-cloud-slow-1 {
+            animation: floatCloud1 16s ease-in-out infinite;
+        }
+
+        .animate-cloud-slow-2 {
+            animation: floatCloud2 20s ease-in-out infinite;
+        }
+
+        @keyframes floatCloud1 {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            50% {
+                transform: translate(25px, -10px) rotate(4deg);
+            }
+        }
+
+        @keyframes floatCloud2 {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            50% {
+                transform: translate(-25px, 10px) rotate(-4deg);
+            }
         }
         
         /* Smooth scrolling */
@@ -104,7 +145,6 @@
                 <div class="hidden md:flex space-x-8 items-center">
                     <a href="#como-funciona" class="text-gray-600 hover:text-accent font-medium transition-colors">Como Funciona</a>
                     <a href="#demonstracao" class="text-gray-600 hover:text-accent font-medium transition-colors">Demonstração</a>
-                    <a href="style-guide.html" class="text-gray-600 hover:text-accent font-medium transition-colors">Guia de Estilo</a>
                     <a href="#planos" class="bg-ink text-paper px-6 py-2 rounded-full font-serif font-semibold hover:bg-accent transition-colors shadow-md">
                         Criar Memorial
                     </a>
@@ -161,38 +201,57 @@
         </div>
     </section>
 
-    <!-- How it works -->
-    <section id="como-funciona" class="py-24 bg-ink text-paper">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-5xl font-serif font-bold mb-4">Como Funciona a Magia</h2>
-                <p class="text-vintage text-lg max-w-2xl mx-auto">Três passos simples para eternizar a memória do seu cãopanheiro em um jornal diário que aquece o coração.</p>
-                <div class="w-24 h-1 bg-accent mx-auto mt-8"></div>
+    <!-- === [PATCHED] How it works — newspaper page, big numerals, line-icon-line divider === -->
+    <section id="como-funciona" class="newspaper-container py-24">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <div class="font-serif italic text-accent text-base mb-3">— Como Funciona —</div>
+                <h2 class="text-4xl md:text-6xl font-serif font-black uppercase tracking-tight text-ink" style="text-shadow: 2px 2px 0px rgba(0,0,0,0.05);">
+                    Apenas 3 Passos
+                </h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-14 md:gap-0">
                 <!-- Step 1 -->
-                <div class="relative">
-                    <div class="w-20 h-20 mx-auto bg-paper text-ink rounded-full flex items-center justify-center text-3xl font-bold font-serif mb-6 shadow-lg shadow-black/50">1</div>
-                    <i class="fa-solid fa-camera-retro text-4xl text-accent mb-4"></i>
-                    <h3 class="text-2xl font-serif font-bold mb-3">Conte a História</h3>
-                    <p class="text-vintage/80">Você nos envia a foto mais linda, o nome, os apelidos carinhosos e as manias inesquecíveis do seu pet.</p>
+                <div class="relative px-2 md:px-8 md:border-r md:border-ink/20">
+                    <div class="font-serif font-black text-7xl md:text-8xl leading-none text-ink text-center">01</div>
+                    <div class="flex items-center justify-center gap-4 my-3">
+                        <div class="h-px flex-1 max-w-[60px] bg-ink/30"></div>
+                        <i class="fa-solid fa-camera-retro text-accent text-sm"></i>
+                        <div class="h-px flex-1 max-w-[60px] bg-ink/30"></div>
+                    </div>
+                    <h3 class="text-2xl font-serif font-bold uppercase tracking-wide text-ink text-center mb-3">Conte a História</h3>
+                    <p class="font-body text-[15px] leading-relaxed text-ink/80 text-center text-balance">
+                        Você nos envia a foto mais linda, o nome, os apelidos carinhosos e as <em>manias inesquecíveis</em> do seu pet.
+                    </p>
                 </div>
+
                 <!-- Step 2 -->
-                <div class="relative">
-                    <div class="hidden md:block absolute top-10 left-0 w-full h-[2px] bg-dashed bg-accent/30 -z-10 transform -translate-x-1/2"></div>
-                    <div class="w-20 h-20 mx-auto bg-paper text-ink rounded-full flex items-center justify-center text-3xl font-bold font-serif mb-6 shadow-lg shadow-black/50">2</div>
-                    <i class="fa-solid fa-laptop-code text-4xl text-accent mb-4"></i>
-                    <h3 class="text-2xl font-serif font-bold mb-3">Página Exclusiva</h3>
-                    <p class="text-vintage/80">Nossa tecnologia cria uma página web única, estilizada perfeitamente como um jornal clássico para o seu pet.</p>
+                <div class="relative px-2 md:px-8 md:border-r md:border-ink/20">
+                    <div class="font-serif font-black text-7xl md:text-8xl leading-none text-ink text-center">02</div>
+                    <div class="flex items-center justify-center gap-4 my-3">
+                        <div class="h-px flex-1 max-w-[60px] bg-ink/30"></div>
+                        <i class="fa-solid fa-feather-pointed text-accent text-sm"></i>
+                        <div class="h-px flex-1 max-w-[60px] bg-ink/30"></div>
+                    </div>
+                    <h3 class="text-2xl font-serif font-bold uppercase tracking-wide text-ink text-center mb-3">Página Exclusiva</h3>
+                    <p class="font-body text-[15px] leading-relaxed text-ink/80 text-center text-balance">
+                        Em poucos minutos, montamos uma página web única — estilizada como um jornal clássico, só para o seu pet.
+                    </p>
                 </div>
+
                 <!-- Step 3 -->
-                <div class="relative">
-                    <div class="hidden md:block absolute top-10 left-0 w-full h-[2px] bg-dashed bg-accent/30 -z-10 transform -translate-x-1/2"></div>
-                    <div class="w-20 h-20 mx-auto bg-accent text-white rounded-full flex items-center justify-center text-3xl font-bold font-serif mb-6 shadow-lg shadow-black/50">3</div>
-                    <i class="fa-regular fa-calendar-check text-4xl text-white mb-4"></i>
-                    <h3 class="text-2xl font-serif font-bold mb-3 text-accent">Notícias Diárias</h3>
-                    <p class="text-vintage/80"><strong>O grande diferencial:</strong> Todo dia, ao abrir o link, uma nova edição gerada com mensagens de amor e aventuras no céu.</p>
+                <div class="relative px-2 md:px-8">
+                    <div class="font-serif font-black text-7xl md:text-8xl leading-none text-ink text-center">03</div>
+                    <div class="flex items-center justify-center gap-4 my-3">
+                        <div class="h-px flex-1 max-w-[60px] bg-ink/30"></div>
+                        <i class="fa-regular fa-calendar-check text-accent text-sm"></i>
+                        <div class="h-px flex-1 max-w-[60px] bg-ink/30"></div>
+                    </div>
+                    <h3 class="text-2xl font-serif font-bold uppercase tracking-wide text-ink text-center mb-3">Notícias Diárias</h3>
+                    <p class="font-body text-[15px] leading-relaxed text-ink/80 text-center text-balance">
+                        <strong>O grande diferencial:</strong> todo dia, ao abrir o link, uma <em>nova edição</em> com aventuras e recados do céu.
+                    </p>
                 </div>
             </div>
         </div>
@@ -201,18 +260,23 @@
     <!-- Interactive Demo Section -->
     <section id="demonstracao" class="py-24 bg-gray-50 overflow-hidden relative">
         <!-- Background decorations -->
-        <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute top-10 left-10 opacity-50"></i>
-        <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute bottom-10 right-10 opacity-50"></i>
+        <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute top-10 left-10 opacity-50 animate-cloud-slow-1"></i>
+        <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute bottom-10 right-10 opacity-50 animate-cloud-slow-2"></i>
 
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-serif font-bold text-ink mb-4">Experimente a Homenagem</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto mb-6">Veja como a página do seu pet vai funcionar. Clique no botão abaixo para simular os dias passando e ver novas notícias geradas automaticamente.</p>
+                <p class="text-gray-600 max-w-2xl mx-auto mb-6">Veja como a página do seu pet vai funcionar. Use os botões abaixo para simular os dias da jornada ou resetar a demonstração.</p>
                 
-                <button onclick="nextDay()" class="bg-ink text-white px-6 py-3 rounded-full font-serif font-bold hover:bg-accent transition-colors shadow-lg flex items-center gap-2 mx-auto">
-                    <i class="fa-solid fa-forward-step"></i> Simular Próximo Dia
-                </button>
-                <p class="text-sm text-gray-500 mt-2 font-serif italic">Atualmente exibindo: <span id="day-counter" class="font-bold text-accent">Dia 1</span></p>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <button onclick="simulateNextDay()" class="bg-ink text-white px-6 py-3 rounded-full font-serif font-bold hover:bg-accent transition-colors shadow-lg flex items-center gap-2">
+                        <i class="fa-solid fa-forward-step"></i> Avançar para Próximo Dia (Demo)
+                    </button>
+                    <button onclick="resetDemo()" class="bg-white text-ink border-2 border-ink px-6 py-3 rounded-full font-serif font-bold hover:bg-gray-100 transition-colors shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Demo
+                    </button>
+                </div>
+                <p class="text-sm text-gray-500 mt-4 font-serif italic">Atualmente exibindo: <span id="day-counter" class="font-bold text-accent">Dia 1 da Jornada</span></p>
             </div>
 
             <!-- THE NEWSPAPER PREVIEW (The Core Feature) -->
@@ -247,30 +311,42 @@
                 <!-- Main Content Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
                     
-                    <!-- Left Column: Fixed Pet Info -->
+                    <!-- Left Column: Fixed Pet Info & Obituário -->
                     <div class="md:col-span-3 border-b-2 md:border-b-0 md:border-r-2 border-ink/30 pb-6 md:pb-0 md:pr-6">
                         <div class="text-center mb-4">
-                            <h3 class="font-serif font-black text-xl uppercase border-b border-ink/50 pb-2 mb-2">Quem foi Flokinho</h3>
-                            <ul class="text-left text-sm font-body space-y-2 list-none">
-                                <li><i class="fa-solid fa-paw text-accent text-xs mr-2"></i> Raça: Shih Tzu</li>
-                                <li><i class="fa-solid fa-paw text-accent text-xs mr-2"></i> Apelido: Floquinho de Neve</li>
-                                <li><i class="fa-solid fa-paw text-accent text-xs mr-2"></i> Amava: Dormir no pé da cama</li>
-                                <li><i class="fa-solid fa-paw text-accent text-xs mr-2"></i> Odiava: Banho</li>
-                            </ul>
+                            <h3 class="font-serif font-black text-xl uppercase border-b border-ink/50 pb-2 mb-2">Obituário</h3>
+                            <p class="text-xs text-justify font-body leading-relaxed italic">
+                                <strong>FLOKINHO (2015-2024)</strong> -- Partiu deste mundo deixando patas marcadas no coração da família Luchesi. Shih Tzu de profissão, especialista em dormir no pé da cama e detentor do título de pior banhista do bairro. Sua missão na Terra foi cumprida com louvor: amar incondicionalmente.
+                            </p>
                         </div>
                         <div class="separator-line"></div>
-                        <div class="text-center mt-4">
-                            <h3 class="font-serif font-black text-lg uppercase mb-2">Mensagem do Céu</h3>
-                            <p class="text-sm italic font-body text-justify">
+                        <div class="text-center mt-4" id="sidebar-rotativa">
+                            <h3 class="font-serif font-black text-lg uppercase mb-2 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cloud text-accent" id="sidebar-icon"></i>
+                                <span id="sidebar-title">Mensagem do Céu</span>
+                            </h3>
+                            <div class="text-sm italic font-body text-justify" id="sidebar-content">
                                 "Não chore por mim. Estou feliz, livre e em paz. Espere-me um dia... vamos correr juntos de novo."
-                            </p>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Center Column: Dynamic Daily News -->
                     <div class="md:col-span-9" id="dynamic-news-content">
+                        <!-- Special Date Badge -->
+                        <div id="special-badge" class="hidden justify-center mb-4">
+                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-yellow-500/10 text-yellow-700 border border-yellow-500/30 text-xs font-bold uppercase tracking-wider">
+                                <i class="fa-solid fa-certificate text-yellow-500"></i> Edição Especial
+                            </span>
+                        </div>
+
+                        <!-- Sunday Rest Banner -->
+                        <div id="sunday-banner" class="hidden bg-accent/10 border border-accent/30 rounded-xl p-4 mb-6 text-center text-accent font-serif text-base italic">
+                            <i class="fa-solid fa-moon mr-2"></i> Domingo é dia de descanso. O Flokinho está dormindo nas nuvens. Volte amanhã para uma nova edição.
+                        </div>
+
                         <!-- Content injected via JS -->
-                        <div class="text-center mb-6 fade-in">
+                        <div class="text-center mb-6">
                             <h2 class="font-serif font-black text-3xl sm:text-4xl uppercase leading-none mb-3" id="news-headline">
                                 FLOKINHO ENCONTRA O ESTOQUE INFINITO DE PETISCOS
                             </h2>
@@ -279,7 +355,7 @@
                             </h3>
                         </div>
 
-                        <div class="flex flex-col sm:flex-row gap-6 items-start fade-in">
+                        <div class="flex flex-col sm:flex-row gap-6 items-start">
                             <!-- Pet Image -->
                             <div class="w-full sm:w-1/2 relative">
                                 <div class="absolute -top-3 -left-3 text-4xl text-accent/80"><i class="fa-solid fa-quote-left"></i></div>
@@ -352,141 +428,484 @@
         </div>
     </section>
 
-    <!-- Pricing / CTA -->
-    <section id="planos" class="py-24 bg-ink text-paper relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CiAgPHBhdGggZD0iTTIwIDIwYzAgMTEuMDQ2LTguOTU0IDIwLTIwIDIwUzAgMzEuMDQ2IDAgMjAgOC45NTQgMCAyMCAwczIwIDguOTU0IDIwIDIwIiBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz4KPC9zdmc+')]"></div>
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <i class="fa-solid fa-heart text-5xl text-accent mb-6 animate-pulse"></i>
-            <h2 class="text-4xl md:text-5xl font-serif font-bold mb-6">Eternize o Seu Amor Hoje</h2>
-            <p class="text-xl text-vintage/90 mb-10 max-w-2xl mx-auto">
-                Crie a página exclusiva do seu pet agora. Pagamento único. Sem mensalidades. Amor para sempre.
-            </p>
-            
-            <div class="bg-paper text-ink rounded-3xl p-8 md:p-12 shadow-2xl max-w-2xl mx-auto transform hover:scale-105 transition-transform duration-300">
-                <h3 class="text-2xl font-serif font-bold uppercase mb-2">Plano Jornal Eterno</h3>
-                <div class="text-5xl font-black font-serif my-4">R$ 97<span class="text-lg font-normal">,00</span></div>
-                <p class="text-sm font-bold text-accent uppercase tracking-widest mb-6">Pagamento Único</p>
-                
-                <ul class="text-left space-y-4 mb-8 font-medium">
-                    <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Página Web Exclusiva (ex: noticiasdoceu.com/seu-pet)</li>
-                    <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Design de Jornal Vintage interativo</li>
-                    <li><i class="fa-solid fa-check text-green-600 mr-2"></i> <strong>NOVAS HISTÓRIAS GERADAS TODOS OS DIAS</strong></li>
-                    <li><i class="fa-solid fa-check text-green-600 mr-2"></i> Opcional: Envio de placa em MDF com QR Code</li>
-                </ul>
-                
-                <button class="w-full bg-accent text-white py-4 rounded-xl font-serif font-bold text-xl hover:bg-ink transition-colors shadow-lg">
-                    Criar Jornal do Meu Pet
-                </button>
-                <p class="text-xs text-gray-500 mt-4"><i class="fa-solid fa-lock"></i> Pagamento 100% seguro.</p>
+    <!-- Cartas para o Céu Section -->
+    <section id="cartas-para-o-ceu" class="py-24 bg-[#EFE6DB] relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <span class="font-serif italic text-accent text-lg">Correio do Coração</span>
+                <h2 class="text-3xl md:text-5xl font-serif font-black uppercase text-ink mt-2">Cartas para o Céu</h2>
+                <p class="text-gray-700 text-lg max-w-2xl mx-auto mt-4 font-body">
+                    Escreva suas palavras de amor e receba o carinho de volta em forma de carta.
+                </p>
+                <div class="w-24 h-1 bg-accent mx-auto mt-8"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Left Column: Vintage Postcard/Letter representation & Cost Card -->
+                <div class="lg:col-span-5 flex flex-col items-center gap-6">
+                    <div class="bg-white border-double-thick p-8 max-w-sm rotate-1 hover:rotate-0 transition-transform duration-500 shadow-xl relative text-ink">
+                        <!-- Postage Stamp Mark -->
+                        <div class="absolute top-4 right-4 w-16 h-16 border-2 border-dashed border-accent/40 rounded-sm flex items-center justify-center rotate-12">
+                            <span class="text-[10px] font-serif uppercase text-accent/60 font-bold text-center leading-none">CÉU<br/>POSTAL</span>
+                        </div>
+                        <div class="font-serif italic text-accent border-b border-ink/20 pb-2 mb-4">Correspondência</div>
+                        <p class="font-body text-sm text-justify italic leading-relaxed text-ink/80">
+                            "Querido amigo, hoje vi um passarinho na janela e lembrei de como você tentava caçá-los. A casa está silenciosa, mas meu coração ainda guarda o som da sua patinha correndo no corredor. Sinto tanta saudade..."
+                        </p>
+                        <div class="separator-line white-bg"></div>
+                        <p class="font-serif text-right text-xs text-accent mt-4">Com amor, seu tutor</p>
+                    </div>
+
+                    <!-- Cost Card (Point 5) -->
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-accent/40 flex justify-between items-center flex-wrap gap-4 w-full max-w-sm">
+                        <div>
+                            <h4 class="text-lg font-serif font-bold text-ink">Custo de Envio Simples</h4>
+                            <p class="text-gray-600 font-body text-xs">Sem assinaturas extras ou complicação.</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-2xl font-serif font-black text-accent">R$ 2,99</span>
+                            <span class="text-xs text-gray-500 font-bold block">por carta</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Explanatory Content -->
+                <div class="lg:col-span-7 space-y-6">
+                    <!-- Point 1 -->
+                    <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-vintage/50 flex gap-4">
+                        <div class="bg-accent/15 text-accent p-3 rounded-xl h-fit">
+                            <i class="fa-solid fa-pen-nib text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-serif font-bold text-ink">Escreva para o seu pet</h3>
+                            <p class="text-gray-700 mt-1 font-body text-sm leading-relaxed">
+                                O tutor escreve uma carta (desabafo, saudade, novidades) expressando todo o seu sentimento para o seu companheiro querido.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Point 2 -->
+                    <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-vintage/50 flex gap-4">
+                        <div class="bg-accent/15 text-accent p-3 rounded-xl h-fit">
+                            <i class="fa-solid fa-clock-rotate-left text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-serif font-bold text-ink">Publicação Garantida</h3>
+                            <p class="text-gray-700 mt-1 font-body text-sm leading-relaxed">
+                                É garantido que a carta será publicada na <strong class="text-ink">PRÓXIMA edição</strong> do jornal do tutor, com todo o destaque que merece.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Point 3 -->
+                    <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-vintage/50 flex gap-4">
+                        <div class="bg-accent/15 text-accent p-3 rounded-xl h-fit">
+                            <i class="fa-solid fa-earth-americas text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-serif font-bold text-ink">Opção de Tornar a Carta PÚBLICA</h3>
+                            <p class="text-gray-700 mt-1 font-body text-sm leading-relaxed">
+                                Caso opte por tornar a carta pública, ela pode ser publicada aleatoriamente em outros jornais, permitindo que outros pets e tutores também a vejam.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Point 4 -->
+                    <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-vintage/50 flex gap-4">
+                        <div class="bg-accent/15 text-accent p-3 rounded-xl h-fit">
+                            <i class="fa-solid fa-reply text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-serif font-bold text-ink">A Resposta do Pet</h3>
+                            <p class="text-gray-700 mt-1 font-body text-sm leading-relaxed">
+                                Uma edição DEPOIS da carta ser publicada, o pet responde com uma carta de volta, visível <strong class="text-ink">APENAS na edição do tutor</strong> que enviou (uma carta pessoal e íntima do pet).
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-12 text-center">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-center items-center gap-2 mb-4">
-                <i class="fa-solid fa-cloud text-gray-500 text-xl"></i>
-                <span class="font-serif font-bold text-xl tracking-wider uppercase text-gray-300">Notícias do Céu</span>
+    <!-- === [PATCHED] Pricing / CTA — light gray with cloud watermarks, matches the Demo === -->
+    <section id="planos" class="py-24 bg-gray-50 relative overflow-hidden">
+        <!-- Background decorations (mirrors the Demo) -->
+        <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute top-10 left-10 opacity-50 pointer-events-none animate-cloud-slow-1"></i>
+        <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute bottom-10 right-10 opacity-50 pointer-events-none animate-cloud-slow-2"></i>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <div class="font-serif italic text-accent text-base mb-3">— Planos —</div>
+            <h2 class="text-4xl md:text-6xl font-serif font-black uppercase tracking-tight text-ink mb-4" style="text-shadow: 2px 2px 0px rgba(0,0,0,0.05);">
+                Eternize o Seu Amor
+            </h2>
+            <p class="font-serif italic text-ink/70 text-base md:text-lg max-w-xl mx-auto mb-16">
+                Escolha o plano ideal para guardar a memória do seu pet em uma edição diária do céu.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch text-ink text-left">
+                <!-- PLANO ANUAL -->
+                <div class="bg-white rounded-2xl p-8 flex flex-col justify-between border border-ink/15 shadow-md hover:shadow-lg transition-shadow">
+                    <div>
+                        <div class="text-center pb-6 border-b border-ink/15">
+                            <p class="font-serif italic text-accent text-sm mb-2">Acesso por um ano</p>
+                            <h3 class="font-serif font-bold uppercase tracking-[0.18em] text-base mb-5">Plano Anual</h3>
+                            <div class="flex items-baseline justify-center gap-1">
+                                <span class="font-serif text-sm text-ink/60 self-start mt-2">R$</span>
+                                <span class="font-serif font-black text-6xl leading-none">9</span>
+                                <span class="font-serif text-2xl text-ink/70">,90</span>
+                            </div>
+                            <p class="font-body text-xs text-ink/55 mt-2">por ano</p>
+                        </div>
+
+                        <ul class="space-y-4 mt-6 mb-8 text-[14.5px]">
+                            <li class="flex items-start gap-3">
+                                <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center">
+                                    <i class="fa-solid fa-check text-accent text-[10px]"></i>
+                                </span>
+                                <span class="text-ink/85 leading-relaxed">Acesso ao webapp por 1 ano (edição do dia atual)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center">
+                                    <i class="fa-solid fa-check text-accent text-[10px]"></i>
+                                </span>
+                                <span class="text-ink/85 leading-relaxed">Compartilhamento simples — link mostra a edição do momento</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <button class="w-full bg-transparent text-ink border-2 border-ink py-3.5 rounded-full font-serif font-bold text-base hover:bg-ink hover:text-paper transition-colors">
+                            Escolher Plano Anual
+                        </button>
+                        <p class="text-center text-xs text-ink/55 mt-4"><i class="fa-solid fa-lock"></i> Pagamento 100% seguro</p>
+                    </div>
+                </div>
+
+                <!-- PLANO VITALÍCIO -->
+                <div class="bg-white rounded-2xl p-8 flex flex-col justify-between border-double-gold shadow-lg hover:shadow-xl transition-shadow relative">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#C5A059] text-white font-serif font-bold text-[10px] uppercase tracking-[0.22em] px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
+                        ★ Recomendado ★
+                    </div>
+                    <div>
+                        <div class="text-center pb-6 border-b border-ink/15">
+                            <p class="font-serif italic text-accent text-sm mb-2 mt-2">Acesso para sempre</p>
+                            <h3 class="font-serif font-bold uppercase tracking-[0.18em] text-base mb-5">Plano Vitalício</h3>
+                            <div class="flex items-baseline justify-center gap-1 text-accent">
+                                <span class="font-serif text-sm self-start mt-2 text-accent/80">R$</span>
+                                <span class="font-serif font-black text-6xl leading-none">39</span>
+                                <span class="font-serif text-2xl text-accent/80">,90</span>
+                            </div>
+                            <p class="font-body text-xs text-ink/55 mt-2">pagamento único</p>
+                        </div>
+
+                        <ul class="space-y-4 mt-6 mb-8 text-[14.5px]">
+                            <li class="flex items-start gap-3">
+                                <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center">
+                                    <i class="fa-solid fa-check text-accent text-[10px]"></i>
+                                </span>
+                                <span class="text-ink/85 leading-relaxed"><strong class="text-ink">Acesso perpétuo</strong>, sem renovação</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center">
+                                    <i class="fa-solid fa-check text-accent text-[10px]"></i>
+                                </span>
+                                <span class="text-ink/85 leading-relaxed"><strong class="text-ink">Arquivo do Jornal</strong> — releia qualquer edição passada</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center">
+                                    <i class="fa-solid fa-check text-accent text-[10px]"></i>
+                                </span>
+                                <span class="text-ink/85 leading-relaxed"><strong class="text-ink">Compartilhamento avançado</strong> — links públicos por edição</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center">
+                                    <i class="fa-solid fa-check text-accent text-[10px]"></i>
+                                </span>
+                                <span class="text-ink/85 leading-relaxed"><strong class="text-ink">Compilado em PDF</strong> — livro digital com todas as edições</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center">
+                                    <i class="fa-solid fa-check text-accent text-[10px]"></i>
+                                </span>
+                                <span class="text-ink/85 leading-relaxed">1 Carta para o Céu grátis por mês</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <button class="w-full bg-accent text-white py-3.5 rounded-full font-serif font-bold text-base hover:bg-ink transition-colors shadow-md">
+                            Escolher Plano Vitalício
+                        </button>
+                        <p class="text-center text-xs text-ink/55 mt-4"><i class="fa-solid fa-lock"></i> Pagamento 100% seguro</p>
+                    </div>
+                </div>
             </div>
-            <p class="mb-6 max-w-md mx-auto">Ajudando famílias a transformarem a dor da perda em uma memória diária de amor e alegria.</p>
-            <div class="flex justify-center space-x-6 mb-8">
-                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa-brands fa-instagram text-2xl"></i></a>
-                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa-brands fa-facebook text-2xl"></i></a>
-                <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa-brands fa-whatsapp text-2xl"></i></a>
+
+            <!-- Donation Notice — paper card, high contrast -->
+            <div class="mt-14 max-w-2xl mx-auto flex items-center gap-4 px-6 py-4 rounded-2xl border border-ink/15 bg-white text-left shadow-sm">
+                <div class="flex-shrink-0 w-11 h-11 rounded-full bg-accent/15 flex items-center justify-center">
+                    <i class="fa-solid fa-paw text-accent text-lg"></i>
+                </div>
+                <p class="font-body text-[14.5px] leading-relaxed text-ink">
+                    <span class="font-serif font-bold text-accent uppercase tracking-[0.15em] text-[11px] block mb-0.5">Com amor aos animais</span>
+                    Parte da nossa receita é destinada para <strong>ONGs de apoio e proteção a pets</strong>.
+                </p>
             </div>
-            <p class="text-sm">© 2026 Notícias do Céu Digital. Todos os direitos reservados.</p>
-            <p class="text-xs mt-2 text-gray-600">Feito com <i class="fa-solid fa-heart text-red-900"></i> para todos os anjos de quatro patas.</p>
+        </div>
+    </section>
+
+    <!-- === [PATCHED] Footer — 4-column "última página" with editorial flourish === -->
+    <footer class="bg-ink text-paper relative overflow-hidden">
+        <!-- Subtle warm-noise texture so the footer feels like paper printed in dark ink -->
+        <div class="absolute inset-0 opacity-[0.05] pointer-events-none" style="background-image: url(&quot;data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+            <!-- Link columns -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-10 pt-16 pb-12">
+                <div class="col-span-2 md:col-span-1">
+                    <h4 class="font-serif font-bold text-[11px] uppercase tracking-[0.2em] text-accent mb-3">A Redação</h4>
+                    <p class="font-body text-[14px] text-paper/75 leading-relaxed max-w-xs">
+                        Ajudamos famílias a transformar a saudade em uma memória diária de amor e alegria — um anjo de quatro patas por vez.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-serif font-bold text-[11px] uppercase tracking-[0.2em] text-accent mb-3">Conheça</h4>
+                    <ul class="space-y-2 font-body text-[14px] text-paper/80">
+                        <li><a href="#como-funciona" class="hover:text-accent transition-colors">Como Funciona</a></li>
+                        <li><a href="#demonstracao" class="hover:text-accent transition-colors">Demonstração</a></li>
+                        <li><a href="#cartas-para-o-ceu" class="hover:text-accent transition-colors">Cartas para o Céu</a></li>
+                        <li><a href="#planos" class="hover:text-accent transition-colors">Planos</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-serif font-bold text-[11px] uppercase tracking-[0.2em] text-accent mb-3">Suporte</h4>
+                    <ul class="space-y-2 font-body text-[14px] text-paper/80">
+                        <li><a href="#" class="hover:text-accent transition-colors">Perguntas Frequentes</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Falar com a Redação</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Termos de Uso</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Política de Privacidade</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-serif font-bold text-[11px] uppercase tracking-[0.2em] text-accent mb-3">Encontre-nos</h4>
+                    <ul class="space-y-2 font-body text-[14px] text-paper/80">
+                        <li class="flex items-center gap-3 pt-1">
+                            <a href="#" aria-label="Instagram" class="w-9 h-9 rounded-full border border-paper/20 flex items-center justify-center hover:bg-accent hover:border-accent transition-colors">
+                                <i class="fa-brands fa-instagram"></i>
+                            </a>
+                            <a href="#" aria-label="Facebook" class="w-9 h-9 rounded-full border border-paper/20 flex items-center justify-center hover:bg-accent hover:border-accent transition-colors">
+                                <i class="fa-brands fa-facebook"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Editorial flourish -->
+            <div class="flex items-center justify-center gap-4 pb-8">
+                <div class="h-px w-16 bg-paper/20"></div>
+                <p class="font-serif italic text-accent text-sm">"o amor não morre, ele vira notícia"</p>
+                <div class="h-px w-16 bg-paper/20"></div>
+            </div>
+
+            <!-- Bottom strip -->
+            <div class="border-t border-paper/15 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-[12px] text-paper/55">
+                <p>© 2026 Notícias do Céu Digital · Todos os direitos reservados.</p>
+                <p class="flex items-center gap-1.5">
+                    Feito com <i class="fa-solid fa-heart text-accent"></i> para todos os anjos de quatro patas.
+                </p>
+            </div>
         </div>
     </footer>
 
-    <!-- Interactive JS for the Demo -->
+    <!-- Interactive JS for the Demo (unchanged) -->
     <script>
-        // Array simulating the daily generated news
-        const dailyNews = [
-            {
-                headline: "FLOKINHO ENCONTRA O ESTOQUE INFINITO DE PETISCOS",
-                subheadline: "Uma tarde inteira de brincadeiras sem fim e a barriguinha cheia.",
-                text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">H</span>oje, nossos correspondentes celestiais avistaram Flokinho correndo a toda velocidade pelo gramado sagrado. O motivo? Ele finalmente descobriu onde os anjos guardam os bifinhos de carne.</p>
-                       <p class="mb-3">Segundo relatos, ele fez aquela carinha de coitado que ninguém resiste, e acabou ganhando petiscos em dobro. "Ele é muito esperto", disse um querubim local. "Ele sabe exatamente como pedir carinho na barriga."</p>
-                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"A saudade é grande, mas a alegria dele aqui é maior ainda!"</p>`,
-                image: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                imageAlt: "Cachorro feliz",
-                caption: "Flokinho aproveitando a vista das nuvens."
-            },
-            {
-                headline: "A GRANDE CORRIDA NAS NUVENS: TEMOS UM CAMPEÃO!",
-                subheadline: "Nosso querido amigo mostrou que ainda corre mais rápido que a luz.",
-                text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">A</span>conteceu ontem o Campeonato Anual de Caça ao Graveto Celestial, e adivinhem quem levou a medalha de ouro? Sim, o próprio Flokinho!</p>
-                       <p class="mb-3">Ele não apenas encontrou o maior graveto do céu, como ainda ajudou um amiguinho pug a alcançar o seu. Depois da corrida, todos descansaram em camas de nuvens ultra-macias.</p>
-                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Ele mandou muitos lambeijos para a família na Terra!"</p>`,
-                image: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                imageAlt: "Golden retriever",
-                caption: "Flokinho com sua medalha de ouro pós corrida."
-            },
-            {
-                headline: "MENSAGEM ESPECIAL: 'ESTOU BEM, MAMÃE!'",
-                subheadline: "Um recado direto do coração para acalmar a sua saudade hoje.",
-                text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">N</span>esta manhã ensolarada no paraíso, Flokinho sentou na beirada de uma nuvem dourada e ficou olhando para baixo. Ele balançou o rabinho fortemente ao ver você sorrir lembrando dele.</p>
-                       <p class="mb-3">A equipe de transmissão celestial captou o recado exato dele: "Não fique triste, o amor que você me deu me aquece até hoje aqui em cima. Eu estou livre de dor e muito, muito feliz."</p>
-                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"O amor não acaba, ele só muda de endereço."</p>`,
-                image: "https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                imageAlt: "Pug sorrindo",
-                caption: "Flokinho olhando do céu com carinho."
-            },
-            {
-                headline: "NOVA AMIZADE COM SÃO FRANCISCO DE ASSIS",
-                subheadline: "Parece que Flokinho arrumou um novo melhor amigo nos passeios da tarde.",
-                text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">É</span> oficial, nosso menino é popular no céu! Ele foi visto passeando lado a lado com São Francisco de Assis pelos jardins floridos do setor sul.</p>
-                       <p class="mb-3">Eles passaram horas conversando (naquela linguagem que só o coração entende) e Flokinho até ganhou uma coroa de margaridas. He prometeu guardar uma para quando vocês se reencontrarem.</p>
-                       <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Cada latido aqui soa como uma música de amor."</p>`,
-                image: "https://images.unsplash.com/photo-1534361960057-19889db9621e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                imageAlt: "Cachorro com flor",
-                caption: "Flokinho usando sua coroa de margaridas."
-            }
-        ];
-
+        // === SEÇÃO: ESTADO DO SISTEMA ===
         let currentDayIndex = 0;
+        let lastAccessDate = "";
+        let demoDateOffset = 0;
 
-        function nextDay() {
-            // Increment index and loop back if needed
-            currentDayIndex = (currentDayIndex + 1) % dailyNews.length;
-            const news = dailyNews[currentDayIndex];
-            
-            // Get DOM elements
-            const container = document.getElementById('dynamic-news-content');
+        // Formata data como YYYY-MM-DD local
+        function getLocalDateString(date) {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        // === SEÇÃO: INICIALIZAÇÃO E CONTROLE DE ACESSO ===
+        function initSystem() {
+            // Recupera dados do localStorage
+            currentDayIndex = parseInt(localStorage.getItem('currentDayIndex') || '0', 10);
+            lastAccessDate = localStorage.getItem('lastAccessDate') || '';
+            demoDateOffset = parseInt(localStorage.getItem('demoDateOffset') || '0', 10);
+
+            const today = new Date();
+            const todayStr = getLocalDateString(today);
+
+            // Se for primeiro acesso
+            if (!lastAccessDate) {
+                lastAccessDate = todayStr;
+                localStorage.setItem('lastAccessDate', todayStr);
+                localStorage.setItem('currentDayIndex', currentDayIndex.toString());
+            } else if (todayStr !== lastAccessDate && demoDateOffset === 0) {
+                // Se for um novo dia real de acesso (e não estamos em simulação offset)
+                // Domingos NÃO avançam o contador da jornada
+                if (!isSunday(today)) {
+                    currentDayIndex = currentDayIndex + 1;
+                    localStorage.setItem('currentDayIndex', currentDayIndex.toString());
+                }
+                lastAccessDate = todayStr;
+                localStorage.setItem('lastAccessDate', todayStr);
+            }
+
+            updateUI(false);
+        }
+
+        // === SEÇÃO: RENDERIZAÇÃO DA INTERFACE ===
+        function updateUI(animate = true) {
+            // Calcula a data de exibição (hoje + offset da simulação)
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + demoDateOffset);
+
+            // 1. Atualizar Data no Cabeçalho do Jornal
+            const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+            let formattedDate = targetDate.toLocaleDateString('pt-BR', dateOptions);
+            formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+            document.getElementById('newspaper-date').innerText = formattedDate;
+
+            // 2. Atualizar Contador da Jornada
+            document.getElementById('day-counter').innerText = `Dia ${currentDayIndex + 1} da Jornada`;
+
+            const paperContainer = document.getElementById('newspaper-paper');
             const headlineEl = document.getElementById('news-headline');
             const subheadlineEl = document.getElementById('news-subheadline');
             const textEl = document.getElementById('news-text');
-            const dayCounterEl = document.getElementById('day-counter');
             const imageEl = document.getElementById('news-image');
             const captionEl = document.getElementById('news-image-caption');
-            
-            // Remove animation classes
-            headlineEl.parentElement.classList.remove('fade-in');
-            textEl.parentElement.classList.remove('fade-in');
-            
-            // Trigger reflow to restart animation
-            void container.offsetWidth; 
-            
-            // Update Content
-            headlineEl.innerText = news.headline;
-            subheadlineEl.innerText = news.subheadline;
-            textEl.innerHTML = news.text;
-            imageEl.src = news.image;
-            imageEl.alt = news.imageAlt;
-            captionEl.innerText = news.caption;
-            dayCounterEl.innerText = `Dia ${currentDayIndex + 1}`;
-            
-            // Update mock date
-            const mockDate = new Date(2026, 4, 25 + currentDayIndex); // May 25 + index
-            const options = { day: 'numeric', month: 'long', year: 'numeric' };
-            document.getElementById('newspaper-date').innerText = mockDate.toLocaleDateString('pt-BR', options);
+            const badgeEl = document.getElementById('special-badge');
+            const sundayBannerEl = document.getElementById('sunday-banner');
+            const sidebarTitleEl = document.getElementById('sidebar-title');
+            const sidebarIconEl = document.getElementById('sidebar-icon');
+            const sidebarContentEl = document.getElementById('sidebar-content');
 
-            // Add animation classes back
-            headlineEl.parentElement.classList.add('fade-in');
-            textEl.parentElement.classList.add('fade-in');
+            const specialDate = getSpecialDate(targetDate);
+            const isSun = isSunday(targetDate);
+
+            if (animate) {
+                const dynamicNews = document.getElementById('dynamic-news-content');
+                const sidebarRot = document.getElementById('sidebar-rotativa');
+                dynamicNews.classList.remove('fade-in');
+                sidebarRot.classList.remove('fade-in');
+                void dynamicNews.offsetWidth;
+                dynamicNews.classList.add('fade-in');
+                sidebarRot.classList.add('fade-in');
+            }
+
+            let newsToRender;
+
+            if (specialDate) {
+                newsToRender = {
+                    headline: specialDate.title,
+                    subheadline: "UMA EDIÇÃO COMEMORATIVA DO DIÁRIO DO CÉU",
+                    text: renderTemplate(specialDate.text),
+                    image: specialDate.image,
+                    imageAlt: specialDate.imageAlt,
+                    caption: specialDate.caption
+                };
+                badgeEl.classList.remove('hidden');
+                badgeEl.classList.add('flex');
+                sundayBannerEl.classList.add('hidden');
+                paperContainer.classList.remove('border-double-thick');
+                paperContainer.classList.add('border-double-gold');
+            } else if (isSun) {
+                const lastNews = getNews(currentDayIndex);
+                newsToRender = {
+                    headline: lastNews.headline,
+                    subheadline: lastNews.subheadline,
+                    text: renderTemplate(lastNews.text),
+                    image: lastNews.image,
+                    imageAlt: lastNews.imageAlt,
+                    caption: lastNews.caption
+                };
+                badgeEl.classList.add('hidden');
+                badgeEl.classList.remove('flex');
+                sundayBannerEl.classList.remove('hidden');
+                paperContainer.classList.add('border-double-thick');
+                paperContainer.classList.remove('border-double-gold');
+            } else {
+                const news = getNews(currentDayIndex);
+                newsToRender = {
+                    headline: news.headline,
+                    subheadline: news.subheadline,
+                    text: renderTemplate(news.text),
+                    image: news.image,
+                    imageAlt: news.imageAlt,
+                    caption: news.caption
+                };
+                badgeEl.classList.add('hidden');
+                badgeEl.classList.remove('flex');
+                sundayBannerEl.classList.add('hidden');
+                paperContainer.classList.add('border-double-thick');
+                paperContainer.classList.remove('border-double-gold');
+            }
+
+            headlineEl.innerText = newsToRender.headline;
+            subheadlineEl.innerText = newsToRender.subheadline;
+            textEl.innerHTML = newsToRender.text;
+            imageEl.src = newsToRender.image;
+            imageEl.alt = newsToRender.imageAlt;
+            captionEl.innerText = newsToRender.caption;
+
+            if (isSun) {
+                sidebarIconEl.className = "fa-solid fa-heart text-accent";
+                sidebarTitleEl.innerText = "Poema do Pet";
+                sidebarContentEl.innerHTML = `<p class="text-sm italic font-body text-justify">
+                    "Se pelas nuvens eu correr,<br/>
+                    E de repente não me ver,<br/>
+                    Olhe para o céu ao anoitecer.<br/>
+                    Em cada estrela a brilhar,<br/>
+                    Estarei sempre a te cuidar,<br/>
+                    Esperando o dia de te reencontrar."
+                </p>`;
+            } else {
+                const dayOfWeek = targetDate.getDay();
+                const sidebarIndex = dayOfWeek - 1;
+                const side = getSidebar(sidebarIndex);
+                sidebarIconEl.className = `fa-solid ${side.icon} text-accent`;
+                sidebarTitleEl.innerText = side.title;
+                sidebarContentEl.innerHTML = renderTemplate(side.content);
+            }
         }
+
+        // === SEÇÃO: FUNÇÕES DE SIMULAÇÃO (DEMONSTRAÇÃO) ===
+        function simulateNextDay() {
+            demoDateOffset += 1;
+            localStorage.setItem('demoDateOffset', demoDateOffset.toString());
+            const simDate = new Date();
+            simDate.setDate(simDate.getDate() + demoDateOffset);
+            if (!isSunday(simDate)) {
+                currentDayIndex += 1;
+                localStorage.setItem('currentDayIndex', currentDayIndex.toString());
+            }
+            updateUI(true);
+        }
+
+        function resetDemo() {
+            currentDayIndex = 0;
+            demoDateOffset = 0;
+            const today = new Date();
+            const todayStr = getLocalDateString(today);
+            localStorage.setItem('currentDayIndex', '0');
+            localStorage.setItem('demoDateOffset', '0');
+            localStorage.setItem('lastAccessDate', todayStr);
+            updateUI(true);
+        }
+
+        window.addEventListener('DOMContentLoaded', initSystem);
     </script>
 </body>
 </html>
