@@ -248,6 +248,47 @@
                     </div>
 
                     <form id="gift-form" class="space-y-6">
+                        <!-- Plan Selection -->
+                        <div class="bg-paper/50 rounded-xl p-5 border border-ink/10">
+                            <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-accent"></i> Escolha o plano do presente
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Vitalício (Default) -->
+                                <label for="plan-lifetime" class="cursor-pointer relative bg-white border-2 border-accent rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none" id="plan-card-lifetime">
+                                    <div class="absolute -top-3 right-4 bg-[#C5A059] text-white font-serif font-bold text-[8px] uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
+                                        ★ Mais Escolhido ★
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <input type="radio" id="plan-lifetime" name="plan-select" value="lifetime" checked class="mt-1 accent-accent" onchange="selectGiftPlan('lifetime')">
+                                        <div>
+                                            <span class="block font-serif font-bold text-base text-ink">Plano Vitalício</span>
+                                            <span class="block text-xs text-gray-500 font-body mt-0.5">Acesso para sempre. Arquivo completo & PDF.</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 pt-3 border-t border-ink/5 flex justify-between items-baseline">
+                                        <span class="text-xs text-accent font-bold uppercase tracking-wider">Acesso Eterno</span>
+                                        <span class="font-serif font-black text-xl text-accent">R$ 39,90</span>
+                                    </div>
+                                </label>
+
+                                <!-- Anual -->
+                                <label for="plan-annual" class="cursor-pointer relative bg-white/60 border-2 border-ink/10 rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none" id="plan-card-annual">
+                                    <div class="flex items-start gap-3">
+                                        <input type="radio" id="plan-annual" name="plan-select" value="annual" class="mt-1 accent-accent" onchange="selectGiftPlan('annual')">
+                                        <div>
+                                            <span class="block font-serif font-bold text-base text-ink">Plano Anual</span>
+                                            <span class="block text-xs text-gray-500 font-body mt-0.5">1 ano de acesso. Edição diária atual.</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 pt-3 border-t border-ink/5 flex justify-between items-baseline">
+                                        <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">1 Ano</span>
+                                        <span class="font-serif font-black text-xl text-ink">R$ 9,90</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
                         <!-- Giver Info -->
                         <div class="bg-paper/50 rounded-xl p-5 border border-ink/10">
                             <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
@@ -317,7 +358,7 @@
                                 <div class="mb-3">
                                     <i class="fa-solid fa-cloud text-accent text-3xl"></i>
                                 </div>
-                                <h4 class="font-serif font-bold text-lg text-ink mb-1">Plano Vitalício</h4>
+                                <h4 id="gift-preview-title" class="font-serif font-bold text-lg text-ink mb-1">Plano Vitalício</h4>
                                 <p class="text-xs text-gray-600 font-body mb-3">Notícias do Céu</p>
                                 <div class="separator-line"></div>
                                 <p class="text-sm font-body italic text-ink/70 mb-2" id="preview-message">
@@ -325,7 +366,7 @@
                                 </p>
                                 <p class="text-xs text-accent font-serif" id="preview-giver">— Seu nome</p>
                                 <div class="mt-4 pt-3 border-t border-ink/10">
-                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest">Acesso vitalício • Jornal diário • 1 carta/mês</p>
+                                    <p id="gift-preview-features" class="text-[10px] text-gray-500 uppercase tracking-widest">Acesso vitalício • Jornal diário • 1 carta/mês</p>
                                 </div>
                             </div>
                         </div>
@@ -350,8 +391,8 @@
                     <div class="bg-paper/50 rounded-xl p-5 border border-ink/10 mb-6">
                         <h3 class="font-serif font-bold text-lg mb-3">Resumo do Pedido</h3>
                         <div class="flex justify-between items-center py-2 border-b border-ink/10">
-                            <span class="font-body">Gift Card - Plano Vitalício</span>
-                            <span class="font-serif font-bold text-accent">R$ 39,90</span>
+                            <span id="summary-product-name" class="font-body">Gift Card - Plano Vitalício</span>
+                            <span id="summary-product-price" class="font-serif font-bold text-accent">R$ 39,90</span>
                         </div>
                         <div class="flex justify-between items-center py-2 text-sm text-gray-500">
                             <span class="font-body">Para: <span id="summary-recipient" class="text-ink font-bold"></span></span>

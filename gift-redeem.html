@@ -224,7 +224,7 @@
                         <div class="mb-3">
                             <i class="fa-solid fa-cloud text-accent text-3xl"></i>
                         </div>
-                        <h4 class="font-serif font-bold text-xl text-ink mb-1">Plano Vitalício</h4>
+                        <h4 id="gift-plan-display" class="font-serif font-bold text-xl text-ink mb-1">Plano Vitalício</h4>
                         <p class="text-xs text-gray-600 font-body mb-4">Notícias do Céu</p>
                         <div class="separator-line"></div>
                         <p class="text-sm font-body italic text-ink/70 mb-3" id="gift-message-display">
@@ -232,7 +232,7 @@
                         </p>
                         <p class="text-xs text-accent font-serif mb-4" id="gift-giver-display">— Seu amigo</p>
                         <div class="separator-line"></div>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-widest">
+                        <p id="gift-features-display" class="text-[10px] text-gray-500 uppercase tracking-widest">
                             Acesso vitalício • Jornal diário • 1 carta/mês
                         </p>
                     </div>
@@ -344,7 +344,7 @@
                             <h3 class="font-serif font-bold text-lg mb-3 flex items-center gap-2">
                                 <i class="fa-solid fa-star text-accent"></i> O que você ganhou:
                             </h3>
-                            <ul class="space-y-2 text-sm font-body text-gray-700">
+                            <ul id="success-features-list" class="space-y-2 text-sm font-body text-gray-700">
                                 <li class="flex items-start gap-2">
                                     <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
                                     <span><strong>Plano Vitalício</strong> — acesso para sempre</span>
@@ -532,18 +532,39 @@
                 const resp = await fetch(`${CONFIG.API_BASE_URL}/gift-cards/${encodeURIComponent(code)}`);
                 if (!resp.ok) throw new Error('invalid');
                 const data = await resp.json();
-                redeemData = { code, giverName: data.giverName, recipientName: data.recipientName, message: data.message };
+                redeemData = { code, giverName: data.giverName, recipientName: data.recipientName, message: data.message, plan: data.plan };
             } else {
                 // Mock mode: simulate validation
                 await delay(1500);
 
-                // Mock gift card data (in real impl, this comes from the API)
-                redeemData = {
-                    code,
-                    giverName: 'Seu amigo',
-                    recipientName: name,
-                    message: '"Querido amigo, sei o quanto o seu companheiro era especial. Espere que este espaço traga um pouco de acalento para o seu coração. Com carinho."',
-                };
+                // Search in localStorage saved gift cards
+                let savedCards = [];
+                try {
+                    savedCards = JSON.parse(localStorage.getItem('ndc_gift_cards') || '[]');
+                } catch(e) {}
+                
+                const matchedCard = savedCards.find(c => c.code === code);
+                
+                if (matchedCard) {
+                    redeemData = {
+                        code,
+                        giverName: matchedCard.giverName,
+                        recipientName: matchedCard.recipientName,
+                        message: matchedCard.message ? `"${matchedCard.message}"` : '"Mensagem de carinho..."',
+                        plan: matchedCard.plan || 'lifetime'
+                    };
+                } else {
+                    // Fallback to default mock gift card data
+                    // If code contains word like "ANUAL" or starts with "A", mock it as annual plan
+                    const isAnnual = code.startsWith('A') || code.includes('ANUAL');
+                    redeemData = {
+                        code,
+                        giverName: 'Seu amigo',
+                        recipientName: name,
+                        message: '"Querido amigo, sei o quanto o seu companheiro era especial. Espero que este espaço traga um pouco de acalento para o seu coração. Com carinho."',
+                        plan: isAnnual ? 'annual' : 'lifetime'
+                    };
+                }
             }
 
             document.getElementById('loading-overlay').classList.add('hidden');
@@ -551,6 +572,17 @@
             // Show gift message
             document.getElementById('gift-message-display').textContent = redeemData.message;
             document.getElementById('gift-giver-display').textContent = `— ${redeemData.giverName}`;
+
+            // Update plan preview in Step 2
+            const planDisplay = document.getElementById('gift-plan-display');
+            const featuresDisplay = document.getElementById('gift-features-display');
+            if (redeemData.plan === 'annual') {
+                if (planDisplay) planDisplay.textContent = 'Plano Anual';
+                if (featuresDisplay) featuresDisplay.textContent = 'Acesso por 1 ano • Jornal diário • compartilhamento';
+            } else {
+                if (planDisplay) planDisplay.textContent = 'Plano Vitalício';
+                if (featuresDisplay) featuresDisplay.textContent = 'Acesso vitalício • Jornal diário • 1 carta/mês';
+            }
 
             goToStep(2);
         } catch (err) {
@@ -598,6 +630,50 @@
             }
 
             document.getElementById('loading-overlay').classList.add('hidden');
+            
+            // Update features list in Step 4
+            const successFeaturesList = document.getElementById('success-features-list');
+            if (successFeaturesList) {
+                if (redeemData.plan === 'annual') {
+                    successFeaturesList.innerHTML = `
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
+                                    <span><strong>Plano Anual</strong> — acesso por 1 ano</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
+                                    <span><strong>Jornal diário</strong> — nova edição todo dia</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
+                                    <span><strong>Compartilhamento simples</strong> — link mostra a edição do momento</span>
+                                </li>
+                    `;
+                } else {
+                    successFeaturesList.innerHTML = `
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
+                                    <span><strong>Plano Vitalício</strong> — acesso para sempre</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
+                                    <span><strong>Jornal diário</strong> — nova edição todo dia</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
+                                    <span><strong>1 Carta para o Céu grátis por mês</strong></span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
+                                    <span><strong>Compartilhamento avançado</strong> — links para edições específicas</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
+                                    <span><strong>Compilado em PDF</strong> — exporte todas as edições</span>
+                                </li>
+                    `;
+                }
+            }
             goToStep(4);
         } catch (err) {
             document.getElementById('loading-overlay').classList.add('hidden');

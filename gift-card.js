@@ -49,6 +49,7 @@ let giftCardData = {
     recipientEmail: '',
     message: '',
     code: '',
+    plan: 'lifetime',
 };
 
 // ============================================================
@@ -58,7 +59,83 @@ let giftCardData = {
 document.addEventListener('DOMContentLoaded', () => {
     initFormListeners();
     initCharCount();
+
+    // Parse URL query parameter for plan type
+    const params = new URLSearchParams(window.location.search);
+    const planParam = params.get('plan');
+    if (planParam === 'annual' || planParam === 'lifetime') {
+        selectGiftPlan(planParam);
+    } else {
+        selectGiftPlan('lifetime'); // Default
+    }
 });
+
+function selectGiftPlan(plan) {
+    giftCardData.plan = plan;
+
+    const cardLifetime = document.getElementById('plan-card-lifetime');
+    const cardAnnual = document.getElementById('plan-card-annual');
+    const radioLifetime = document.getElementById('plan-lifetime');
+    const radioAnnual = document.getElementById('plan-annual');
+
+    const previewTitle = document.getElementById('gift-preview-title');
+    const previewFeatures = document.getElementById('gift-preview-features');
+
+    const summaryProductName = document.getElementById('summary-product-name');
+    const summaryProductPrice = document.getElementById('summary-product-price');
+    const payButton = document.getElementById('pay-button');
+
+    if (plan === 'lifetime') {
+        // State and config
+        CONFIG.PRICE_CENTS = 3990;
+        CONFIG.PRODUCT_NAME = 'Gift Card - Plano Vitalício';
+        CONFIG.PRODUCT_DESCRIPTION = 'Acesso vitalício ao memorial digital Notícias do Céu';
+
+        // Check input
+        if (radioLifetime) radioLifetime.checked = true;
+
+        // Visual classes
+        if (cardLifetime) {
+            cardLifetime.className = "cursor-pointer relative bg-white border-2 border-accent rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none";
+        }
+        if (cardAnnual) {
+            cardAnnual.className = "cursor-pointer relative bg-white/60 border-2 border-ink/10 rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none";
+        }
+
+        // Preview & Summary
+        if (previewTitle) previewTitle.textContent = 'Plano Vitalício';
+        if (previewFeatures) previewFeatures.textContent = 'Acesso vitalício • Jornal diário • 1 carta/mês';
+        if (summaryProductName) summaryProductName.textContent = 'Gift Card - Plano Vitalício';
+        if (summaryProductPrice) summaryProductPrice.textContent = 'R$ 39,90';
+        if (payButton) payButton.innerHTML = `<i class="fa-solid fa-lock"></i> Pagar R$ 39,90`;
+    } else {
+        // State and config
+        CONFIG.PRICE_CENTS = 990;
+        CONFIG.PRODUCT_NAME = 'Gift Card - Plano Anual';
+        CONFIG.PRODUCT_DESCRIPTION = '1 ano de acesso ao memorial digital Notícias do Céu';
+
+        // Check input
+        if (radioAnnual) radioAnnual.checked = true;
+
+        // Visual classes
+        if (cardLifetime) {
+            cardLifetime.className = "cursor-pointer relative bg-white/60 border-2 border-ink/10 rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none";
+        }
+        if (cardAnnual) {
+            cardAnnual.className = "cursor-pointer relative bg-white border-2 border-accent rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none";
+        }
+
+        // Preview & Summary
+        if (previewTitle) previewTitle.textContent = 'Plano Anual';
+        if (previewFeatures) previewFeatures.textContent = 'Acesso por 1 ano • Jornal diário • compartilhamento';
+        if (summaryProductName) summaryProductName.textContent = 'Gift Card - Plano Anual';
+        if (summaryProductPrice) summaryProductPrice.textContent = 'R$ 9,90';
+        if (payButton) payButton.innerHTML = `<i class="fa-solid fa-lock"></i> Pagar R$ 9,90`;
+    }
+}
+
+// Make globally available
+window.selectGiftPlan = selectGiftPlan;
 
 function initFormListeners() {
     const msgField = document.getElementById('gift-message');
@@ -181,6 +258,7 @@ function handleFormSubmit() {
 
     // Save data
     giftCardData = {
+        ...giftCardData,
         giverName,
         giverEmail,
         recipientName,
@@ -270,6 +348,7 @@ async function handleRealPayment() {
             recipientName: giftCardData.recipientName,
             recipientEmail: giftCardData.recipientEmail,
             message: giftCardData.message,
+            plan: giftCardData.plan,
             amount: CONFIG.PRICE_CENTS,
             currency: CONFIG.CURRENCY,
         }),
