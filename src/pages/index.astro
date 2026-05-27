@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import WaitingListModal from '../components/WaitingListModal.astro';
 ---
 
 <Layout title="Notícias do Céu | O Jornal Diário do Seu Pet">
@@ -525,9 +526,9 @@ import Footer from '../components/Footer.astro';
           </div>
 
           <div>
-            <a href="/gift-card?plan=annual" class="block w-full text-center bg-transparent text-ink border-2 border-ink py-3.5 rounded-full font-serif font-bold text-base hover:bg-ink hover:text-paper transition-colors cursor-pointer">
+            <button onclick="openWaitingListModal('annual')" class="block w-full text-center bg-transparent text-ink border-2 border-ink py-3.5 rounded-full font-serif font-bold text-base hover:bg-ink hover:text-paper transition-colors cursor-pointer">
               Escolher Plano Anual
-            </a>
+            </button>
             <p class="text-center text-xs text-ink/55 mt-4"><i class="fa-solid fa-lock"></i> Pagamento 100% seguro</p>
           </div>
         </div>
@@ -584,9 +585,9 @@ import Footer from '../components/Footer.astro';
           </div>
 
           <div>
-            <a href="/gift-card?plan=lifetime" class="block w-full text-center bg-accent text-white py-3.5 rounded-full font-serif font-bold text-base hover:bg-ink transition-colors shadow-md cursor-pointer">
+            <button onclick="openWaitingListModal('lifetime')" class="block w-full text-center bg-accent text-white py-3.5 rounded-full font-serif font-bold text-base hover:bg-ink transition-colors shadow-md cursor-pointer">
               Escolher Plano Vitalício
-            </a>
+            </button>
             <p class="text-center text-xs text-ink/55 mt-4"><i class="fa-solid fa-lock"></i> Pagamento 100% seguro</p>
           </div>
         </div>
@@ -691,6 +692,7 @@ import Footer from '../components/Footer.astro';
     </div>
   </section>
 
+  <WaitingListModal />
   <Footer />
 </Layout>
 

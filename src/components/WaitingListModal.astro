@@ -1,0 +1,167 @@
+---
+// WaitingListModal.astro
+---
+
+<!-- Modal Wrapper -->
+<div id="waiting-list-modal" class="fixed inset-0 z-50 items-center justify-center hidden">
+  <!-- Semi-transparent Backdrop with blur -->
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="waiting-list-modal-backdrop"></div>
+  
+  <!-- Dialog Paper Card -->
+  <div class="relative z-10 w-full max-w-lg mx-4 newspaper-container border-double-thick p-8 text-ink shadow-2xl">
+    <!-- Close Button -->
+    <button id="waiting-list-modal-close" class="absolute top-4 right-4 text-ink/60 hover:text-ink text-xl cursor-pointer" aria-label="Fechar">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    
+    <!-- Header -->
+    <div class="text-center border-b-2 border-ink pb-4 mb-6">
+      <p class="text-xs font-bold uppercase tracking-widest mb-1">Edição Especial de Lançamento</p>
+      <h2 class="font-serif text-3xl font-black uppercase tracking-tighter">Notícias do Céu</h2>
+    </div>
+
+    <!-- Active Form View Block -->
+    <div class="text-center mb-6" id="waiting-list-form-header">
+      <h3 class="font-serif text-2xl font-bold mb-3">Estamos aquecendo as impressoras celestiais! ☁️</h3>
+      <p class="text-sm font-body leading-relaxed text-ink/80">
+        A procura pelo <strong>Notícias do Céu</strong> superou nossas expectativas. Estamos liberando o criador de memoriais em lotes semanais para garantir que cada pet receba uma edição de jornal diária impecável.
+      </p>
+      <p class="text-sm font-body leading-relaxed text-ink/80 mt-2">
+        Insira seu e-mail abaixo para garantir sua vaga na lista de espera prioritária e ser avisado assim que liberarmos o acesso do seu lote.
+      </p>
+    </div>
+
+    <!-- Form -->
+    <form id="waiting-list-form" class="space-y-5">
+      <input type="hidden" id="waiting-list-plan" name="plan" value="lifetime" />
+      <div>
+        <label for="waiting-list-email" class="block text-xs font-bold uppercase tracking-wider mb-2">Seu melhor e-mail</label>
+        <input type="email" id="waiting-list-email" required placeholder="seu@email.com" 
+          class="w-full text-center font-body text-lg py-3.5 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl" />
+      </div>
+      <div id="waiting-list-error" class="hidden text-red-700 bg-red-50 border border-red-200 px-4 py-2.5 rounded-xl text-sm text-center font-medium"></div>
+      
+      <button type="submit" class="w-full bg-accent text-white py-4 rounded-xl font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg flex justify-center items-center gap-2 cursor-pointer">
+        <span>Entrar na Fila</span> <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </form>
+
+    <!-- Success Block (Initially Hidden) -->
+    <div id="waiting-list-success" class="hidden text-center py-6">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-green-50 text-green-600 rounded-full border-2 border-green-200 mb-4 shadow-sm">
+        <i class="fa-solid fa-check text-3xl"></i>
+      </div>
+      <h3 class="font-serif text-2xl font-bold mb-2">Inscrição Confirmada!</h3>
+      <p class="text-sm font-body leading-relaxed text-ink/80 max-w-sm mx-auto mb-6">
+        Seu e-mail foi adicionado com sucesso à nossa lista de espera prioritária. Avisaremos assim que seu acesso for liberado!
+      </p>
+      <button type="button" onclick="closeWaitingListModal()" class="bg-ink text-paper px-8 py-3 rounded-full font-serif font-semibold hover:bg-accent transition-colors shadow-md cursor-pointer">
+        Entendido
+      </button>
+    </div>
+
+    <!-- Loading Overlay (Initially Hidden) -->
+    <div id="waiting-list-loading" class="hidden absolute inset-0 bg-[#F4EADD]/80 backdrop-blur-sm rounded-xl flex flex-col items-center justify-center z-20">
+      <div class="spinner mb-4"></div>
+      <p class="font-serif font-bold text-ink">Registrando sua inscrição...</p>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  function openWaitingListModal(planName) {
+    const modal = document.getElementById('waiting-list-modal');
+    const planInput = document.getElementById('waiting-list-plan');
+    const emailInput = document.getElementById('waiting-list-email');
+    const errorEl = document.getElementById('waiting-list-error');
+    const formBlock = document.getElementById('waiting-list-form');
+    const formHeader = document.getElementById('waiting-list-form-header');
+    const successBlock = document.getElementById('waiting-list-success');
+
+    if (modal && planInput) {
+      planInput.value = planName || 'lifetime';
+      emailInput.value = '';
+      if (errorEl) errorEl.classList.add('hidden');
+      if (formBlock) formBlock.classList.remove('hidden');
+      if (formHeader) formHeader.classList.remove('hidden');
+      if (successBlock) successBlock.classList.add('hidden');
+      
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden'; // prevent scrolling background
+    }
+  }
+
+  function closeWaitingListModal() {
+    const modal = document.getElementById('waiting-list-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = ''; // restore scrolling
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.getElementById('waiting-list-modal-close');
+    const backdrop = document.getElementById('waiting-list-modal-backdrop');
+    
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeWaitingListModal);
+    }
+    if (backdrop) {
+      backdrop.addEventListener('click', closeWaitingListModal);
+    }
+
+    const form = document.getElementById('waiting-list-form');
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('waiting-list-email').value.trim();
+        const plan = document.getElementById('waiting-list-plan').value;
+        const errorEl = document.getElementById('waiting-list-error');
+        const loadingEl = document.getElementById('waiting-list-loading');
+        const formBlock = document.getElementById('waiting-list-form');
+        const formHeader = document.getElementById('waiting-list-form-header');
+        const successBlock = document.getElementById('waiting-list-success');
+
+        if (errorEl) errorEl.classList.add('hidden');
+        if (loadingEl) loadingEl.classList.remove('hidden');
+
+        try {
+          const response = await fetch('/api/waiting-list', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, plan })
+          });
+
+          const data = await response.json();
+          if (loadingEl) loadingEl.classList.add('hidden');
+
+          if (response.ok) {
+            if (formBlock) formBlock.classList.add('hidden');
+            if (formHeader) formHeader.classList.add('hidden');
+            if (successBlock) successBlock.classList.remove('hidden');
+          } else {
+            if (errorEl) {
+              errorEl.textContent = data.error || 'Ocorreu um erro ao registrar sua inscrição. Tente novamente.';
+              errorEl.classList.remove('hidden');
+            }
+          }
+        } catch (err) {
+          if (loadingEl) loadingEl.classList.add('hidden');
+          if (errorEl) {
+            errorEl.textContent = 'Erro de conexão com o servidor. Por favor, tente novamente.';
+            errorEl.classList.remove('hidden');
+          }
+        }
+      });
+    }
+  });
+
+  // Make functions available globally
+  window.openWaitingListModal = openWaitingListModal;
+  window.closeWaitingListModal = closeWaitingListModal;
+</script>
