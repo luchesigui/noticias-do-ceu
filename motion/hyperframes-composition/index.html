@@ -2,56 +2,71 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Notícias do Céu — Motion Graphics</title>
 
-  <!-- Tailwind v4 (runtime) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            cream: '#F7F1E8',
-            'brown-dark': '#3A2416',
-            caramel: '#B9854D',
-            'gold-soft': '#D6A75E',
-            'off-white': '#FFFDF8',
-            'gray-text': '#6E6258',
-          },
-          fontFamily: {
-            serif: ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
-            mono: ['Menlo', 'Monaco', 'Consolas', 'monospace'],
-          }
-        }
-      }
+  <!-- Local @font-face declarations (captured woff2 files) -->
+  <style>
+    @font-face {
+      font-family: 'EB Garamond';
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url('assets/fonts/SlGUmQSNjdsmc35JDF1K5GR1SDk.woff2') format('woff2');
     }
-  </script>
+    @font-face {
+      font-family: 'EB Garamond';
+      font-style: italic;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url('assets/fonts/SlGWmQSNjdsmc35JDF1K5GRweDs1Zw.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Space Mono';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('assets/fonts/i7dPIFZifjKcF5UAWdDRYEF8RQ.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Space Mono';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url('assets/fonts/i7dMIFZifjKcF5UAWdDRaPpZUFWaHg.woff2') format('woff2');
+    }
+  </style>
 
   <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
   <style>
-    /* Base */
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream:      #F7F1E8;
+      --brown-dark: #3A2416;
+      --caramel:    #B9854D;
+      --gold-soft:  #D6A75E;
+      --off-white:  #FFFDF8;
+      --gray-text:  #6E6258;
+    }
 
     body {
       width: 1080px;
       height: 1920px;
       overflow: hidden;
       background: var(--cream);
-      font-family: Georgia, serif;
+      font-family: 'EB Garamond', serif;
     }
 
-    /* Stage */
     #stage {
-      width: 100%;
-      height: 100%;
+      width: 1080px;
+      height: 1920px;
       position: relative;
-      background: #F7F1E8;
+      background: var(--cream);
     }
 
-    /* Scene containers */
+    /* All scenes start hidden; GSAP fades them in */
     .scene {
       position: absolute;
       inset: 0;
@@ -63,233 +78,191 @@
       pointer-events: none;
     }
 
-    .scene.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    /* Safe area for Reels/TikTok UI chrome */
+    .safe { padding-top: 260px; padding-bottom: 260px; }
 
-    /* Safe areas for Reels */
-    .safe-top { padding-top: 250px; }
-    .safe-bottom { padding-bottom: 250px; }
-
-    /* Newspaper mockup */
+    /* ── Newspaper ── */
     .newspaper {
-      background: #FFFDF8;
-      border: 3px double #3A2416;
+      background: var(--off-white);
+      border: 3px double var(--brown-dark);
       padding: 40px;
-      max-width: 900px;
-      box-shadow: 0 4px 20px rgba(58, 36, 22, 0.1);
+      box-shadow: 0 6px 28px rgba(58,36,22,0.12);
     }
 
-    .newspaper-title {
-      font-family: Georgia, serif;
-      font-size: 56px;
-      font-weight: bold;
-      color: #3A2416;
-      text-align: center;
-      letter-spacing: 4px;
-      border-bottom: 2px solid #3A2416;
-      padding-bottom: 16px;
-      margin-bottom: 24px;
-    }
-
-    .newspaper-subtitle {
-      font-family: Georgia, serif;
-      font-size: 28px;
-      color: #6E6258;
-      text-align: center;
-      font-style: italic;
-      margin-bottom: 32px;
-    }
-
-    .newspaper-section {
-      border-top: 1px solid #D6A75E;
-      padding-top: 16px;
-      margin-top: 16px;
-    }
-
-    .newspaper-section-title {
-      font-family: Georgia, serif;
-      font-size: 24px;
-      font-weight: bold;
-      color: #3A2416;
-      margin-bottom: 8px;
-    }
-
-    .newspaper-section-body {
-      font-family: Georgia, serif;
-      font-size: 20px;
-      color: #6E6258;
-      line-height: 1.6;
-    }
-
-    /* Cloud decorations */
-    .cloud {
-      position: absolute;
-      opacity: 0.15;
-      pointer-events: none;
-    }
-
-    /* Envelope */
-    .envelope {
-      width: 200px;
-      height: 140px;
-      background: #FFFDF8;
-      border: 2px solid #D6A75E;
-      border-radius: 8px;
-      position: relative;
-      box-shadow: 0 4px 12px rgba(58, 36, 22, 0.1);
-    }
-
-    .envelope::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: linear-gradient(135deg, #D6A75E 50%, transparent 50%);
-      border-radius: 6px 6px 0 0;
-    }
-
-    /* Seal */
-    .seal {
-      width: 80px;
-      height: 80px;
-      background: #D6A75E;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: Menlo, monospace;
-      font-size: 12px;
-      color: #FFFDF8;
-      text-align: center;
-      font-weight: bold;
-      box-shadow: 0 2px 8px rgba(58, 36, 22, 0.2);
-    }
-
-    /* CTA Button */
-    .cta-button {
-      background: #B9854D;
-      color: #FFFDF8;
-      font-family: Menlo, monospace;
-      font-size: 28px;
-      font-weight: bold;
-      padding: 24px 48px;
-      border-radius: 9999px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 4px 16px rgba(185, 133, 77, 0.3);
-    }
-
-    /* Text styles */
-    .text-hook {
-      font-family: Georgia, serif;
+    .masthead {
+      font-family: 'EB Garamond', serif;
       font-size: 52px;
-      color: #3A2416;
+      font-weight: 700;
+      color: var(--brown-dark);
       text-align: center;
-      line-height: 1.3;
-      max-width: 800px;
+      letter-spacing: 5px;
+      border-bottom: 2px solid var(--brown-dark);
+      padding-bottom: 12px;
+      margin-bottom: 6px;
+    }
+
+    .dateline {
+      font-family: 'Space Mono', monospace;
+      font-size: 16px;
+      color: var(--gray-text);
+      text-align: center;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .section-rule {
+      height: 1px;
+      background: var(--gold-soft);
+      margin: 14px 0;
+    }
+
+    .section-head {
+      font-family: 'Space Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--brown-dark);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .section-body {
+      font-family: 'EB Garamond', serif;
+      font-size: 22px;
+      color: var(--gray-text);
+      line-height: 1.55;
+    }
+
+    /* ── Text styles ── */
+    .text-hook {
+      font-family: 'EB Garamond', serif;
+      font-size: 62px;
+      font-weight: 700;
+      font-style: italic;
+      color: var(--brown-dark);
+      text-align: center;
+      line-height: 1.25;
+      max-width: 860px;
     }
 
     .text-body {
-      font-family: Georgia, serif;
-      font-size: 36px;
-      color: #3A2416;
+      font-family: 'EB Garamond', serif;
+      font-size: 40px;
+      color: var(--brown-dark);
       text-align: center;
       line-height: 1.4;
-      max-width: 750px;
+      max-width: 840px;
     }
 
     .text-cta {
-      font-family: Georgia, serif;
-      font-size: 48px;
-      color: #3A2416;
+      font-family: 'EB Garamond', serif;
+      font-size: 54px;
+      font-weight: 700;
+      color: var(--brown-dark);
       text-align: center;
-      font-weight: bold;
+      line-height: 1.2;
     }
 
     .text-url {
-      font-family: Menlo, monospace;
-      font-size: 24px;
-      color: #B9854D;
+      font-family: 'Space Mono', monospace;
+      font-size: 26px;
+      color: var(--caramel);
       text-align: center;
     }
 
-    /* Gold underline animation */
-    .gold-underline {
-      display: inline-block;
-      border-bottom: 3px solid #D6A75E;
-      padding-bottom: 4px;
+    .cta-btn {
+      font-family: 'Space Mono', monospace;
+      font-size: 26px;
+      font-weight: 700;
+      background: var(--caramel);
+      color: var(--off-white);
+      padding: 26px 64px;
+      border-radius: 9999px;
+      border: none;
+      box-shadow: 0 4px 18px rgba(185,133,77,0.38);
+      letter-spacing: 1px;
     }
 
-    /* Star particle */
-    .star {
+    .day-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 17px;
+      font-weight: 700;
+      background: var(--brown-dark);
+      color: var(--off-white);
+      padding: 9px 28px;
+      border-radius: 9999px;
+      letter-spacing: 1px;
+      display: inline-block;
+    }
+
+    .cloud {
       position: absolute;
-      width: 8px;
-      height: 8px;
-      background: #D6A75E;
+      pointer-events: none;
+    }
+
+    .star-pt {
+      position: absolute;
       border-radius: 50%;
+      background: var(--gold-soft);
       opacity: 0;
     }
 
-    /* Day counter */
-    .day-badge {
-      background: #3A2416;
-      color: #FFFDF8;
-      font-family: Menlo, monospace;
-      font-size: 18px;
-      padding: 8px 20px;
-      border-radius: 9999px;
-      display: inline-block;
+    .seal {
+      width: 104px;
+      height: 104px;
+      background: var(--gold-soft);
+      border-radius: 50%;
+      border: 3px solid var(--caramel);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--off-white);
+      text-align: center;
+      line-height: 1.3;
+      box-shadow: 0 3px 10px rgba(58,36,22,0.22);
     }
   </style>
 </head>
 <body>
 
-<!-- ============================================================ -->
-<!-- HYPERFRAMES STAGE                                              -->
-<!-- ============================================================ -->
 <div id="stage"
      data-composition-id="noticias-do-ceu-intro"
      data-start="0"
      data-width="1080"
      data-height="1920">
 
-  <!-- ======================================================== -->
-  <!-- CENA 1 — HOOK (0s a 4s)                                  -->
-  <!-- ======================================================== -->
-  <div id="scene-01"
-       class="scene safe-top safe-bottom"
-       data-start="0"
-       data-duration="4"
-       data-track-index="0">
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- CENA 1 — HOOK (0s–4s)                                      -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="scene-01" class="scene clip safe"
+       data-start="0" data-duration="4.5" data-track-index="0">
 
-    <!-- Clouds background -->
-    <div class="cloud" style="top:200px;left:100px;">
-      <svg width="200" height="80" viewBox="0 0 200 80" fill="#D6A75E">
-        <ellipse cx="60" cy="50" rx="60" ry="30"/>
-        <ellipse cx="100" cy="35" rx="50" ry="25"/>
-        <ellipse cx="140" cy="50" rx="55" ry="28"/>
+    <div class="cloud" style="top:330px;left:-30px;opacity:0.18;">
+      <svg width="230" height="88" viewBox="0 0 230 88" fill="var(--gold-soft)">
+        <ellipse cx="72" cy="56" rx="72" ry="34"/>
+        <ellipse cx="118" cy="40" rx="60" ry="30"/>
+        <ellipse cx="164" cy="56" rx="65" ry="32"/>
       </svg>
     </div>
-    <div class="cloud" style="top:400px;right:80px;">
-      <svg width="160" height="60" viewBox="0 0 160 60" fill="#D6A75E">
-        <ellipse cx="50" cy="35" rx="50" ry="22"/>
-        <ellipse cx="85" cy="25" rx="40" ry="20"/>
-        <ellipse cx="115" cy="35" rx="45" ry="20"/>
+    <div class="cloud" style="top:510px;right:-20px;opacity:0.12;">
+      <svg width="185" height="70" viewBox="0 0 185 70" fill="var(--gold-soft)">
+        <ellipse cx="57" cy="42" rx="57" ry="26"/>
+        <ellipse cx="95" cy="29" rx="47" ry="23"/>
+        <ellipse cx="132" cy="42" rx="52" ry="24"/>
       </svg>
     </div>
 
-    <!-- Main text -->
-    <div class="text-hook" id="hook-text">
+    <div id="hook-text" class="text-hook" style="padding:0 90px;">
       "E se a saudade<br>virasse notícia<br>no céu?"
     </div>
 
-    <!-- Paw print -->
-    <div style="position:absolute;bottom:300px;right:120px;opacity:0;" id="hook-paw">
-      <svg width="60" height="60" viewBox="0 0 60 60" fill="#D6A75E">
+    <!-- Paw print — no inline transform; GSAP controls it -->
+    <div id="hook-paw" style="position:absolute;bottom:330px;right:150px;">
+      <svg width="68" height="68" viewBox="0 0 60 60" fill="var(--gold-soft)">
         <ellipse cx="30" cy="38" rx="12" ry="14"/>
         <ellipse cx="14" cy="18" rx="7" ry="10"/>
         <ellipse cx="30" cy="12" rx="7" ry="10"/>
@@ -298,332 +271,349 @@
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- CENA 2 — DOR + PROMESSA (4s a 9s)                        -->
-  <!-- ======================================================== -->
-  <div id="scene-02"
-       class="scene safe-top safe-bottom"
-       data-start="4"
-       data-duration="5"
-       data-track-index="1">
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- CENA 2 — DOR + PROMESSA (4s–9s)                            -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="scene-02" class="scene clip safe"
+       data-start="4" data-duration="5.5" data-track-index="1">
 
-    <!-- Newspaper frame with pet photo -->
-    <div style="opacity:0;" id="promise-frame">
-      <div style="width:700px;height:500px;background:#FFFDF8;border:3px double #3A2416;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(58,36,22,0.1);position:relative;">
-        <!-- Gold border glow -->
-        <div style="position:absolute;inset:0;border:2px solid #D6A75E;opacity:0;pointer-events:none;" id="gold-glow"></div>
+    <div id="promise-frame" style="position:relative;opacity:0;">
+      <div style="width:700px;background:var(--off-white);border:3px double var(--brown-dark);padding:36px;box-shadow:0 6px 28px rgba(58,36,22,0.12);">
+
+        <!-- Mini masthead inside frame -->
+        <div style="font-family:'EB Garamond',Georgia,serif;font-size:26px;font-weight:700;color:var(--brown-dark);text-align:center;letter-spacing:3px;border-bottom:1px solid var(--gold-soft);padding-bottom:10px;margin-bottom:18px;">
+          NOTÍCIAS DO CÉU
+        </div>
 
         <!-- Pet photo placeholder -->
-        <div style="width:300px;height:380px;background:#F7F1E8;border:1px solid #D6A75E;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="#B9854D">
-            <ellipse cx="40" cy="50" rx="20" ry="22"/>
-            <ellipse cx="20" cy="22" rx="10" ry="14"/>
-            <ellipse cx="40" cy="14" rx="10" ry="14"/>
-            <ellipse cx="60" cy="22" rx="10" ry="14"/>
-            <circle cx="40" cy="42" r="8" fill="#FFFDF8"/>
+        <div style="width:100%;height:360px;background:var(--cream);border:1px solid rgba(214,167,94,0.5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;position:relative;overflow:hidden;">
+          <svg width="130" height="130" viewBox="0 0 120 120" fill="var(--caramel)" opacity="0.4">
+            <ellipse cx="60" cy="74" rx="28" ry="32"/>
+            <ellipse cx="30" cy="36" rx="14" ry="18"/>
+            <ellipse cx="60" cy="26" rx="14" ry="18"/>
+            <ellipse cx="90" cy="36" rx="14" ry="18"/>
+            <circle cx="60" cy="64" r="12" fill="var(--off-white)" opacity="0.7"/>
           </svg>
-          <span style="font-family:Menlo,monospace;font-size:16px;color:#6E6258;">foto do pet</span>
+          <span style="font-family:'Space Mono',monospace;font-size:17px;color:var(--gray-text);">foto do seu pet aqui</span>
         </div>
+
+        <!-- Gold shimmer border (GSAP controls opacity) -->
+        <div id="gold-glow" style="position:absolute;inset:0;border:3px solid var(--gold-soft);box-shadow:inset 0 0 24px rgba(214,167,94,0.18);pointer-events:none;opacity:0;"></div>
       </div>
     </div>
 
-    <!-- Text -->
-    <div class="text-body" style="margin-top:48px;opacity:0;" id="promise-text">
+    <div id="promise-text" class="text-body" style="margin-top:52px;padding:0 90px;opacity:0;">
       Seu pet partiu,<br>mas a história dele continua.
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- CENA 3 — PRODUTO (9s a 17s)                               -->
-  <!-- ======================================================== -->
-  <div id="scene-03"
-       class="scene safe-top safe-bottom"
-       data-start="9"
-       data-duration="8"
-       data-track-index="2">
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- CENA 3 — PRODUTO (9s–17s)                                  -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="scene-03" class="scene clip safe"
+       data-start="9" data-duration="8.5" data-track-index="2">
 
-    <div id="product-newspaper" style="opacity:0;transform:scale(0.8);">
-      <div class="newspaper">
-        <div class="newspaper-title" id="product-title">NOTÍCIAS DO CÉU</div>
-        <div class="newspaper-subtitle">Diretamente do Paraíso para a Terra</div>
+    <!-- No inline transform — GSAP controls scale via fromTo -->
+    <div id="product-newspaper" class="newspaper" style="width:880px;opacity:0;">
+      <div class="masthead">NOTÍCIAS DO CÉU</div>
+      <div class="dateline">✦ Diretamente do Paraíso ✦ Edição Especial ✦</div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;">
-          <div class="newspaper-section" style="opacity:0;" id="product-card-1">
-            <div class="newspaper-section-title">OBITUÁRIO</div>
-            <div class="newspaper-section-body">
-              Flokinho partiu deixando patas marcadas no coração da família.
-            </div>
-          </div>
-          <div class="newspaper-section" style="opacity:0;" id="product-card-2">
-            <div class="newspaper-section-title">HORÓSCOPO PET</div>
-            <div class="newspaper-section-body">
-              Hoje é dia de sonecas prolongadas no sofá celestial.
-            </div>
-          </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;">
+        <div id="product-card-1" style="opacity:0;">
+          <div class="section-rule"></div>
+          <div class="section-head">Obituário</div>
+          <div class="section-body">Flokinho partiu deixando patas marcadas no coração da família.</div>
         </div>
-
-        <div class="newspaper-section" style="opacity:0;" id="product-card-3">
-          <div class="newspaper-section-title">CHEGADA AO PORTAL DOURADO</div>
-          <div class="newspaper-section-body">
-            Flokinho entra no céu saltando sobre nuvens macias.
-          </div>
+        <div id="product-card-2" style="opacity:0;">
+          <div class="section-rule"></div>
+          <div class="section-head">Horóscopo Pet</div>
+          <div class="section-body">Hoje é dia de sonecas no sofá celestial das nuvens eternas.</div>
         </div>
+      </div>
+
+      <div class="section-rule" style="background:var(--gold-soft);height:2px;margin:16px 0;"></div>
+
+      <div id="product-card-3" style="opacity:0;">
+        <div class="section-head">Chegada ao Portal Dourado</div>
+        <div class="section-body">Flokinho entra no céu saltando sobre nuvens macias, recebido com alegria por todos os anjos.</div>
       </div>
     </div>
 
-    <div class="text-body" style="margin-top:40px;opacity:0;" id="product-text">
+    <div id="product-text" class="text-body" style="margin-top:44px;padding:0 90px;opacity:0;">
       Uma página exclusiva<br>em formato de jornal celestial.
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- CENA 4 — DIFERENCIAL (17s a 25s)                          -->
-  <!-- ======================================================== -->
-  <div id="scene-04"
-       class="scene safe-top safe-bottom"
-       data-start="17"
-       data-duration="8"
-       data-track-index="3">
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- CENA 4 — DIFERENCIAL (17s–25s)                             -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="scene-04" class="scene clip"
+       data-start="17" data-duration="8.5" data-track-index="3">
 
-    <!-- Stars container -->
-    <div id="stars-container" style="position:absolute;inset:0;pointer-events:none;"></div>
+    <div id="stars-layer" style="position:absolute;inset:0;pointer-events:none;"></div>
 
-    <!-- Day flip cards -->
-    <div style="display:flex;flex-direction:column;align-items:center;gap:24px;">
-      <div class="day-badge" id="day-badge" style="opacity:0;">Dia 1 da Jornada</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:24px;padding-top:270px;perspective:1000px;">
 
-      <div id="flip-newspaper" style="opacity:0;transform:rotateX(-5deg);">
-        <div class="newspaper" style="width:700px;padding:32px;">
-          <div class="newspaper-title" style="font-size:36px;">NOTÍCIAS DO CÉU</div>
-          <div class="newspaper-section" style="margin-top:16px;">
-            <div class="newspaper-section-title" id="flip-headline">
-              Flokinho faz novos amigos nas nuvens
-            </div>
-            <div class="newspaper-section-body" style="margin-top:8px;">
-              O jornal celestial que transforma saudade em memória viva.
-            </div>
-          </div>
-        </div>
+      <!-- Three day badges (only one visible at a time) -->
+      <div style="position:relative;height:44px;display:flex;align-items:center;justify-content:center;width:100%;">
+        <div id="badge-1" class="day-badge" style="position:absolute;opacity:0;">DIA 1 DA JORNADA</div>
+        <div id="badge-2" class="day-badge" style="position:absolute;opacity:0;">DIA 2 DA JORNADA</div>
+        <div id="badge-3" class="day-badge" style="position:absolute;opacity:0;">DIA 3 DA JORNADA</div>
       </div>
-    </div>
 
-    <div class="text-body" style="margin-top:40px;opacity:0;" id="diff-text">
-      Todos os dias,<br>uma nova notícia,<br>uma aventura, uma lembrança.
+      <!-- Day 1 newspaper -->
+      <div id="flip-day1" class="newspaper" style="width:720px;padding:32px;opacity:0;">
+        <div class="masthead" style="font-size:36px;">NOTÍCIAS DO CÉU</div>
+        <div class="section-rule"></div>
+        <div class="section-head" style="font-size:14px;">Manchete do Dia</div>
+        <div style="font-family:'EB Garamond',Georgia,serif;font-size:30px;font-weight:700;color:var(--brown-dark);margin:8px 0 10px;">
+          Flokinho faz novos amigos nas nuvens
+        </div>
+        <div class="section-body">A jornada celestial começa com alegria e aventuras infinitas.</div>
+      </div>
+
+      <!-- Day 2 newspaper (hidden, stacked on same position) -->
+      <div id="flip-day2" class="newspaper" style="width:720px;padding:32px;opacity:0;position:absolute;top:390px;">
+        <div class="masthead" style="font-size:36px;">NOTÍCIAS DO CÉU</div>
+        <div class="section-rule"></div>
+        <div class="section-head" style="font-size:14px;">Manchete do Dia</div>
+        <div style="font-family:'EB Garamond',Georgia,serif;font-size:30px;font-weight:700;color:var(--brown-dark);margin:8px 0 10px;">
+          Brinca com anjos e persegue nuvens douradas
+        </div>
+        <div class="section-body">O segundo dia no céu é de pura exploração e descobertas.</div>
+      </div>
+
+      <!-- Day 3 newspaper -->
+      <div id="flip-day3" class="newspaper" style="width:720px;padding:32px;opacity:0;position:absolute;top:390px;">
+        <div class="masthead" style="font-size:36px;">NOTÍCIAS DO CÉU</div>
+        <div class="section-rule"></div>
+        <div class="section-head" style="font-size:14px;">Manchete do Dia</div>
+        <div style="font-family:'EB Garamond',Georgia,serif;font-size:30px;font-weight:700;color:var(--brown-dark);margin:8px 0 10px;">
+          Novo amigo celestial encontrado no jardim das estrelas
+        </div>
+        <div class="section-body">Cada dia traz uma nova história, uma nova aventura, uma nova lembrança.</div>
+      </div>
+
+      <div id="diff-text" class="text-body" style="padding:0 90px;padding-bottom:270px;opacity:0;margin-top:360px;">
+        Todos os dias,<br>uma nova notícia,<br>uma aventura, uma lembrança.
+      </div>
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- CENA 5 — CARTAS PARA O CÉU (25s a 31s)                   -->
-  <!-- ======================================================== -->
-  <div id="scene-05"
-       class="scene safe-top safe-bottom"
-       data-start="25"
-       data-duration="6"
-       data-track-index="4">
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- CENA 5 — CARTAS PARA O CÉU (25s–31s)                      -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="scene-05" class="scene clip"
+       data-start="25" data-duration="6.5" data-track-index="4">
 
-    <!-- Clouds -->
-    <div class="cloud" style="top:300px;left:60px;">
-      <svg width="180" height="70" viewBox="0 0 180 70" fill="#D6A75E">
-        <ellipse cx="55" cy="42" rx="55" ry="26"/>
-        <ellipse cx="95" cy="30" rx="45" ry="22"/>
-        <ellipse cx="130" cy="42" rx="50" ry="24"/>
+    <div class="cloud" style="top:280px;left:30px;opacity:0.16;">
+      <svg width="210" height="80" viewBox="0 0 210 80" fill="var(--gold-soft)">
+        <ellipse cx="65" cy="49" rx="65" ry="30"/>
+        <ellipse cx="110" cy="35" rx="54" ry="27"/>
+        <ellipse cx="154" cy="49" rx="58" ry="29"/>
       </svg>
     </div>
-    <div class="cloud" style="top:500px;right:40px;">
-      <svg width="140" height="50" viewBox="0 0 140 50" fill="#D6A75E">
-        <ellipse cx="45" cy="30" rx="45" ry="18"/>
-        <ellipse cx="75" cy="20" rx="35" ry="16"/>
-        <ellipse cx="100" cy="30" rx="40" ry="17"/>
+    <div class="cloud" style="top:490px;right:10px;opacity:0.11;">
+      <svg width="160" height="60" viewBox="0 0 160 60" fill="var(--gold-soft)">
+        <ellipse cx="50" cy="36" rx="50" ry="22"/>
+        <ellipse cx="84" cy="25" rx="41" ry="20"/>
+        <ellipse cx="116" cy="36" rx="44" ry="21"/>
       </svg>
     </div>
 
-    <!-- Envelope -->
-    <div id="letter-envelope" style="opacity:0;transform:scale(0);">
-      <div class="envelope"></div>
-    </div>
-
-    <!-- Seal -->
-    <div id="letter-seal" style="opacity:0;position:absolute;top:40%;left:50%;transform:translate(-50%,-50%) scale(0);">
-      <div class="seal">
-        CÉU<br>POSTAL
+    <!-- Envelope — no inline transform; GSAP fromTo controls scale -->
+    <div id="letter-envelope" style="position:absolute;top:640px;left:420px;opacity:0;">
+      <div style="width:240px;height:170px;background:var(--off-white);border:2px solid var(--gold-soft);border-radius:6px;position:relative;box-shadow:0 5px 18px rgba(58,36,22,0.13);">
+        <div style="position:absolute;top:0;left:0;right:0;height:0;border-left:120px solid transparent;border-right:120px solid transparent;border-top:68px solid rgba(214,167,94,0.28);border-radius:4px 4px 0 0;"></div>
+        <div style="position:absolute;bottom:18px;left:24px;right:24px;">
+          <div style="height:2px;background:rgba(214,167,94,0.45);margin-bottom:9px;"></div>
+          <div style="height:2px;background:rgba(214,167,94,0.45);margin-bottom:9px;width:78%;"></div>
+          <div style="height:2px;background:rgba(214,167,94,0.45);width:58%;"></div>
+        </div>
+        <div style="position:absolute;top:10px;right:10px;width:36px;height:44px;background:rgba(185,133,77,0.18);border:1px solid var(--caramel);border-radius:2px;"></div>
       </div>
     </div>
 
-    <!-- Text -->
-    <div class="text-body" style="position:absolute;bottom:350px;left:0;right:0;opacity:0;" id="letter-text">
+    <!-- Seal — positioned with margin, no inline transform -->
+    <div id="letter-seal" style="position:absolute;top:800px;left:440px;opacity:0;">
+      <div class="seal">CÉU<br>POSTAL</div>
+    </div>
+
+    <div id="letter-text" class="text-body" style="position:absolute;bottom:290px;left:0;right:0;padding:0 90px;opacity:0;">
       E você ainda pode<br>escrever cartas para ele.
     </div>
   </div>
 
-  <!-- ======================================================== -->
-  <!-- CENA 6 — CTA (31s a 37s)                                  -->
-  <!-- ======================================================== -->
-  <div id="scene-06"
-       class="scene safe-top safe-bottom"
-       data-start="31"
-       data-duration="6"
-       data-track-index="5">
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- CENA 6 — CTA (31s–37s)                                     -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div id="scene-06" class="scene clip safe"
+       data-start="31" data-duration="6" data-track-index="5">
 
-    <!-- Clouds -->
-    <div class="cloud" style="top:280px;left:80px;">
-      <svg width="160" height="60" viewBox="0 0 160 60" fill="#D6A75E">
-        <ellipse cx="50" cy="35" rx="50" ry="22"/>
-        <ellipse cx="85" cy="25" rx="40" ry="20"/>
-        <ellipse cx="115" cy="35" rx="45" ry="20"/>
+    <div class="cloud" style="top:295px;left:50px;opacity:0.16;">
+      <svg width="175" height="66" viewBox="0 0 175 66" fill="var(--gold-soft)">
+        <ellipse cx="54" cy="40" rx="54" ry="24"/>
+        <ellipse cx="92" cy="28" rx="44" ry="22"/>
+        <ellipse cx="126" cy="40" rx="49" ry="23"/>
       </svg>
     </div>
-    <div class="cloud" style="top:350px;right:60px;">
-      <svg width="120" height="45" viewBox="0 0 120 45" fill="#D6A75E">
-        <ellipse cx="40" cy="26" rx="40" ry="16"/>
-        <ellipse cx="65" cy="18" rx="32" ry="14"/>
-        <ellipse cx="85" cy="26" rx="35" ry="15"/>
+    <div class="cloud" style="top:380px;right:40px;opacity:0.1;">
+      <svg width="135" height="52" viewBox="0 0 135 52" fill="var(--gold-soft)">
+        <ellipse cx="43" cy="31" rx="43" ry="18"/>
+        <ellipse cx="72" cy="21" rx="35" ry="17"/>
+        <ellipse cx="97" cy="31" rx="38" ry="18"/>
       </svg>
     </div>
 
-    <!-- Logo -->
-    <div id="cta-logo" style="opacity:0;text-align:center;">
-      <div style="font-family:Georgia,serif;font-size:64px;font-weight:bold;color:#3A2416;letter-spacing:4px;">
-        NOTÍCIAS DO CÉU
+    <div id="cta-logo" style="text-align:center;opacity:0;">
+      <div style="font-family:'EB Garamond',Georgia,serif;font-size:64px;font-weight:700;color:var(--brown-dark);letter-spacing:5px;line-height:1.1;">
+        NOTÍCIAS<br>DO CÉU
       </div>
-      <div style="margin-top:12px;" id="cta-paw" style="opacity:0;">
-        <svg width="48" height="48" viewBox="0 0 60 60" fill="#D6A75E" style="margin:0 auto;">
-          <ellipse cx="30" cy="38" rx="12" ry="14"/>
-          <ellipse cx="14" cy="18" rx="7" ry="10"/>
-          <ellipse cx="30" cy="12" rx="7" ry="10"/>
-          <ellipse cx="46" cy="18" rx="7" ry="10"/>
-        </svg>
-      </div>
+      <div style="width:380px;height:2px;background:linear-gradient(90deg,transparent,var(--gold-soft),transparent);margin:18px auto;"></div>
+      <svg width="52" height="52" viewBox="0 0 60 60" fill="var(--gold-soft)" style="display:block;margin:0 auto;">
+        <ellipse cx="30" cy="38" rx="12" ry="14"/>
+        <ellipse cx="14" cy="18" rx="7" ry="10"/>
+        <ellipse cx="30" cy="12" rx="7" ry="10"/>
+        <ellipse cx="46" cy="18" rx="7" ry="10"/>
+      </svg>
     </div>
 
-    <!-- CTA text -->
-    <div class="text-cta" style="margin-top:48px;opacity:0;" id="cta-text">
+    <div id="cta-text" class="text-cta" style="margin-top:52px;opacity:0;">
       Eternize o amor<br>do seu pet.
     </div>
 
-    <!-- CTA button -->
-    <button class="cta-button" style="margin-top:40px;opacity:0;" id="cta-button">
+    <button id="cta-button" class="cta-btn" style="margin-top:44px;opacity:0;">
       CRIE UMA HOMENAGEM
     </button>
 
-    <!-- URL -->
-    <div class="text-url" style="margin-top:24px;opacity:0;" id="cta-url">
+    <div id="cta-url" class="text-url" style="margin-top:24px;opacity:0;">
       noticias-do-ceu.com
     </div>
   </div>
 
-</div>
-<!-- End stage -->
+</div><!-- /stage -->
 
-<!-- ============================================================ -->
-<!-- GSAP MASTER TIMELINE                                          -->
-<!-- ============================================================ -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- GSAP MASTER TIMELINE                                           -->
+<!-- ══════════════════════════════════════════════════════════════ -->
 <script>
-  // HyperFrames deterministic timeline
-  window.__hfTimeline = window.__hfTimeline || gsap.timeline({paused: true});
+  // ── Seeded PRNG: mulberry32 — replaces Math.random() ─────────
+  function mulberry32(seed) {
+    return function () {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  var rand = mulberry32(42);
 
-  const tl = window.__hfTimeline;
+  // ── Create star particles (deterministic positions) ───────────
+  (function () {
+    var layer = document.getElementById('stars-layer');
+    for (var i = 0; i < 14; i++) {
+      var el = document.createElement('div');
+      el.className = 'star-pt';
+      var sz = 5 + rand() * 7;
+      el.style.left   = Math.floor(rand() * 1000 + 40) + 'px';
+      el.style.top    = Math.floor(580 + rand() * 660) + 'px';
+      el.style.width  = sz.toFixed(1) + 'px';
+      el.style.height = sz.toFixed(1) + 'px';
+      layer.appendChild(el);
+    }
+  }());
 
-  // ── CENA 1: HOOK (0s–4s) ──────────────────────────────────
-  tl.to("#scene-01", { opacity: 1, duration: 0.5, ease: "power1.inOut" }, 0);
-  tl.from("#hook-text", { opacity: 0, y: 30, duration: 1.2, ease: "power2.out" }, 0.8);
-  tl.to("#hook-paw", { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.2)" }, 3.0);
-  tl.to("#scene-01", { opacity: 0, duration: 0.3, ease: "power1.in" }, 3.7);
+  // ── HyperFrames timeline registration ────────────────────────
+  window.__hfTimeline = gsap.timeline({ paused: true });
+  window.__timelines  = window.__timelines || {};
+  window.__timelines['noticias-do-ceu-intro'] = window.__hfTimeline;
 
-  // ── CENA 2: PROMISE (4s–9s) ────────────────────────────────
-  tl.to("#scene-02", { opacity: 1, duration: 0.3, ease: "power1.inOut" }, 4.0);
-  tl.to("#promise-frame", { opacity: 1, duration: 1.0, ease: "power2.out" }, 4.5);
-  tl.from("#promise-frame", { y: 20, duration: 1.0, ease: "power2.out" }, 4.5);
-  tl.to("#gold-glow", { opacity: 0.6, duration: 1.5, ease: "power1.inOut" }, 5.5);
-  tl.to("#promise-text", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 6.5);
-  tl.from("#promise-text", { y: 20, duration: 0.8, ease: "power2.out" }, 6.5);
-  tl.to("#scene-02", { opacity: 0, duration: 0.3, ease: "power1.in" }, 8.7);
+  var tl = window.__hfTimeline;
 
-  // ── CENA 3: PRODUCT (9s–17s) ───────────────────────────────
-  tl.to("#scene-03", { opacity: 1, duration: 0.3, ease: "power1.inOut" }, 9.0);
-  tl.to("#product-newspaper", { opacity: 1, scale: 1, duration: 1.2, ease: "back.out(1.2)" }, 9.5);
-  tl.from("#product-newspaper", { rotateX: -5, duration: 1.2, ease: "back.out(1.2)" }, 9.5);
-  tl.from("#product-title", { opacity: 0, y: -20, duration: 0.8, ease: "power2.out" }, 10.5);
-  tl.to("#product-card-1", { opacity: 1, duration: 0.6, ease: "power2.out" }, 12.0);
-  tl.to("#product-card-2", { opacity: 1, duration: 0.6, ease: "power2.out" }, 12.4);
-  tl.to("#product-card-3", { opacity: 1, duration: 0.6, ease: "power2.out" }, 12.8);
-  tl.to("#product-text", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 14.0);
-  tl.from("#product-text", { y: 20, duration: 0.8, ease: "power2.out" }, 14.0);
-  tl.to("#scene-03", { opacity: 0, duration: 0.3, ease: "power1.in" }, 16.7);
+  // ════════════════════════════════════════════════════════════
+  // CENA 1 — HOOK  (0s–4s)
+  // ════════════════════════════════════════════════════════════
+  tl.fromTo('#scene-01',  { opacity:0 }, { opacity:1, duration:0.5, ease:'power1.inOut' }, 0);
+  tl.fromTo('#hook-text', { opacity:0, y:30 }, { opacity:1, y:0, duration:1.3, ease:'power2.out' }, 0.6);
+  tl.fromTo('#hook-paw',  { opacity:0, scale:0 }, { opacity:1, scale:1, duration:0.7, ease:'back.out(1.2)' }, 2.9);
+  tl.to('#scene-01', { opacity:0, duration:0.3, ease:'power1.in' }, 4.0);
 
-  // ── CENA 4: DIFFERENTIAL (17s–25s) ─────────────────────────
-  tl.to("#scene-04", { opacity: 1, duration: 0.3, ease: "power1.inOut" }, 17.0);
-  tl.to("#day-badge", { opacity: 1, duration: 0.5, ease: "power2.out" }, 17.5);
-  tl.to("#flip-newspaper", { opacity: 1, rotateX: 0, duration: 1.0, ease: "power2.out" }, 18.0);
-  tl.from("#flip-newspaper", { rotateX: -5, duration: 1.0, ease: "power2.out" }, 18.0);
+  // ════════════════════════════════════════════════════════════
+  // CENA 2 — PROMESSA  (4s–9s)
+  // ════════════════════════════════════════════════════════════
+  tl.fromTo('#scene-02',      { opacity:0 }, { opacity:1, duration:0.4, ease:'power1.inOut' }, 4.0);
+  tl.fromTo('#promise-frame', { opacity:0, y:26 }, { opacity:1, y:0, duration:1.0, ease:'power2.out' }, 4.5);
+  tl.fromTo('#gold-glow',     { opacity:0 }, { opacity:1, duration:1.5, ease:'power1.inOut' }, 5.5);
+  tl.fromTo('#promise-text',  { opacity:0, y:22 }, { opacity:1, y:0, duration:0.9, ease:'power2.out' }, 6.8);
+  tl.to('#scene-02', { opacity:0, duration:0.3, ease:'power1.in' }, 9.0);
 
-  // Day flip animation (20s–22s)
-  tl.to("#flip-headline", { opacity: 0, duration: 0.2 }, 20.0);
-  tl.to("#flip-headline", { opacity: 1, duration: 0.2 }, 20.5);
-  tl.to("#day-badge", { opacity: 0, duration: 0.2 }, 20.0);
-  tl.to("#day-badge", { opacity: 1, duration: 0.2 }, 20.5);
+  // ════════════════════════════════════════════════════════════
+  // CENA 3 — PRODUTO  (9s–17s)
+  // ════════════════════════════════════════════════════════════
+  tl.fromTo('#scene-03',          { opacity:0 }, { opacity:1, duration:0.4, ease:'power1.inOut' }, 9.0);
+  tl.fromTo('#product-newspaper', { opacity:0, scale:0.86 }, { opacity:1, scale:1, duration:1.1, ease:'back.out(1.1)' }, 9.5);
+  tl.fromTo('#product-card-1',    { opacity:0 }, { opacity:1, duration:0.6, ease:'power2.out' }, 12.0);
+  tl.fromTo('#product-card-2',    { opacity:0 }, { opacity:1, duration:0.6, ease:'power2.out' }, 12.5);
+  tl.fromTo('#product-card-3',    { opacity:0 }, { opacity:1, duration:0.6, ease:'power2.out' }, 13.0);
+  tl.fromTo('#product-text',      { opacity:0, y:22 }, { opacity:1, y:0, duration:0.9, ease:'power2.out' }, 14.0);
+  tl.to('#scene-03', { opacity:0, duration:0.3, ease:'power1.in' }, 17.0);
 
-  tl.to("#diff-text", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 22.0);
-  tl.from("#diff-text", { y: 20, duration: 0.8, ease: "power2.out" }, 22.0);
+  // ════════════════════════════════════════════════════════════
+  // CENA 4 — DIFERENCIAL  (17s–25s)
+  // ════════════════════════════════════════════════════════════
+  tl.fromTo('#scene-04', { opacity:0 }, { opacity:1, duration:0.4, ease:'power1.inOut' }, 17.0);
+
+  // Day 1
+  tl.fromTo('#badge-1',    { opacity:0 }, { opacity:1, duration:0.5, ease:'power2.out' }, 17.5);
+  tl.fromTo('#flip-day1',  { opacity:0, scale:0.93 }, { opacity:1, scale:1, duration:0.9, ease:'power2.out' }, 18.0);
+
+  // Day 1 → Day 2
+  tl.fromTo('#badge-1',    { opacity:1 }, { opacity:0, duration:0.25, ease:'power1.in' }, 20.0);
+  tl.fromTo('#flip-day1',  { opacity:1 }, { opacity:0, duration:0.25, ease:'power1.in' }, 20.0);
+  tl.fromTo('#badge-2',    { opacity:0 }, { opacity:1, duration:0.25, ease:'power1.out' }, 20.25);
+  tl.fromTo('#flip-day2',  { opacity:0, scale:0.95 }, { opacity:1, scale:1, duration:0.35, ease:'power2.out' }, 20.25);
+
+  // Day 2 → Day 3
+  tl.fromTo('#badge-2',    { opacity:1 }, { opacity:0, duration:0.25, ease:'power1.in' }, 21.5);
+  tl.fromTo('#flip-day2',  { opacity:1 }, { opacity:0, duration:0.25, ease:'power1.in' }, 21.5);
+  tl.fromTo('#badge-3',    { opacity:0 }, { opacity:1, duration:0.25, ease:'power1.out' }, 21.75);
+  tl.fromTo('#flip-day3',  { opacity:0, scale:0.95 }, { opacity:1, scale:1, duration:0.35, ease:'power2.out' }, 21.75);
+
+  tl.fromTo('#diff-text', { opacity:0, y:22 }, { opacity:1, y:0, duration:0.9, ease:'power2.out' }, 22.8);
 
   // Stars scatter
-  for (let i = 0; i < 12; i++) {
-    const delay = 19 + i * 0.3;
-    tl.to(".star", { opacity: 0.8, duration: 0.3, ease: "power1.out" }, delay);
-    tl.to(".star", { opacity: 0, duration: 0.5, ease: "power1.in" }, delay + 0.5);
-  }
+  var starEls = document.querySelectorAll('.star-pt');
+  starEls.forEach(function (star, i) {
+    var t = 18.6 + (i / starEls.length) * 3.5;
+    tl.fromTo(star, { opacity:0, scale:0 }, { opacity:0.85, scale:1, duration:0.4, ease:'power1.out' }, t);
+    tl.fromTo(star, { opacity:0.85, scale:1 }, { opacity:0, scale:0.5, duration:0.55, ease:'power1.in' }, t + 0.75);
+  });
 
-  tl.to("#scene-04", { opacity: 0, duration: 0.3, ease: "power1.in" }, 24.7);
+  tl.to('#scene-04', { opacity:0, duration:0.3, ease:'power1.in' }, 25.0);
 
-  // ── CENA 5: LETTERS (25s–31s) ──────────────────────────────
-  tl.to("#scene-05", { opacity: 1, duration: 0.3, ease: "power1.inOut" }, 25.0);
-  tl.to("#letter-envelope", { opacity: 1, scale: 1, duration: 0.8, ease: "elastic.out(1, 0.5)" }, 25.5);
-  tl.from("#letter-envelope", { scale: 0, duration: 0.8, ease: "elastic.out(1, 0.5)" }, 25.5);
-  tl.to("#letter-text", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 27.0);
-  tl.from("#letter-text", { y: 20, duration: 0.8, ease: "power2.out" }, 27.0);
+  // ════════════════════════════════════════════════════════════
+  // CENA 5 — CARTAS  (25s–31s)
+  // ════════════════════════════════════════════════════════════
+  tl.fromTo('#scene-05',       { opacity:0 }, { opacity:1, duration:0.4, ease:'power1.inOut' }, 25.0);
+  tl.fromTo('#letter-envelope',{ opacity:0, scale:0 }, { opacity:1, scale:1, duration:0.85, ease:'elastic.out(1, 0.55)' }, 25.5);
+  tl.fromTo('#letter-text',    { opacity:0, y:22 }, { opacity:1, y:0, duration:0.8, ease:'power2.out' }, 27.0);
+  tl.fromTo('#letter-envelope',{ y:0 }, { y:-330, duration:2.2, ease:'power1.in' }, 27.8);
+  tl.fromTo('#letter-seal',    { opacity:0, scale:0, rotation:-18 }, { opacity:1, scale:1, rotation:0, duration:0.55, ease:'back.out(1.5)' }, 29.8);
+  tl.to('#scene-05', { opacity:0, duration:0.3, ease:'power1.in' }, 31.0);
 
-  // Envelope rises
-  tl.to("#letter-envelope", { y: -300, duration: 2.0, ease: "power1.in" }, 28.0);
+  // ════════════════════════════════════════════════════════════
+  // CENA 6 — CTA  (31s–37s)
+  // ════════════════════════════════════════════════════════════
+  tl.fromTo('#scene-06',   { opacity:0 }, { opacity:1, duration:0.4, ease:'power1.inOut' }, 31.0);
+  tl.fromTo('#cta-logo',   { opacity:0, y:-22 }, { opacity:1, y:0, duration:0.9, ease:'power2.out' }, 31.5);
+  tl.fromTo('#cta-text',   { opacity:0, y:22 },  { opacity:1, y:0, duration:0.8, ease:'power2.out' }, 33.0);
+  tl.fromTo('#cta-button', { opacity:0 }, { opacity:1, duration:0.6, ease:'power2.out' }, 34.0);
+  tl.fromTo('#cta-url',    { opacity:0 }, { opacity:1, duration:0.5, ease:'power2.out' }, 34.8);
 
-  // Seal appears
-  tl.to("#letter-seal", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.5)" }, 29.5);
-  tl.from("#letter-seal", { scale: 0, rotate: -15, duration: 0.6, ease: "back.out(1.5)" }, 29.5);
+  // Button pulse: 3 cycles
+  tl.fromTo('#cta-button', { scale:1 }, { scale:1.06, duration:0.32, ease:'power1.inOut', yoyo:true, repeat:5 }, 35.1);
 
-  tl.to("#scene-05", { opacity: 0, duration: 0.3, ease: "power1.in" }, 30.7);
-
-  // ── CENA 6: CTA (31s–37s) ──────────────────────────────────
-  tl.to("#scene-06", { opacity: 1, duration: 0.3, ease: "power1.inOut" }, 31.0);
-  tl.to("#cta-logo", { opacity: 1, duration: 0.8, ease: "power2.out" }, 31.5);
-  tl.from("#cta-logo", { y: -20, duration: 0.8, ease: "power2.out" }, 31.5);
-  tl.to("#cta-paw", { opacity: 1, duration: 0.5, ease: "power2.out" }, 32.5);
-  tl.to("#cta-text", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 33.0);
-  tl.from("#cta-text", { y: 20, duration: 0.8, ease: "power2.out" }, 33.0);
-  tl.to("#cta-button", { opacity: 1, duration: 0.6, ease: "power2.out" }, 34.5);
-  tl.to("#cta-url", { opacity: 1, duration: 0.5, ease: "power2.out" }, 35.5);
-
-  // Button pulse
-  tl.to("#cta-button", { scale: 1.05, duration: 0.4, ease: "power1.inOut" }, 35.0);
-  tl.to("#cta-button", { scale: 1.0, duration: 0.4, ease: "power1.inOut" }, 35.4);
-  tl.to("#cta-button", { scale: 1.05, duration: 0.4, ease: "power1.inOut" }, 35.8);
-  tl.to("#cta-button", { scale: 1.0, duration: 0.4, ease: "power1.inOut" }, 36.2);
-
-  // ── FIM ────────────────────────────────────────────────────
-  // Total: ~37 segundos
-
-  // Create star particles dynamically
-  (function createStars() {
-    const container = document.getElementById('stars-container');
-    if (!container) return;
-    for (let i = 0; i < 15; i++) {
-      const star = document.createElement('div');
-      star.className = 'star';
-      star.style.left = Math.random() * 1080 + 'px';
-      star.style.top = 600 + Math.random() * 800 + 'px';
-      star.style.width = (4 + Math.random() * 8) + 'px';
-      star.style.height = star.style.width;
-      star.style.opacity = 0;
-      container.appendChild(star);
-    }
-  })();
+  // ─ Total: 37 seconds ────────────────────────────────────────
 </script>
 
 </body>

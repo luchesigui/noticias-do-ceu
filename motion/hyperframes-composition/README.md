@@ -104,21 +104,26 @@ hyperframes-composition/
 | Safe area topo | 250px |
 | Safe area base | 250px |
 
-## Assets Necessários
+## Assets
 
-Antes do render final, substitua os placeholders pelos assets reais:
+### Fontes (capturadas localmente)
 
-| Asset | Arquivo | Status |
-|-------|---------|--------|
-| Logo Notícias do Céu | `assets/logo.svg` | ⬜ Placeholder |
-| Mockup do jornal | `assets/newspaper-mockup.png` | ⬜ Placeholder |
-| Foto de pet exemplo | `assets/pet-photo.jpg` | ⬜ Placeholder |
-| Ícone nuvem | `assets/cloud.svg` | ⬜ Placeholder |
-| Ícone patinha | `assets/paw.svg` | ⬜ Placeholder |
-| Envelope/carta | `assets/envelope.svg` | ⬜ Placeholder |
-| Selo "Céu Postal" | `assets/seal-ceu-postal.svg` | ⬜ Placeholder |
-| Textura de papel | `assets/paper-texture.png` | ⬜ Placeholder |
-| Trilha sonora | `assets/music.mp3` | ⬜ Opcional |
+| Asset | Arquivo |
+|-------|---------|
+| EB Garamond Normal | `assets/fonts/SlGUmQSNjdsmc35JDF1K5GR1SDk.woff2` |
+| EB Garamond Italic | `assets/fonts/SlGWmQSNjdsmc35JDF1K5GRweDs1Zw.woff2` |
+| Space Mono 400 | `assets/fonts/i7dPIFZifjKcF5UAWdDRYEF8RQ.woff2` |
+| Space Mono 700 | `assets/fonts/i7dMIFZifjKcF5UAWdDRaPpZUFWaHg.woff2` |
+
+### Assets visuais — Substitua antes do render final
+
+| Asset | Descrição | Status |
+|-------|-----------|--------|
+| Foto do pet (cena 2) | Foto real do pet na moldura do jornal | ⬜ Placeholder SVG |
+| Trilha sonora | `assets/music.mp3` — piano leve em Dó/Sol | ⬜ Opcional |
+
+> Todos os outros elementos (nuvens, nuvens, patinhas, envelope, selo, manchetes)
+> são SVGs inline e estão implementados visualmente na composição.
 
 ## Cenas
 

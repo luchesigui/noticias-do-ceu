@@ -1,5 +1,22 @@
 import crypto from 'crypto';
-import db from '../db/database.js';
+
+// In-memory store for gift cards (transient in serverless environments)
+const giftCards = [
+  {
+    code: "TEST-CARD-VITA",
+    sender_name: "Remetente de Teste",
+    recipient_email: "amigo@example.com",
+    recipient_name: "Amigo de Teste",
+    pet_name: "Rex",
+    plan: "lifetime",
+    message: "Uma mensagem carinhosa para testar o resgate.",
+    design: "nuvens",
+    created_at: new Date().toISOString(),
+    expires_at: null,
+    redeemed_at: null,
+    redeemed_by: null
+  }
+];
 
 function generateCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -23,15 +40,12 @@ export class GiftCardService {
     let attempts = 0;
     let success = false;
 
-    // Retry up to 100 times to find a unique code
+    // Find unique code
     while (!success && attempts < 100) {
       code = generateCode();
       attempts++;
 
-      // Check if it already exists
-      const stmt = db.prepare('SELECT 1 FROM gift_cards WHERE code = ?');
-      const exists = stmt.get(code);
-
+      const exists = giftCards.some(c => c.code === code);
       if (!exists) {
         success = true;
       }
@@ -49,25 +63,7 @@ export class GiftCardService {
       expires_at = expiryDate.toISOString();
     }
 
-    const insertStmt = db.prepare(`
-      INSERT INTO gift_cards (code, sender_name, recipient_email, recipient_name, pet_name, plan, message, design, created_at, expires_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    insertStmt.run(
-      code,
-      sender_name,
-      recipient_email,
-      recipient_name,
-      pet_name || null,
-      plan,
-      message || null,
-      design,
-      created_at,
-      expires_at
-    );
-
-    return {
+    const card = {
       code,
       sender_name,
       recipient_email,
@@ -77,73 +73,64 @@ export class GiftCardService {
       message: message || null,
       design,
       created_at,
-      expires_at
+      expires_at,
+      redeemed_at: null,
+      redeemed_by: null
     };
+
+    giftCards.push(card);
+
+    return card;
   }
 
   static getGiftCardByCode(code) {
-    const stmt = db.prepare('SELECT * FROM gift_cards WHERE code = ?');
-    const row = stmt.get(code);
-    if (!row) return null;
-    return row;
+    const card = giftCards.find(c => c.code === code);
+    if (!card) return null;
+    return card;
   }
 
   static redeemGiftCard(code, userId) {
-    // We use a transaction for redemption
-    const redeemTransaction = db.transaction(() => {
-      const card = db.prepare('SELECT * FROM gift_cards WHERE code = ?').get(code);
-      if (!card) {
-        return { error: 'not_found' };
+    const card = giftCards.find(c => c.code === code);
+    if (!card) {
+      return { error: 'not_found' };
+    }
+
+    // Check expiration
+    if (card.expires_at) {
+      const expiresTime = new Date(card.expires_at).getTime();
+      const now = Date.now();
+      if (now > expiresTime) {
+        return { error: 'expired' };
       }
+    }
 
-      // Check expiration
-      if (card.expires_at) {
-        const expiresTime = new Date(card.expires_at).getTime();
-        const now = Date.now();
-        if (now > expiresTime) {
-          return { error: 'expired' };
-        }
+    // Check redemption status
+    if (card.redeemed_by) {
+      if (card.redeemed_by === userId) {
+        // Idempotency: same user gets success
+        return { success: true, redeemed_at: card.redeemed_at, alreadyRedeemed: true };
+      } else {
+        return { error: 'already_redeemed' };
       }
+    }
 
-      // Check redemption status
-      if (card.redeemed_by) {
-        if (card.redeemed_by === userId) {
-          // Idempotency: same user gets success with same timestamp
-          return { success: true, redeemed_at: card.redeemed_at, alreadyRedeemed: true };
-        } else {
-          return { error: 'already_redeemed' };
-        }
-      }
+    const redeemed_at = new Date().toISOString();
+    card.redeemed_by = userId;
+    card.redeemed_at = redeemed_at;
 
-      const redeemed_at = new Date().toISOString();
-      const updateStmt = db.prepare(`
-        UPDATE gift_cards
-        SET redeemed_by = ?, redeemed_at = ?
-        WHERE code = ?
-      `);
-      updateStmt.run(userId, redeemed_at, code);
-
-      return { success: true, redeemed_at, alreadyRedeemed: false };
-    });
-
-    return redeemTransaction();
+    return { success: true, redeemed_at, alreadyRedeemed: false };
   }
 
   static listGiftCards(page = 1, limit = 10) {
     const offset = (page - 1) * limit;
+    const total = giftCards.length;
 
-    const countStmt = db.prepare('SELECT COUNT(*) as count FROM gift_cards');
-    const total = countStmt.get().count;
-
-    const listStmt = db.prepare(`
-      SELECT * FROM gift_cards
-      ORDER BY created_at DESC
-      LIMIT ? OFFSET ?
-    `);
-    const cards = listStmt.all(limit, offset);
+    // Sort by created_at DESC
+    const sorted = [...giftCards].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const pageCards = sorted.slice(offset, offset + limit);
 
     return {
-      cards,
+      cards: pageCards,
       pagination: {
         total,
         page,
