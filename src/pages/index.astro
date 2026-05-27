@@ -62,7 +62,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
               <img
                 src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                 alt="Cachorro feliz"
-                class="w-full h-48 object-cover rounded filter sepia-[0.3] contrast-125 mb-4 border border-ink/30"
+                class="w-full h-48 object-cover rounded filter grayscale contrast-125 mb-4 border border-ink/30"
               />
               <p class="text-sm text-justify font-body">
                 "Hoje nosso amado anjinho de quatro patas foi visto correndo
@@ -219,27 +219,25 @@ import WaitingListModal from '../components/WaitingListModal.astro';
 
         <!-- Main Content Grid -->
         <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-          <!-- Left Column: Fixed Pet Info & Obituário -->
+          <!-- Left Column: Two Rotating Sidebar Sections -->
           <div class="md:col-span-3 border-b-2 md:border-b-0 md:border-r-2 border-ink/30 pb-6 md:pb-0 md:pr-6">
-            <div class="text-center mb-4">
-              <h3 class="font-serif font-black text-xl uppercase border-b border-ink/50 pb-2 mb-2">
-                Obituário
+            <div class="text-center mb-4" id="sidebar-rotativa-top">
+              <h3 class="font-serif font-black text-lg uppercase mb-2 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-cloud text-accent" id="sidebar-top-icon"></i>
+                <span id="sidebar-top-title">Mensagem do Céu</span>
               </h3>
-              <p class="text-xs text-justify font-body leading-relaxed italic">
-                <strong>FLOKINHO (2015-2024)</strong> -- Partiu deste mundo
-                deixando patas marcadas no coração da família Luchesi. Shih
-                Tzu de profissão, especialista em dormir no pé da cama e
-                detentor do título de pior banhista do bairro. Sua missão na
-                Terra foi cumprida com louvor: amar incondicionalmente.
-              </p>
+              <div class="text-sm italic font-body text-justify" id="sidebar-top-content">
+                "Não chore por mim. Estou feliz, livre e em paz. Espere-me um
+                dia... vamos correr juntos de novo."
+              </div>
             </div>
             <div class="separator-line"></div>
-            <div class="text-center mt-4" id="sidebar-rotativa">
+            <div class="text-center mt-4" id="sidebar-rotativa-bottom">
               <h3 class="font-serif font-black text-lg uppercase mb-2 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-cloud text-accent" id="sidebar-icon"></i>
-                <span id="sidebar-title">Mensagem do Céu</span>
+                <i class="fa-solid fa-cloud text-accent" id="sidebar-bottom-icon"></i>
+                <span id="sidebar-bottom-title">Mensagem do Céu</span>
               </h3>
-              <div class="text-sm italic font-body text-justify" id="sidebar-content">
+              <div class="text-sm italic font-body text-justify" id="sidebar-bottom-content">
                 "Não chore por mim. Estou feliz, livre e em paz. Espere-me um
                 dia... vamos correr juntos de novo."
               </div>
@@ -283,7 +281,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
                     id="news-image"
                     src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                     alt="Flokinho no céu"
-                    class="w-full h-auto object-cover filter sepia-[0.2] contrast-[1.1]"
+                    class="w-full h-auto object-cover filter grayscale contrast-[1.1]"
                   />
                   <div id="news-image-caption" class="absolute bottom-0 w-full bg-black/60 text-white text-xs p-1 text-center font-serif">
                     Flokinho aproveitando a vista das nuvens.
@@ -774,25 +772,34 @@ import WaitingListModal from '../components/WaitingListModal.astro';
     const captionEl = document.getElementById("news-image-caption");
     const badgeEl = document.getElementById("special-badge");
     const sundayBannerEl = document.getElementById("sunday-banner");
-    const sidebarTitleEl = document.getElementById("sidebar-title");
-    const sidebarIconEl = document.getElementById("sidebar-icon");
-    const sidebarContentEl = document.getElementById("sidebar-content");
+    const sidebarTopTitleEl = document.getElementById("sidebar-top-title");
+    const sidebarTopIconEl = document.getElementById("sidebar-top-icon");
+    const sidebarTopContentEl = document.getElementById("sidebar-top-content");
+    const sidebarBottomTitleEl = document.getElementById("sidebar-bottom-title");
+    const sidebarBottomIconEl = document.getElementById("sidebar-bottom-icon");
+    const sidebarBottomContentEl = document.getElementById("sidebar-bottom-content");
 
     const specialDate = getSpecialDate(targetDate);
     const isSun = isSunday(targetDate);
 
     if (animate) {
       const dynamicNews = document.getElementById("dynamic-news-content");
-      const sidebarRot = document.getElementById("sidebar-rotativa");
+      const sidebarRotTop = document.getElementById("sidebar-rotativa-top");
+      const sidebarRotBottom = document.getElementById("sidebar-rotativa-bottom");
       if (dynamicNews) {
         dynamicNews.classList.remove("fade-in");
         void dynamicNews.offsetWidth;
         dynamicNews.classList.add("fade-in");
       }
-      if (sidebarRot) {
-        sidebarRot.classList.remove("fade-in");
-        void sidebarRot.offsetWidth;
-        sidebarRot.classList.add("fade-in");
+      if (sidebarRotTop) {
+        sidebarRotTop.classList.remove("fade-in");
+        void sidebarRotTop.offsetWidth;
+        sidebarRotTop.classList.add("fade-in");
+      }
+      if (sidebarRotBottom) {
+        sidebarRotBottom.classList.remove("fade-in");
+        void sidebarRotBottom.offsetWidth;
+        sidebarRotBottom.classList.add("fade-in");
       }
     }
 
@@ -856,6 +863,13 @@ import WaitingListModal from '../components/WaitingListModal.astro';
       }
     }
 
+    // Apenas 1 a cada 5 edições tem alguma imagem ilustrando (1ª, 6ª, 11ª, etc.)
+    if (currentDayIndex % 5 !== 0) {
+      newsToRender.image = null;
+      newsToRender.imageAlt = null;
+      newsToRender.caption = null;
+    }
+
     if (headlineEl) headlineEl.innerText = newsToRender.headline;
     if (subheadlineEl) subheadlineEl.innerText = newsToRender.subheadline;
     if (textEl) textEl.innerHTML = newsToRender.text;
@@ -878,10 +892,11 @@ import WaitingListModal from '../components/WaitingListModal.astro';
     }
 
     if (isSun) {
-      if (sidebarIconEl) sidebarIconEl.className = "fa-solid fa-heart text-accent";
-      if (sidebarTitleEl) sidebarTitleEl.innerText = "Poema do Pet";
-      if (sidebarContentEl) {
-        sidebarContentEl.innerHTML = `<p class="text-sm italic font-body text-justify">
+      // Bottom sidebar: Poem
+      if (sidebarBottomIconEl) sidebarBottomIconEl.className = "fa-solid fa-heart text-accent";
+      if (sidebarBottomTitleEl) sidebarBottomTitleEl.innerText = "Poema do Pet";
+      if (sidebarBottomContentEl) {
+        sidebarBottomContentEl.innerHTML = `<p class="text-sm italic font-body text-justify">
                   "Se pelas nuvens eu correr,<br/>
                   E de repente não me ver,<br/>
                   Olhe para o céu ao anoitecer.<br/>
@@ -890,13 +905,31 @@ import WaitingListModal from '../components/WaitingListModal.astro';
                   Esperando o dia de te reencontrar."
               </p>`;
       }
+
+      // Top sidebar: Sunday Reflection
+      if (sidebarTopIconEl) sidebarTopIconEl.className = "fa-solid fa-dove text-accent";
+      if (sidebarTopTitleEl) sidebarTopTitleEl.innerText = "Reflexão de Domingo";
+      if (sidebarTopContentEl) {
+        sidebarTopContentEl.innerHTML = `<p class="text-sm italic font-body text-justify">
+                  "Um dia de paz e silêncio no céu. Os pets descansam sob a sombra da grande árvore da vida, enviando raios de sol e brisas suaves para aquecer os corações de quem ficou na Terra."
+              </p>`;
+      }
     } else {
       const dayOfWeek = targetDate.getDay();
-      const sidebarIndex = dayOfWeek - 1;
-      const side = getSidebar(sidebarIndex);
-      if (sidebarIconEl) sidebarIconEl.className = `fa-solid ${side.icon} text-accent`;
-      if (sidebarTitleEl) sidebarTitleEl.innerText = side.title;
-      if (sidebarContentEl) sidebarContentEl.innerHTML = renderTemplate(side.content);
+
+      // Bottom Section: index (dayOfWeek - 1) % 6
+      const sidebarBottomIndex = (dayOfWeek - 1) % 6;
+      const sideBottom = getSidebar(sidebarBottomIndex);
+      if (sidebarBottomIconEl) sidebarBottomIconEl.className = `fa-solid ${sideBottom.icon} text-accent`;
+      if (sidebarBottomTitleEl) sidebarBottomTitleEl.innerText = sideBottom.title;
+      if (sidebarBottomContentEl) sidebarBottomContentEl.innerHTML = renderTemplate(sideBottom.content);
+
+      // Top Section: index (dayOfWeek + 2) % 6 (distinct offset)
+      const sidebarTopIndex = (dayOfWeek + 2) % 6;
+      const sideTop = getSidebar(sidebarTopIndex);
+      if (sidebarTopIconEl) sidebarTopIconEl.className = `fa-solid ${sideTop.icon} text-accent`;
+      if (sidebarTopTitleEl) sidebarTopTitleEl.innerText = sideTop.title;
+      if (sidebarTopContentEl) sidebarTopContentEl.innerHTML = renderTemplate(sideTop.content);
     }
   }
 
