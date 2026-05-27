@@ -1,0 +1,20 @@
+{
+  "name": "noticias-do-ceu-motion",
+  "version": "1.0.0",
+  "description": "Vídeo de motion graphics para o Notícias do Céu usando HyperFrames",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview": "npx hyperframes preview",
+    "render": "npx hyperframes render",
+    "render:high": "npx hyperframes render --quality high",
+    "lint": "npx hyperframes lint",
+    "init": "npx hyperframes init"
+  },
+  "dependencies": {
+    "hyperframes": "latest"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

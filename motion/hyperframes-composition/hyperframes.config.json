@@ -1,0 +1,22 @@
+{
+  "composition": {
+    "id": "noticias-do-ceu-intro",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "duration": 37
+  },
+  "output": {
+    "format": "mp4",
+    "quality": "high",
+    "codec": "h264",
+    "audioCodec": "aac"
+  },
+  "rendering": {
+    "headless": true,
+    "timeoutMs": 120000
+  },
+  "assets": {
+    "baseUrl": "./assets"
+  }
+}

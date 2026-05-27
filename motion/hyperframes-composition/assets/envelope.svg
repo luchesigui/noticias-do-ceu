@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" fill="none">
+  <!-- Envelope body -->
+  <rect x="10" y="30" width="180" height="100" rx="8" fill="#FFFDF8" stroke="#D6A75E" stroke-width="2"/>
+  <!-- Envelope flap -->
+  <polygon points="10,30 100,80 190,30" fill="#F7F1E8" stroke="#D6A75E" stroke-width="2"/>
+  <!-- Inner line -->
+  <line x1="10" y1="130" x2="190" y2="130" stroke="#D6A75E" stroke-width="1" opacity="0.3"/>
+</svg>

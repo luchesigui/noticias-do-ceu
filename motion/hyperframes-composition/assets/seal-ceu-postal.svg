@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Seal circle -->
+  <circle cx="50" cy="50" r="40" fill="#D6A75E"/>
+  <circle cx="50" cy="50" r="32" fill="none" stroke="#FFFDF8" stroke-width="2" stroke-dasharray="4 3"/>
+  <!-- Text -->
+  <text x="50" y="42" text-anchor="middle" fill="#FFFDF8" font-family="Menlo, monospace" font-size="11" font-weight="bold">CÉU</text>
+  <text x="50" y="58" text-anchor="middle" fill="#FFFDF8" font-family="Menlo, monospace" font-size="11" font-weight="bold">POSTAL</text>
+</svg>

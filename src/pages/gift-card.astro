@@ -1,0 +1,774 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Presenteie um Amigo | Notícias do Céu">
+  <Navbar showCreateMemorial={false} />
+
+  <!-- Hero Section -->
+  <section class="relative pt-32 pb-16 lg:pt-40 lg:pb-24 overflow-hidden bg-gradient-to-b from-paper/40 to-white">
+    <!-- Background decorations -->
+    <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -top-10 -left-10 opacity-30 pointer-events-none animate-cloud-slow-1"></i>
+    <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -bottom-10 -right-10 opacity-30 pointer-events-none animate-cloud-slow-2"></i>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <div class="text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent font-semibold text-sm mb-6 border border-accent/20">
+          <i class="fa-solid fa-gift"></i> Um gesto de amor que atravessa o céu
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-black leading-tight mb-6 text-ink">
+          Presenteie um Amigo<br/>
+          <span class="italic text-accent">com um Memorial Eterno</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-700 mb-8 max-w-2xl mx-auto leading-relaxed">
+          Sabe aquele amigo que perdeu um companheiro de quatro patas?
+          Ofereça a ele um espaço para honrar essa memória com carinho:
+          <strong>um jornal diário direto do céu</strong>, todos os dias,
+          para sempre.
+        </p>
+        <div class="flex items-center justify-center gap-3 text-sm text-gray-500 flex-wrap">
+          <span><i class="fa-solid fa-heart text-red-400"></i> parte da receita vai para ONGs de pets</span>
+          <span class="text-gray-300">|</span>
+          <span><i class="fa-solid fa-infinity text-accent"></i> Acesso vitalício</span>
+          <span class="text-gray-300">|</span>
+          <span><i class="fa-solid fa-envelope text-accent"></i> Entrega digital imediata</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Gift Card Section -->
+  <section class="pb-24 bg-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Step Indicator -->
+      <div class="flex items-center justify-center mb-10">
+        <div class="flex items-center gap-2">
+          <div id="step-indicator-1" class="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-serif font-bold transition-colors">1</div>
+          <div class="w-12 h-0.5 bg-gray-300" id="step-line-1"></div>
+          <div id="step-indicator-2" class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-serif font-bold transition-colors">2</div>
+          <div class="w-12 h-0.5 bg-gray-300" id="step-line-2"></div>
+          <div id="step-indicator-3" class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-serif font-bold transition-colors">3</div>
+        </div>
+      </div>
+
+      <div class="newspaper-container border-double-thick p-6 sm:p-10 relative">
+        <!-- STEP 1: Personalization Form -->
+        <div id="step-1" class="step-content active">
+          <div class="text-center mb-8">
+            <h2 class="text-2xl md:text-3xl font-serif font-bold text-ink mb-2">Personalize o Presente</h2>
+            <p class="text-gray-600 font-body">Preencha os dados para criar o presente perfeito</p>
+          </div>
+
+          <form id="gift-form" class="space-y-6">
+            <!-- Plan Selection -->
+            <div class="bg-paper/50 rounded-xl p-5 border border-ink/10">
+              <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-accent"></i> Escolha o plano do presente
+              </h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Vitalício (Default) -->
+                <label for="plan-lifetime" class="cursor-pointer relative bg-white border-2 border-accent rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none" id="plan-card-lifetime">
+                  <div class="absolute -top-3 right-4 bg-[#C5A059] text-white font-serif font-bold text-[8px] uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
+                    ★ Mais Escolhido ★
+                  </div>
+                  <div class="flex items-start gap-3">
+                    <input type="radio" id="plan-lifetime" name="plan-select" value="lifetime" checked class="mt-1 accent-accent" onchange="selectGiftPlan('lifetime')">
+                    <div>
+                      <span class="block font-serif font-bold text-base text-ink">Plano Vitalício</span>
+                      <span class="block text-xs text-gray-500 font-body mt-0.5">Acesso para sempre. Arquivo completo & PDF.</span>
+                    </div>
+                  </div>
+                  <div class="mt-4 pt-3 border-t border-ink/5 flex justify-between items-baseline">
+                    <span class="text-xs text-accent font-bold uppercase tracking-wider">Acesso Eterno</span>
+                    <span class="font-serif font-black text-xl text-accent">R$ 39,90</span>
+                  </div>
+                </label>
+
+                <!-- Anual -->
+                <label for="plan-annual" class="cursor-pointer relative bg-white/60 border-2 border-ink/10 rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none" id="plan-card-annual">
+                  <div class="flex items-start gap-3">
+                    <input type="radio" id="plan-annual" name="plan-select" value="annual" class="mt-1 accent-accent" onchange="selectGiftPlan('annual')">
+                    <div>
+                      <span class="block font-serif font-bold text-base text-ink">Plano Anual</span>
+                      <span class="block text-xs text-gray-500 font-body mt-0.5">1 ano de acesso. Edição diária atual.</span>
+                    </div>
+                  </div>
+                  <div class="mt-4 pt-3 border-t border-ink/5 flex justify-between items-baseline">
+                    <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">1 Ano</span>
+                    <span class="font-serif font-black text-xl text-ink">R$ 9,90</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Giver Info -->
+            <div class="bg-paper/50 rounded-xl p-5 border border-ink/10">
+              <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-user text-accent"></i> Seus dados (quem presenteia)
+              </h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-bold text-ink mb-1">Seu nome *</label>
+                  <input type="text" id="giver-name" required
+                    class="w-full px-4 py-3 rounded-lg border-2 border-ink/20 bg-white focus:border-accent focus:outline-none transition-colors font-body"
+                    placeholder="Maria Silva">
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ink mb-1">Seu e-mail *</label>
+                  <input type="email" id="giver-email" required
+                    class="w-full px-4 py-3 rounded-lg border-2 border-ink/20 bg-white focus:border-accent focus:outline-none transition-colors font-body"
+                    placeholder="maria@email.com">
+                </div>
+              </div>
+            </div>
+
+            <!-- Recipient Info -->
+            <div class="bg-paper/50 rounded-xl p-5 border border-ink/10">
+              <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-heart text-accent"></i> Dados do amigo (quem recebe)
+              </h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-bold text-ink mb-1">Nome do amigo *</label>
+                  <input type="text" id="recipient-name" required
+                    class="w-full px-4 py-3 rounded-lg border-2 border-ink/20 bg-white focus:border-accent focus:outline-none transition-colors font-body"
+                    placeholder="João Santos">
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-ink mb-1">E-mail do amigo</label>
+                  <input type="email" id="recipient-email"
+                    class="w-full px-4 py-3 rounded-lg border-2 border-ink/20 bg-white focus:border-accent focus:outline-none transition-colors font-body"
+                    placeholder="joao@email.com (opcional)">
+                  <p class="text-xs text-gray-500 mt-1">Se preenchido, enviamos direto para ele</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Personal Message -->
+            <div class="bg-paper/50 rounded-xl p-5 border border-ink/10">
+              <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-pen-fancy text-accent"></i> Mensagem de carinho
+              </h3>
+              <div>
+                <label class="block text-sm font-bold text-ink mb-1">Sua mensagem *</label>
+                <textarea id="gift-message" required rows="4" maxlength="300"
+                  class="w-full px-4 py-3 rounded-lg border-2 border-ink/20 bg-white focus:border-accent focus:outline-none transition-colors font-body resize-none"
+                  placeholder="Querido amigo, sei o quanto o [Nome do Pet] era especial. Espero que este espaço traga um pouco de acalento para o seu coração..."></textarea>
+                <p class="text-xs text-gray-500 mt-1 text-right"><span id="char-count">0</span>/300 caracteres</p>
+              </div>
+            </div>
+
+            <!-- Gift Card Preview -->
+            <div class="bg-paper/50 rounded-xl p-5 border border-ink/10">
+              <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-eye text-accent"></i> Pré-visualização do presente
+              </h3>
+              <div class="gift-card-preview rounded-xl p-6 max-w-sm mx-auto text-center relative bg-gradient-to-br from-paper to-vintage">
+                <div class="gift-card-stamp absolute top-3 right-3 w-16 h-16 rounded-sm flex items-center justify-center">
+                  <span class="text-[9px] font-serif uppercase text-accent/60 font-bold text-center leading-none">PRESENTE<br/>CELESTIAL</span>
+                </div>
+                <div class="mb-3">
+                  <i class="fa-solid fa-cloud text-accent text-3xl"></i>
+                </div>
+                <h4 id="gift-preview-title" class="font-serif font-bold text-lg text-ink mb-1">Plano Vitalício</h4>
+                <p class="text-xs text-gray-600 font-body mb-3">Notícias do Céu</p>
+                <div class="separator-line"></div>
+                <p class="text-sm font-body italic text-ink/70 mb-2" id="preview-message">
+                  "Sua mensagem aparecerá aqui..."
+                </p>
+                <p class="text-xs text-accent font-serif" id="preview-giver">— Seu nome</p>
+                <div class="mt-4 pt-3 border-t border-ink/10">
+                  <p id="gift-preview-features" class="text-[10px] text-gray-500 uppercase tracking-widest">Acesso vitalício • Jornal diário • 1 carta/mês</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end">
+              <button type="submit"
+                class="bg-accent text-white px-8 py-4 rounded-xl font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg flex items-center gap-2 cursor-pointer">
+                Continuar para Pagamento <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- STEP 2: Payment -->
+        <div id="step-2" class="step-content">
+          <div class="text-center mb-8">
+            <h2 class="text-2xl md:text-3xl font-serif font-bold text-ink mb-2">Pagamento</h2>
+            <p class="text-gray-600 font-body">Pagamento seguro via cartão de crédito (Simulação)</p>
+          </div>
+
+          <!-- Order Summary -->
+          <div class="bg-paper/50 rounded-xl p-5 border border-ink/10 mb-6">
+            <h3 class="font-serif font-bold text-lg mb-3">Resumo do Pedido</h3>
+            <div class="flex justify-between items-center py-2 border-b border-ink/10">
+              <span id="summary-product-name" class="font-body">Gift Card - Plano Vitalício</span>
+              <span id="summary-product-price" class="font-serif font-bold text-accent">R$ 39,90</span>
+            </div>
+            <div class="flex justify-between items-center py-2 text-sm text-gray-500">
+              <span class="font-body">Para: <span id="summary-recipient" class="text-ink font-bold"></span></span>
+              <span></span>
+            </div>
+            <div class="flex justify-between items-center py-2 text-sm text-gray-500">
+              <span class="font-body">De: <span id="summary-giver" class="text-ink font-bold"></span></span>
+              <span></span>
+            </div>
+          </div>
+
+          <!-- Stripe Payment Element -->
+          <div class="bg-paper/50 rounded-xl p-5 border border-ink/10 mb-6">
+            <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-credit-card text-accent"></i> Dados do Cartão
+            </h3>
+            <div id="payment-element" class="mb-4">
+              <!-- Stripe Payment Element mounts here -->
+              <div id="stripe-card-element" class="p-4 border-2 border-ink/20 rounded-lg bg-white"></div>
+            </div>
+            <div id="payment-message" class="hidden text-sm text-red-600 font-body mb-2"></div>
+            <p class="text-xs text-gray-500"><i class="fa-solid fa-lock"></i> Pagamento 100% seguro. Seus dados não são armazenados.</p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row justify-between gap-3">
+            <button type="button" onclick="goToStep(1)"
+              class="bg-transparent text-ink border-2 border-ink px-6 py-3 rounded-xl font-serif font-bold hover:bg-ink hover:text-paper transition-colors flex items-center justify-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-arrow-left"></i> Voltar
+            </button>
+            <button type="button" id="pay-button" onclick="handlePayment()"
+              class="bg-accent text-white px-8 py-4 rounded-xl font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg flex items-center justify-center gap-2 flex-1 sm:flex-none cursor-pointer">
+              <i class="fa-solid fa-lock"></i> Pagar R$ 39,90
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Confirmation -->
+        <div id="step-3" class="step-content">
+          <div class="text-center mb-8">
+            <div class="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <i class="fa-solid fa-check text-green-600 text-4xl"></i>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-serif font-bold text-ink mb-2">Presente Criado com Sucesso!</h2>
+            <p class="text-gray-600 font-body">O gift card foi criado e está pronto para ser entregue</p>
+          </div>
+
+          <!-- Gift Card Code -->
+          <div class="bg-paper/50 rounded-xl p-6 border-2 border-accent/40 mb-6 text-center">
+            <h3 class="font-serif font-bold text-lg mb-2">Código do Gift Card</h3>
+            <div class="bg-white rounded-lg p-4 border-2 border-dashed border-accent/40 inline-block mb-3">
+              <span id="gift-code" class="font-mono text-2xl font-bold text-ink tracking-widest">----</span>
+            </div>
+            <div class="flex flex-wrap justify-center gap-3 mt-4">
+              <button onclick="copyCode()" class="bg-ink text-paper px-4 py-2 rounded-lg font-serif font-bold text-sm hover:bg-accent transition-colors flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-copy"></i> Copiar Código
+              </button>
+              <button onclick="copyLink()" class="bg-white text-ink border-2 border-ink px-4 py-2 rounded-lg font-serif font-bold text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-link"></i> Copiar Link
+              </button>
+              <button onclick="shareWhatsApp()" class="bg-green-600 text-white px-4 py-2 rounded-lg font-serif font-bold text-sm hover:bg-green-700 transition-colors flex items-center gap-2 cursor-pointer">
+                <i class="fa-brands fa-whatsapp"></i> WhatsApp
+              </button>
+              <button onclick="window.print()" class="bg-white text-ink border-2 border-ink px-4 py-2 rounded-lg font-serif font-bold text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-print"></i> Imprimir
+              </button>
+            </div>
+          </div>
+
+          <!-- Printable Gift Card (hidden, shown on print) -->
+          <div id="printable-gift-card" class="hidden">
+            <div class="gift-card-preview rounded-xl p-8 max-w-md mx-auto text-center border-double-gold">
+              <div class="mb-4">
+                <i class="fa-solid fa-cloud text-accent text-4xl"></i>
+              </div>
+              <h4 class="font-serif font-bold text-2xl text-ink mb-1">Notícias do Céu</h4>
+              <p class="text-sm text-gray-600 font-body mb-4">Um presente de amor eterno</p>
+              <div class="separator-line"></div>
+              <p class="text-base font-body italic text-ink/70 mb-3" id="print-message"></p>
+              <p class="text-sm text-accent font-serif mb-4" id="print-giver"></p>
+              <div class="separator-line"></div>
+              <p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Código de Ativação</p>
+              <p class="font-mono text-xl font-bold text-ink tracking-widest mb-4" id="print-code"></p>
+              <p class="text-xs text-gray-500">Acesse: noticias-do-ceu.com/redeem</p>
+              <p class="text-[10px] text-gray-400 mt-3">Parte da receita é destinada a ONGs de proteção animal</p>
+            </div>
+          </div>
+
+          <!-- Email notification info -->
+          <div class="bg-accent/10 rounded-xl p-4 border border-accent/20 mb-6">
+            <div class="flex items-start gap-3">
+              <i class="fa-solid fa-envelope text-accent text-xl mt-0.5"></i>
+              <div>
+                <h4 class="font-serif font-bold text-ink" id="email-status-title">E-mail enviado!</h4>
+                <p class="text-sm text-gray-600 font-body" id="email-status-message">
+                  Uma mensagem carinhosa foi enviada para o seu amigo com o código e instruções para ativar o presente.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Donation notice -->
+          <div class="flex items-center justify-center gap-2 text-sm text-gray-500">
+            <i class="fa-solid fa-paw text-accent"></i>
+            <p>Com amor: <strong>Parte do valor deste presente</strong> vai para ONGs de proteção animal.</p>
+          </div>
+
+          <div class="flex justify-center mt-6">
+            <a href="/" class="bg-accent text-white px-8 py-3 rounded-xl font-serif font-bold hover:bg-ink transition-colors shadow-lg flex items-center gap-2">
+              <i class="fa-solid fa-home"></i> Voltar ao Início
+            </a>
+          </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="hidden absolute inset-0 bg-paper/80 backdrop-blur-sm rounded-xl flex flex-col items-center justify-center z-20">
+          <div class="spinner mb-4"></div>
+          <p class="font-serif font-bold text-ink" id="loading-text">Processando pagamento...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast" class="toast">
+    <span id="toast-message"></span>
+  </div>
+
+  <Footer />
+</Layout>
+
+<script>
+  // ============================================================
+  // Configuration
+  // ============================================================
+
+  const CONFIG = {
+    // Stripe publishable key (null for mock/dev mode)
+    STRIPE_KEY: null,
+
+    // Backend API base URL
+    API_BASE_URL: '/api',
+
+    // Gift card price in cents (R$ 39.90)
+    PRICE_CENTS: 3990,
+    CURRENCY: 'brl',
+
+    // Product description
+    PRODUCT_NAME: 'Gift Card - Plano Vitalício',
+    PRODUCT_DESCRIPTION: 'Acesso vitalício ao memorial digital Notícias do Céu',
+  };
+
+  // ============================================================
+  // State
+  // ============================================================
+
+  let currentStep = 1;
+  let stripe = null;
+  let cardElement = null;
+  let giftCardData = {
+    giverName: '',
+    giverEmail: '',
+    recipientName: '',
+    recipientEmail: '',
+    message: '',
+    code: '',
+    plan: 'lifetime',
+    design: 'nuvens' // Default design theme
+  };
+
+  // ============================================================
+  // Initialization
+  // ============================================================
+
+  function initPage() {
+    initFormListeners();
+    initCharCount();
+
+    // Parse URL query parameter for plan type
+    const params = new URLSearchParams(window.location.search);
+    const planParam = params.get('plan');
+    if (planParam === 'annual' || planParam === 'lifetime') {
+      selectGiftPlan(planParam);
+    } else {
+      selectGiftPlan('lifetime'); // Default
+    }
+  }
+
+  function selectGiftPlan(plan) {
+    giftCardData.plan = plan;
+
+    const cardLifetime = document.getElementById('plan-card-lifetime');
+    const cardAnnual = document.getElementById('plan-card-annual');
+    const radioLifetime = document.getElementById('plan-lifetime') as HTMLInputElement | null;
+    const radioAnnual = document.getElementById('plan-annual') as HTMLInputElement | null;
+
+    const previewTitle = document.getElementById('gift-preview-title');
+    const previewFeatures = document.getElementById('gift-preview-features');
+
+    const summaryProductName = document.getElementById('summary-product-name');
+    const summaryProductPrice = document.getElementById('summary-product-price');
+    const payButton = document.getElementById('pay-button');
+
+    if (plan === 'lifetime') {
+      CONFIG.PRICE_CENTS = 3990;
+      CONFIG.PRODUCT_NAME = 'Gift Card - Plano Vitalício';
+      CONFIG.PRODUCT_DESCRIPTION = 'Acesso vitalício ao memorial digital Notícias do Céu';
+
+      if (radioLifetime) radioLifetime.checked = true;
+
+      if (cardLifetime) {
+        cardLifetime.className = "cursor-pointer relative bg-white border-2 border-accent rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none";
+      }
+      if (cardAnnual) {
+        cardAnnual.className = "cursor-pointer relative bg-white/60 border-2 border-ink/10 rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none";
+      }
+
+      if (previewTitle) previewTitle.textContent = 'Plano Vitalício';
+      if (previewFeatures) previewFeatures.textContent = 'Acesso vitalício • Jornal diário • 1 carta/mês';
+      if (summaryProductName) summaryProductName.textContent = 'Gift Card - Plano Vitalício';
+      if (summaryProductPrice) summaryProductPrice.textContent = 'R$ 39,90';
+      if (payButton) payButton.innerHTML = `<i class="fa-solid fa-lock"></i> Pagar R$ 39,90`;
+    } else {
+      CONFIG.PRICE_CENTS = 990;
+      CONFIG.PRODUCT_NAME = 'Gift Card - Plano Anual';
+      CONFIG.PRODUCT_DESCRIPTION = '1 ano de acesso ao memorial digital Notícias do Céu';
+
+      if (radioAnnual) radioAnnual.checked = true;
+
+      if (cardLifetime) {
+        cardLifetime.className = "cursor-pointer relative bg-white/60 border-2 border-ink/10 rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none";
+      }
+      if (cardAnnual) {
+        cardAnnual.className = "cursor-pointer relative bg-white border-2 border-accent rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none";
+      }
+
+      if (previewTitle) previewTitle.textContent = 'Plano Anual';
+      if (previewFeatures) previewFeatures.textContent = 'Acesso por 1 ano • Jornal diário • compartilhamento';
+      if (summaryProductName) summaryProductName.textContent = 'Gift Card - Plano Anual';
+      if (summaryProductPrice) summaryProductPrice.textContent = 'R$ 9,90';
+      if (payButton) payButton.innerHTML = `<i class="fa-solid fa-lock"></i> Pagar R$ 9,90`;
+    }
+  }
+
+  function initFormListeners() {
+    const msgField = document.getElementById('gift-message') as HTMLTextAreaElement | null;
+    const giverName = document.getElementById('giver-name') as HTMLInputElement | null;
+
+    if (msgField) msgField.addEventListener('input', updatePreview);
+    if (giverName) giverName.addEventListener('input', updatePreview);
+
+    // Form submission
+    const form = document.getElementById('gift-form');
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleFormSubmit();
+      });
+    }
+  }
+
+  function initCharCount() {
+    const msgField = document.getElementById('gift-message') as HTMLTextAreaElement | null;
+    const charCount = document.getElementById('char-count');
+    if (msgField && charCount) {
+      msgField.addEventListener('input', () => {
+        charCount.textContent = String(msgField.value.length);
+      });
+    }
+  }
+
+  // ============================================================
+  // Step Navigation
+  // ============================================================
+
+  function goToStep(step) {
+    document.querySelectorAll('.step-content').forEach(el => {
+      el.classList.remove('active');
+    });
+
+    const stepEl = document.getElementById(`step-${step}`);
+    if (stepEl) stepEl.classList.add('active');
+
+    for (let i = 1; i <= 3; i++) {
+      const indicator = document.getElementById(`step-indicator-${i}`);
+      const line = document.getElementById(`step-line-${i}`);
+
+      if (indicator) {
+        if (i <= step) {
+          indicator.classList.remove('bg-gray-300', 'text-gray-600');
+          indicator.classList.add('bg-accent', 'text-white');
+        } else {
+          indicator.classList.add('bg-gray-300', 'text-gray-600');
+          indicator.classList.remove('bg-accent', 'text-white');
+        }
+      }
+
+      if (line) {
+        if (i < step) {
+          line.classList.remove('bg-gray-300');
+          line.classList.add('bg-accent');
+        } else {
+          line.classList.add('bg-gray-300');
+          line.classList.remove('bg-accent');
+        }
+      }
+    }
+
+    currentStep = step;
+
+    // Scroll to top of form
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  }
+
+  // ============================================================
+  // Form Handling
+  // ============================================================
+
+  function updatePreview() {
+    const message = (document.getElementById('gift-message') as HTMLTextAreaElement | null)?.value || '';
+    const giver = (document.getElementById('giver-name') as HTMLInputElement | null)?.value || '';
+
+    const previewMsg = document.getElementById('preview-message');
+    const previewGiver = document.getElementById('preview-giver');
+
+    if (previewMsg) {
+      previewMsg.textContent = message ? `"${message}"` : '"Sua mensagem aparecerá aqui..."';
+    }
+    if (previewGiver) {
+      previewGiver.textContent = giver ? `— ${giver}` : '— Seu nome';
+    }
+  }
+
+  function handleFormSubmit() {
+    const giverName = (document.getElementById('giver-name') as HTMLInputElement | null)?.value.trim() || '';
+    const giverEmail = (document.getElementById('giver-email') as HTMLInputElement | null)?.value.trim() || '';
+    const recipientName = (document.getElementById('recipient-name') as HTMLInputElement | null)?.value.trim() || '';
+    const recipientEmail = (document.getElementById('recipient-email') as HTMLInputElement | null)?.value.trim() || '';
+    const message = (document.getElementById('gift-message') as HTMLTextAreaElement | null)?.value.trim() || '';
+
+    if (!giverName || !giverEmail || !recipientName || !message) {
+      showToast('Por favor, preencha todos os campos obrigatórios.', 'error');
+      return;
+    }
+
+    if (!isValidEmail(giverEmail)) {
+      showToast('Por favor, insira um e-mail válido para você.', 'error');
+      return;
+    }
+
+    if (recipientEmail && !isValidEmail(recipientEmail)) {
+      showToast('Por favor, insira um e-mail válido para o amigo.', 'error');
+      return;
+    }
+
+    // Save data
+    giftCardData = {
+      ...giftCardData,
+      giverName,
+      giverEmail,
+      recipientName,
+      recipientEmail,
+      message,
+      code: '',
+    };
+
+    // Update summary
+    const sumRec = document.getElementById('summary-recipient');
+    const sumGiv = document.getElementById('summary-giver');
+    if (sumRec) sumRec.textContent = recipientName;
+    if (sumGiv) sumGiv.textContent = giverName;
+
+    goToStep(2);
+  }
+
+  // ============================================================
+  // Payment Integration
+  // ============================================================
+
+  async function handlePayment() {
+    showLoading('Processando pagamento...');
+
+    try {
+      // Connect to Astro endpoint to create the gift card
+      await handleAstroAPIPayment();
+    } catch (error) {
+      hideLoading();
+      console.error('Payment error:', error);
+      showToast(error.message || 'Erro ao processar pagamento. Tente novamente.', 'error');
+    }
+  }
+
+  async function handleAstroAPIPayment() {
+    // Simulate payment processing time
+    await delay(1500);
+
+    // Call our unified Astro API to create a gift card
+    const response = await fetch(`${CONFIG.API_BASE_URL}/gift-cards`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sender_name: giftCardData.giverName,
+        recipient_email: giftCardData.recipientEmail || 'no-email@noticias-do-ceu.com',
+        recipient_name: giftCardData.recipientName,
+        plan: giftCardData.plan,
+        message: giftCardData.message,
+        design: giftCardData.design
+      }),
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.error || 'Erro ao criar pedido no servidor.');
+    }
+
+    const card = await response.json();
+    giftCardData.code = card.code;
+
+    // Simulate sending email notifications (mock console log)
+    if (giftCardData.recipientEmail) {
+      console.log(`[MOCK] Email sent to ${giftCardData.recipientEmail}`);
+    }
+    console.log(`[MOCK] Confirmation email sent to ${giftCardData.giverEmail}`);
+
+    await onPaymentSuccess();
+  }
+
+  async function onPaymentSuccess() {
+    hideLoading();
+
+    // Update confirmation page
+    const codeEl = document.getElementById('gift-code');
+    const prCode = document.getElementById('print-code');
+    const prMsg = document.getElementById('print-message');
+    const prGiv = document.getElementById('print-giver');
+
+    if (codeEl) codeEl.textContent = giftCardData.code;
+    if (prCode) prCode.textContent = giftCardData.code;
+    if (prMsg) prMsg.textContent = `"${giftCardData.message}"`;
+    if (prGiv) prGiv.textContent = `— ${giftCardData.giverName}`;
+
+    // Update email status text
+    const emailTitle = document.getElementById('email-status-title');
+    const emailMessage = document.getElementById('email-status-message');
+
+    if (emailTitle && emailMessage) {
+      if (giftCardData.recipientEmail) {
+        emailTitle.textContent = 'E-mail enviado para seu amigo!';
+        emailMessage.textContent = `Uma mensagem carinhosa foi enviada para ${giftCardData.recipientEmail} com o código e instruções para ativar o presente.`;
+      } else {
+        emailTitle.textContent = 'Presente pronto!';
+        emailMessage.textContent = 'Você recebeu o código no seu e-mail. Compartilhe com seu amigo manualmente usando os botões abaixo.';
+      }
+    }
+
+    goToStep(3);
+    saveGiftCard();
+  }
+
+  // ============================================================
+  // Share / Copy / Print
+  // ============================================================
+
+  function copyCode() {
+    const code = giftCardData.code;
+    copyToClipboard(code);
+    showToast(`Código ${code} copiado!`, 'success');
+  }
+
+  function copyLink() {
+    const link = `${window.location.origin}/redeem?code=${giftCardData.code}`;
+    copyToClipboard(link);
+    showToast('Link copiado! Cole onde quiser compartilhar.', 'success');
+  }
+
+  function shareWhatsApp() {
+    const text = encodeURIComponent(
+      `Olá ${giftCardData.recipientName}! 💌\n\n` +
+      `${giftCardData.giverName} preparou um presente especial para você:\n` +
+      `um memorial digital para honrar a memória do seu companheiro de quatro patas.\n\n` +
+      `"${giftCardData.message}"\n\n` +
+      `🎁 Código do presente: ${giftCardData.code}\n` +
+      `👉 Resgate em: ${window.location.origin}/redeem?code=${giftCardData.code}\n\n` +
+      `Com carinho, Notícias do Céu ☁️`
+    );
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  }
+
+  function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+  }
+
+  // ============================================================
+  // Helpers
+  // ============================================================
+
+  function showLoading(text) {
+    const overlay = document.getElementById('loading-overlay');
+    const loadingText = document.getElementById('loading-text');
+    if (loadingText && text) loadingText.textContent = text;
+    if (overlay) overlay.classList.remove('hidden');
+  }
+
+  function hideLoading() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) overlay.classList.add('hidden');
+  }
+
+  function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+
+    if (!toast || !toastMessage) return;
+
+    toastMessage.textContent = message;
+    toast.className = `toast ${type} show`;
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  function saveGiftCard() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('ndc_gift_cards') || '[]');
+      saved.push({
+        ...giftCardData,
+        createdAt: new Date().toISOString(),
+      });
+      localStorage.setItem('ndc_gift_cards', JSON.stringify(saved));
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Expose handlers for onclick
+  window.selectGiftPlan = selectGiftPlan;
+  window.goToStep = goToStep;
+  window.handlePayment = handlePayment;
+  window.copyCode = copyCode;
+  window.copyLink = copyLink;
+  window.shareWhatsApp = shareWhatsApp;
+
+  document.addEventListener('DOMContentLoaded', initPage);
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    initPage();
+  }
+</script>

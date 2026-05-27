@@ -1,0 +1,146 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Resgate Concluído | Notícias do Céu">
+  <Navbar showCreateMemorial={false} />
+
+  <!-- Main Container -->
+  <main class="flex-grow pt-32 pb-20 px-4 flex items-center justify-center bg-gradient-to-b from-paper/30 to-white relative overflow-hidden min-h-[70vh]">
+    <!-- Background decorations -->
+    <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -top-10 -left-10 opacity-30 pointer-events-none animate-cloud-slow-1"></i>
+    <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -bottom-10 -right-10 opacity-30 pointer-events-none animate-cloud-slow-2"></i>
+
+    <div class="w-full max-w-2xl relative z-10">
+      
+      <div class="newspaper-container border-double-thick p-8 fade-in text-ink text-center">
+        <!-- Success icon -->
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-green-50 text-green-600 rounded-full border-2 border-green-200 mb-6 shadow-md">
+          <i class="fa-solid fa-check text-4xl"></i>
+        </div>
+
+        <!-- Plan Badge -->
+        <div class="mb-4">
+          <span id="plan-type-badge" class="inline-block bg-accent/10 text-accent font-serif font-semibold text-sm px-4 py-1.5 rounded-full border border-accent/25">
+            Plano Ativado
+          </span>
+        </div>
+
+        <!-- Info Notice for Idempotent loads -->
+        <div id="already-redeemed-notice" class="hidden mb-6 bg-amber-50 text-amber-800 border border-amber-200 rounded-xl px-4 py-3 text-sm text-left">
+          <div class="flex items-start gap-2">
+            <i class="fa-solid fa-circle-info text-amber-600 mt-0.5"></i>
+            <p>Você já havia resgatado este cartão anteriormente. O seu acesso permanece ativo e garantido.</p>
+          </div>
+        </div>
+
+        <h2 id="recipient-greeting" class="font-serif text-3xl font-black mb-3">Tudo pronto!</h2>
+        <p id="redemption-summary" class="text-gray-700 leading-relaxed font-body max-w-md mx-auto mb-6">
+          Seu cartão de presente foi resgatado com sucesso.
+        </p>
+
+        <div class="separator-line"></div>
+
+        <p class="text-sm text-gray-600 max-w-md mx-auto mb-8 leading-relaxed">
+          Sabemos que a saudade de um grande amigo de quatro patas é infinita. A partir de agora, você terá uma edição de jornal diária repleta de amor e boas notícias do paraíso dos pets.
+        </p>
+
+        <!-- Primary CTA -->
+        <div class="space-y-4">
+          <a href="/#demonstracao" class="block w-full bg-ink text-paper py-4 rounded-xl font-serif font-bold text-lg hover:bg-accent transition-colors shadow-lg flex justify-center items-center gap-2">
+            <span>Iniciar Homenagem</span> <i class="fa-solid fa-paw"></i>
+          </a>
+        </div>
+
+        <!-- Lifetime Bonus Info (only visible if Lifetime Plan was redeemed) -->
+        <div id="lifetime-bonus-info" class="hidden mt-8 bg-amber-50/50 p-6 rounded-xl border border-amber-200/60 text-left">
+          <h4 class="font-serif font-bold text-amber-900 flex items-center gap-2 mb-2">
+            <i class="fa-solid fa-award text-amber-700"></i> Benefícios Vitalícios Inclusos:
+          </h4>
+          <ul class="text-xs text-amber-800 space-y-2 list-disc list-inside">
+            <li>Acesso permanente à página sem renovações.</li>
+            <li>Navegação pelo arquivo histórico de todas as edições diárias.</li>
+            <li>Possibilidade de exportar todas as histórias geradas como um lindo livro digital em PDF.</li>
+            <li>1 Carta para o Céu grátis inclusa por mês.</li>
+          </ul>
+        </div>
+
+        <!-- Optional Upgrade Section (only visible if Annual Plan was redeemed) -->
+        <div id="upgrade-section" class="hidden mt-8 bg-amber-50/50 p-6 rounded-xl border border-amber-200/60 text-left">
+          <h4 class="font-serif font-bold text-amber-900 flex items-center gap-2 mb-2">
+            <i class="fa-solid fa-circle-chevron-up text-amber-700"></i> Deseja migrar para o Vitalício?
+          </h4>
+          <p class="text-xs text-amber-800 leading-relaxed mb-4">
+            O plano anual dá acesso à edição atual por um ano. Com o upgrade único para o plano Vitalício, você garante o arquivo perpétuo do jornal, a exportação de PDF completa, além de cartas mensais para o céu, sem cobranças futuras.
+          </p>
+          <a href="/#planos" class="inline-flex items-center gap-2 bg-[#C5A059] text-white text-xs font-serif font-bold px-4 py-2.5 rounded-lg hover:bg-ink transition-colors shadow-md">
+            <span>Ver Benefícios do Vitalício</span> <i class="fa-solid fa-star"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  function initSuccessPage() {
+    const params = new URLSearchParams(window.location.search);
+    const sender = params.get('sender') || '';
+    const recipient = params.get('recipient') || '';
+    const plan = params.get('plan') || '';
+    const pet = params.get('pet') || '';
+    const already = params.get('already') === 'true';
+
+    // Set greeting
+    const greetingEl = document.getElementById('recipient-greeting');
+    if (greetingEl && recipient) {
+      greetingEl.innerText = `Olá, ${recipient}`;
+    }
+
+    // Set custom detail sentence
+    let summaryText = '';
+    if (sender) {
+      summaryText += `O cartão de presente enviado por <strong>${sender}</strong> foi resgatado com sucesso. `;
+    } else {
+      summaryText += `Seu cartão de presente foi resgatado com sucesso. `;
+    }
+
+    if (pet) {
+      summaryText += `A homenagem para o querido <strong>${pet}</strong> agora está ativa!`;
+    } else {
+      summaryText += `O seu novo memorial já está pronto para ser iniciado.`;
+    }
+    const summaryEl = document.getElementById('redemption-summary');
+    if (summaryEl) summaryEl.innerHTML = summaryText;
+
+    // Handle plan details and upgrade block
+    const badgeEl = document.getElementById('plan-type-badge');
+    const upgradeSec = document.getElementById('upgrade-section');
+    const bonusInfo = document.getElementById('lifetime-bonus-info');
+
+    if (plan === 'annual') {
+      if (badgeEl) badgeEl.innerText = 'Plano Anual Ativado';
+      if (upgradeSec) upgradeSec.classList.remove('hidden');
+      if (bonusInfo) bonusInfo.classList.add('hidden');
+    } else {
+      if (badgeEl) badgeEl.innerText = 'Plano Vitalício Ativado';
+      if (upgradeSec) upgradeSec.classList.add('hidden');
+      if (bonusInfo) bonusInfo.classList.remove('hidden');
+    }
+
+    // Set already redeemed message
+    const noticeEl = document.getElementById('already-redeemed-notice');
+    if (noticeEl && already) {
+      noticeEl.classList.remove('hidden');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initSuccessPage);
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    initSuccessPage();
+  }
+</script>
