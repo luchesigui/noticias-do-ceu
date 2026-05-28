@@ -34,6 +34,13 @@ export async function POST({ params, request }) {
       });
     }
 
+    if (result.error === 'pending_payment') {
+      return new Response(JSON.stringify({ error: 'O pagamento deste cartão de presente ainda não foi confirmado.' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     if (result.error === 'expired') {
       return new Response(JSON.stringify({ error: 'Gift card has expired' }), {
         status: 410,

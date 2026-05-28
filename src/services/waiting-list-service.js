@@ -1,18 +1,18 @@
+import { EmailService } from './email-service.js';
+
 export class WaitingListService {
   static async addLead(email, plan) {
-    const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
-    const ownerEmail = import.meta.env.OWNER_EMAIL || process.env.OWNER_EMAIL;
+    const ownerEmail =
+      (typeof process !== 'undefined' ? process.env.OWNER_EMAIL : null) ||
+      (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.OWNER_EMAIL : null);
 
-    if (!apiKey) {
-      throw new Error("RESEND_API_KEY is not configured.");
-    }
     if (!ownerEmail) {
       throw new Error("OWNER_EMAIL is not configured.");
     }
 
     const timestamp = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
 
-    const htmlContent = `
+    const html = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
         <h2 style="color: #8B5A2B; font-family: serif; border-bottom: 2px solid #8B5A2B; padding-bottom: 10px; text-transform: uppercase;">
           ☁️ Novo Lead - Notícias do Céu
@@ -40,25 +40,10 @@ export class WaitingListService {
       </div>
     `;
 
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        from: "onboarding@resend.dev",
-        to: ownerEmail,
-        subject: `☁️ Lead Lista de Espera: ${email} (${plan})`,
-        html: htmlContent
-      })
+    return EmailService.send({
+      to: ownerEmail,
+      subject: `☁️ Lead Lista de Espera: ${email} (${plan})`,
+      html,
     });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || `Failed to send email to ${ownerEmail}. Status: ${response.status}`);
-    }
-
-    return data;
   }
 }

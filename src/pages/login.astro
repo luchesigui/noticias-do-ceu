@@ -111,7 +111,11 @@ export const prerender = false;
       }
 
       // Check user status to redirect appropriately
-      if (data.user && data.user.status === 'pending_payment') {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      if (code) {
+        window.location.href = `/redeem?code=${code}`;
+      } else if (data.user && data.user.status === 'pending_payment') {
         window.location.href = '/checkout';
       } else {
         window.location.href = '/dashboard';

@@ -1,5 +1,7 @@
 import crypto from 'crypto';
-import { giftCards as giftCardsApi } from '../lib/data.js';
+import { db } from '../db/index.js';
+import { giftCards, users } from '../db/schema.js';
+import { eq } from 'drizzle-orm';
 
 function generateCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -15,21 +17,40 @@ function generateCode() {
   return code;
 }
 
+function mapToExternal(dbCard) {
+  if (!dbCard) return null;
+  return {
+    code: dbCard.code,
+    sender_name: dbCard.senderName,
+    sender_email: dbCard.senderEmail,
+    recipient_name: dbCard.recipientName,
+    recipient_email: dbCard.recipientEmail,
+    pet_name: dbCard.petName,
+    plan: dbCard.plan,
+    message: dbCard.message,
+    design: dbCard.design,
+    status: dbCard.status,
+    created_at: dbCard.createdAt,
+    expires_at: dbCard.expiresAt,
+    redeemed_at: dbCard.redeemedAt,
+    redeemed_by: dbCard.redeemedBy
+  };
+}
+
 export class GiftCardService {
   static async createGiftCard(data) {
-    const { sender_name, recipient_email, recipient_name, pet_name, plan, message, design } = data;
+    const { sender_name, sender_email, recipient_email, recipient_name, pet_name, plan, message, design, status = 'pending_payment', buyer_id = null } = data;
 
     let code;
     let attempts = 0;
     let success = false;
 
-    // Find unique code
     while (!success && attempts < 100) {
       code = generateCode();
       attempts++;
 
-      const { data: exists, error } = await giftCardsApi.findByCode(code);
-      if (!exists && !error) {
+      const existing = await db.select().from(giftCards).where(eq(giftCards.code, code)).limit(1);
+      if (existing.length === 0) {
         success = true;
       }
     }
@@ -46,75 +67,120 @@ export class GiftCardService {
       expires_at = expiryDate.toISOString();
     }
 
-    const card = {
+    await db.insert(giftCards).values({
       code,
-      sender_name,
-      recipient_email,
-      recipient_name,
-      pet_name: pet_name || null,
+      senderName: sender_name,
+      senderEmail: sender_email || 'no-email@noticias-do-ceu.com',
+      recipientName: recipient_name,
+      recipientEmail: recipient_email || null,
+      petName: pet_name || null,
       plan,
       message: message || null,
       design,
-      created_at,
-      expires_at,
-      redeemed_at: null,
-      redeemed_by: null
-    };
+      status,
+      createdAt: created_at,
+      expiresAt: expires_at,
+      buyerId: buyer_id || null,
+    });
 
-    const { data: createdCard, error } = await giftCardsApi.create(card);
-    if (error) {
-      throw error;
+    const [newCard] = await db.select().from(giftCards).where(eq(giftCards.code, code)).limit(1);
+    return mapToExternal(newCard);
+  }
+
+  static async confirmPayment(code) {
+    const cleanCode = code.trim().toUpperCase();
+    const existing = await db.select().from(giftCards).where(eq(giftCards.code, cleanCode)).limit(1);
+    if (existing.length === 0) {
+      throw new Error('Gift card not found');
     }
 
-    return createdCard;
+    await db.update(giftCards)
+      .set({ status: 'active' })
+      .where(eq(giftCards.code, cleanCode));
+
+    const [updatedCard] = await db.select().from(giftCards).where(eq(giftCards.code, cleanCode)).limit(1);
+    return mapToExternal(updatedCard);
   }
 
   static async getGiftCardByCode(code) {
-    const { data: card, error } = await giftCardsApi.findByCode(code);
-    if (error) {
-      throw error;
-    }
-    return card;
+    if (!code) return null;
+    const cleanCode = code.trim().toUpperCase();
+    const results = await db.select().from(giftCards).where(eq(giftCards.code, cleanCode)).limit(1);
+    if (results.length === 0) return null;
+    return mapToExternal(results[0]);
   }
 
   static async redeemGiftCard(code, userId) {
-    const { data: card, error: findError } = await giftCardsApi.findByCode(code);
-    if (findError || !card) {
+    const cleanCode = code.trim().toUpperCase();
+    const matched = await db.select().from(giftCards).where(eq(giftCards.code, cleanCode)).limit(1);
+    if (matched.length === 0) {
       return { error: 'not_found' };
     }
 
-    // Check expiration
-    if (card.expires_at) {
-      const expiresTime = new Date(card.expires_at).getTime();
+    const card = matched[0];
+
+    if (card.status !== 'active' && card.status !== 'redeemed') {
+      return { error: 'pending_payment' };
+    }
+
+    if (card.expiresAt) {
+      const expiresTime = new Date(card.expiresAt).getTime();
       const now = Date.now();
       if (now > expiresTime) {
         return { error: 'expired' };
       }
     }
 
-    // Check redemption status
-    if (card.redeemed_by) {
-      if (card.redeemed_by === userId) {
-        // Idempotency: same user gets success
-        return { success: true, redeemed_at: card.redeemed_at, alreadyRedeemed: true };
+    if (card.redeemedBy) {
+      if (card.redeemedBy === userId) {
+        return { success: true, redeemed_at: card.redeemedAt, alreadyRedeemed: true };
       } else {
         return { error: 'already_redeemed' };
       }
     }
 
-    const { data: redeemedCard, error: redeemError } = await giftCardsApi.redeem(code, userId);
-    if (redeemError || !redeemedCard) {
-      return { error: 'redeem_failed' };
-    }
+    const redeemed_at = new Date().toISOString();
 
-    return { success: true, redeemed_at: redeemedCard.redeemed_at, alreadyRedeemed: false };
+    await db.update(giftCards)
+      .set({
+        status: 'redeemed',
+        redeemedBy: userId,
+        redeemedAt: redeemed_at
+      })
+      .where(eq(giftCards.code, cleanCode));
+
+    await db.update(users)
+      .set({
+        plan: card.plan,
+        status: 'active',
+        pendingRenewal: card.plan === 'annual',
+      })
+      .where(eq(users.id, userId));
+
+    return { success: true, redeemed_at, alreadyRedeemed: false };
   }
 
   static async listGiftCards(page = 1, limit = 10) {
-    const { data, error } = await giftCardsApi.list({ page, limit });
-    if (error) {
-      throw error;
-    }
-    return data;
+    const offset = (page - 1) * limit;
+
+    const allCards = await db.select().from(giftCards);
+    const total = allCards.length;
+
+    const results = await db.select()
+      .from(giftCards)
+      .limit(limit)
+      .offset(offset);
+
+    const sorted = results.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    return {
+      cards: sorted.map(mapToExternal),
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
+      }
+    };
   }
 }

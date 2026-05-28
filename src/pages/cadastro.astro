@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { GiftCardService } from '../services/gift-card-service.js';
+import RegisterForm from '../components/RegisterForm.astro';
 
 export const prerender = false;
 
@@ -13,7 +14,7 @@ let giftError = null;
 
 if (code) {
   const cleanCode = code.trim().toUpperCase();
-  giftCard = GiftCardService.getGiftCardByCode(cleanCode);
+  giftCard = await GiftCardService.getGiftCardByCode(cleanCode);
   if (!giftCard) {
     giftError = "O código de presente informado é inválido ou não existe.";
   } else if (giftCard.redeemed_by) {
@@ -70,124 +71,12 @@ if (code) {
           <p class="text-xs text-gray-600 mt-1">Guarde a história do seu melhor amigo de quatro patas.</p>
         </div>
 
-        <form id="register-form" class="space-y-6" onsubmit="handleRegister(event)">
-          <!-- Hidden inputs to submit code -->
-          <input type="hidden" name="code" value={giftCard && !giftError ? code : ''} />
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label for="name" class="block text-xs font-bold uppercase tracking-wider mb-1.5">Nome Completo</label>
-              <input 
-                type="text" 
-                id="name" 
-                name="name" 
-                required 
-                value={giftCard && !giftError ? giftCard.recipient_name : ''}
-                placeholder="Seu nome"
-                class="w-full px-4 py-3 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl font-sans"
-              />
-            </div>
-
-            <div>
-              <label for="email" class="block text-xs font-bold uppercase tracking-wider mb-1.5">E-mail</label>
-              <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                required 
-                value={giftCard && !giftError ? giftCard.recipient_email : ''}
-                placeholder="seuemail@exemplo.com"
-                class="w-full px-4 py-3 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl font-sans"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label for="password" class="block text-xs font-bold uppercase tracking-wider mb-1.5">Senha (mínimo 6 caracteres)</label>
-            <input 
-              type="password" 
-              id="password" 
-              name="password" 
-              required 
-              placeholder="••••••••"
-              class="w-full px-4 py-3 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl font-sans"
-            />
-          </div>
-
-          <!-- Plan selector, only visible if registering normally (without valid gift card) -->
-          {(!giftCard || giftError) ? (
-            <div class="space-y-3">
-              <label class="block text-xs font-bold uppercase tracking-wider">Escolha o seu Plano</label>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                <!-- Annual Plan Card -->
-                <label class="relative flex flex-col p-5 border-2 border-ink rounded-2xl bg-white cursor-pointer hover:bg-paper/10 transition-colors select-none">
-                  <div class="flex justify-between items-start mb-2">
-                    <span class="font-serif font-bold text-lg text-ink">Plano Anual</span>
-                    <input 
-                      type="radio" 
-                      name="plan" 
-                      value="annual" 
-                      required 
-                      checked
-                      class="h-4 w-4 text-accent border-gray-300 focus:ring-accent"
-                    />
-                  </div>
-                  <span class="text-2xl font-serif font-black text-accent mb-2">R$ 9,90<span class="text-xs font-sans text-gray-500 font-normal"> / ano</span></span>
-                  <ul class="text-[11px] text-gray-600 space-y-1 mt-1 font-sans">
-                    <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Edição diária do jornal por 1 ano</li>
-                    <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Até 5 fotos no memorial</li>
-                    <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Personalização com detalhes do pet</li>
-                  </ul>
-                </label>
-
-                <!-- Lifetime Plan Card -->
-                <label class="relative flex flex-col p-5 border-2 border-ink rounded-2xl bg-white cursor-pointer hover:bg-paper/10 transition-colors select-none">
-                  <div class="absolute -top-3 right-4 bg-accent text-white text-[9px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm">
-                    Recomendado
-                  </div>
-                  <div class="flex justify-between items-start mb-2">
-                    <span class="font-serif font-bold text-lg text-ink">Plano Vitalício</span>
-                    <input 
-                      type="radio" 
-                      name="plan" 
-                      value="lifetime" 
-                      class="h-4 w-4 text-accent border-gray-300 focus:ring-accent"
-                    />
-                  </div>
-                  <span class="text-2xl font-serif font-black text-accent mb-2">R$ 39,90<span class="text-xs font-sans text-gray-500 font-normal"> pagamento único</span></span>
-                  <ul class="text-[11px] text-gray-600 space-y-1 mt-1 font-sans">
-                    <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Memorial ativo para sempre</li>
-                    <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Acesso permanente ao arquivo</li>
-                    <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Exportar histórias em PDF</li>
-                    <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Cartas para o Céu inclusas</li>
-                  </ul>
-                </label>
-
-              </div>
-            </div>
-          ) : (
-            // Pre-fixed plan if gift card is applied
-            <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
-              <span class="block text-[10px] font-bold uppercase text-gray-500 tracking-wider">Plano Presenteado Ativo</span>
-              <span class="font-serif font-bold text-lg text-accent uppercase">
-                Plano {giftCard.plan === 'lifetime' ? 'Vitalício' : 'Anual'} - R$ 0,00
-              </span>
-              <input type="hidden" name="plan" value={giftCard.plan} />
-            </div>
-          )}
-
-          <!-- Error Alert -->
-          <div id="error-message" class="hidden text-red-700 bg-red-50 border border-red-200 px-4 py-3 rounded-xl text-sm font-medium text-center"></div>
-
-          <button 
-            type="submit" 
-            id="submit-btn" 
-            class="w-full bg-accent text-white py-4 rounded-xl font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg flex justify-center items-center gap-2 cursor-pointer"
-          >
-            <span>{giftCard && !giftError ? 'Ativar Presente e Cadastrar' : 'Continuar para Pagamento'}</span> <i class="fa-solid fa-arrow-right"></i>
-          </button>
-        </form>
+        <!-- Render unified register form component -->
+        <RegisterForm 
+          giftCard={giftCard && !giftError ? giftCard : null} 
+          prefillName={giftCard && !giftError ? giftCard.recipient_name : ''} 
+          prefillEmail={giftCard && !giftError ? giftCard.recipient_email : ''} 
+        />
 
         <div class="separator-line my-6"></div>
 
@@ -201,65 +90,3 @@ if (code) {
 
   <Footer />
 </Layout>
-
-<script is:inline>
-  async function handleRegister(e) {
-    e.preventDefault();
-    
-    const form = e.target;
-    const submitBtn = document.getElementById('submit-btn');
-    const errorEl = document.getElementById('error-message');
-    
-    if (errorEl) {
-      errorEl.classList.add('hidden');
-    }
-
-    const name = form.name.value.trim();
-    const email = form.email.value.trim();
-    const password = form.password.value;
-    const code = form.code.value;
-    
-    // Read plan from checked radio or hidden input
-    let plan = '';
-    if (form.plan) {
-      plan = form.plan.value;
-    }
-
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Criando conta...`;
-    }
-
-    try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, plan, code })
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Erro ao realizar o cadastro.');
-      }
-
-      // Check if registration was backed by a gift card
-      if (code && data.user.status === 'active') {
-        // Gift card automatically activated the account, redirect to dashboard
-        window.location.href = `/redeem-success?code=${code}&recipient=${encodeURIComponent(name)}&plan=${plan}&already=false`;
-      } else {
-        // Normal flow, redirect to simulated checkout
-        window.location.href = '/checkout';
-      }
-    } catch (err) {
-      if (errorEl) {
-        errorEl.innerText = err.message;
-        errorEl.classList.remove('hidden');
-      }
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>${code ? 'Ativar Presente e Cadastrar' : 'Continuar para Pagamento'}</span> <i class="fa-solid fa-arrow-right"></i>`;
-      }
-    }
-  }
-</script>

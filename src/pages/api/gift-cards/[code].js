@@ -24,6 +24,14 @@ export async function GET({ params }) {
       });
     }
 
+    // Check payment status
+    if (card.status === 'pending_payment') {
+      return new Response(JSON.stringify({ error: 'O pagamento deste cartão de presente ainda não foi confirmado.' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     // Check expiration
     if (card.expires_at) {
       const expiresTime = new Date(card.expires_at).getTime();

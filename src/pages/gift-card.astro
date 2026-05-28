@@ -2,6 +2,12 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+
+export const prerender = false;
+
+const user = Astro.locals.user;
+const defaultGiverName = user ? user.name : '';
+const defaultGiverEmail = user ? user.email : '';
 ---
 
 <Layout title="Presenteie um Amigo | Notícias do Céu">
@@ -113,13 +119,13 @@ import Footer from '../components/Footer.astro';
                   <label class="block text-sm font-bold text-ink mb-1">Seu nome *</label>
                   <input type="text" id="giver-name" required
                     class="w-full px-4 py-3 rounded-lg border-2 border-ink/20 bg-white focus:border-accent focus:outline-none transition-colors font-body"
-                    placeholder="Maria Silva">
+                    placeholder="Maria Silva" value={defaultGiverName}>
                 </div>
                 <div>
                   <label class="block text-sm font-bold text-ink mb-1">Seu e-mail *</label>
                   <input type="email" id="giver-email" required
                     class="w-full px-4 py-3 rounded-lg border-2 border-ink/20 bg-white focus:border-accent focus:outline-none transition-colors font-body"
-                    placeholder="maria@email.com">
+                    placeholder="maria@email.com" value={defaultGiverEmail}>
                 </div>
               </div>
             </div>
@@ -598,20 +604,19 @@ import Footer from '../components/Footer.astro';
   }
 
   async function handleAstroAPIPayment() {
-    // Simulate payment processing time
-    await delay(1500);
-
-    // Call our unified Astro API to create a gift card
+    // 1. Create the gift card in pending_payment state
     const response = await fetch(`${CONFIG.API_BASE_URL}/gift-cards`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         sender_name: giftCardData.giverName,
+        sender_email: giftCardData.giverEmail,
         recipient_email: giftCardData.recipientEmail || 'no-email@noticias-do-ceu.com',
         recipient_name: giftCardData.recipientName,
         plan: giftCardData.plan,
         message: giftCardData.message,
-        design: giftCardData.design
+        design: giftCardData.design,
+        status: 'pending_payment'
       }),
     });
 
@@ -623,11 +628,27 @@ import Footer from '../components/Footer.astro';
     const card = await response.json();
     giftCardData.code = card.code;
 
-    // Simulate sending email notifications (mock console log)
-    if (giftCardData.recipientEmail) {
-      console.log(`[MOCK] Email sent to ${giftCardData.recipientEmail}`);
+    // Simulate payment processing time (gateway validation)
+    showLoading('Aguardando confirmação do pagamento...');
+    await delay(1500);
+
+    // 2. Confirm the payment (checkout simulation)
+    const confirmRes = await fetch(`${CONFIG.API_BASE_URL}/gift-cards/${card.code}/confirm-payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!confirmRes.ok) {
+      const errData = await confirmRes.json();
+      throw new Error(errData.error || 'Erro ao confirmar o pagamento.');
     }
-    console.log(`[MOCK] Confirmation email sent to ${giftCardData.giverEmail}`);
+
+    // Simulate sending email notifications (mock console log)
+    const validationLink = `${window.location.origin}/redeem?code=${card.code}`;
+    if (giftCardData.recipientEmail) {
+      console.log(`[MOCK] Email sent to ${giftCardData.recipientEmail} with validation link: ${validationLink}`);
+    }
+    console.log(`[MOCK] Confirmation email sent to ${giftCardData.giverEmail} with code: ${card.code}`);
 
     await onPaymentSuccess();
   }
