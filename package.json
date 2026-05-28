@@ -14,9 +14,15 @@
   "dependencies": {
     "@astrojs/node": "^10.1.1",
     "@astrojs/vercel": "^10.0.7",
+    "@aws-sdk/client-s3": "^3.1055.0",
+    "@libsql/client": "^0.17.3",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^6.3.8",
+    "drizzle-orm": "^0.45.2",
     "tailwindcss": "^4.3.0",
     "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.10"
   }
 }

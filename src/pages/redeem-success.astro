@@ -36,7 +36,7 @@ import Footer from '../components/Footer.astro';
           </div>
         </div>
 
-        <h2 id="recipient-greeting" class="font-serif text-3xl font-black mb-3">Tudo pronto!</h2>
+        <h2 id="recipient-greeting" class="font-serif text-3xl font-bold text-ink mb-3">Tudo pronto!</h2>
         <p id="redemption-summary" class="text-gray-700 leading-relaxed font-body max-w-md mx-auto mb-6">
           Seu cartão de presente foi resgatado com sucesso.
         </p>
@@ -49,16 +49,16 @@ import Footer from '../components/Footer.astro';
 
         <!-- Primary CTA -->
         <div class="space-y-4">
-          <a href="/#demonstracao" class="block w-full bg-ink text-paper py-4 rounded-xl font-serif font-bold text-lg hover:bg-accent transition-colors shadow-lg flex justify-center items-center gap-2">
-            <span>Iniciar Homenagem</span> <i class="fa-solid fa-paw"></i>
+          <a href="/dashboard" class="block w-full bg-ink text-paper py-4 rounded-xl font-serif font-bold text-lg hover:bg-accent transition-colors shadow-lg flex justify-center items-center gap-2">
+            <span>Ir para o Meu Painel</span> <i class="fa-solid fa-paw"></i>
           </a>
         </div>
 
         <!-- Lifetime Bonus Info (only visible if Lifetime Plan was redeemed) -->
         <div id="lifetime-bonus-info" class="hidden mt-8 bg-amber-50/50 p-6 rounded-xl border border-amber-200/60 text-left">
-          <h4 class="font-serif font-bold text-amber-900 flex items-center gap-2 mb-2">
+          <h5 class="text-lg font-serif font-semibold text-amber-900 mb-2 flex items-center gap-2">
             <i class="fa-solid fa-award text-amber-700"></i> Benefícios Vitalícios Inclusos:
-          </h4>
+          </h5>
           <ul class="text-xs text-amber-800 space-y-2 list-disc list-inside">
             <li>Acesso permanente à página sem renovações.</li>
             <li>Navegação pelo arquivo histórico de todas as edições diárias.</li>
@@ -69,13 +69,13 @@ import Footer from '../components/Footer.astro';
 
         <!-- Optional Upgrade Section (only visible if Annual Plan was redeemed) -->
         <div id="upgrade-section" class="hidden mt-8 bg-amber-50/50 p-6 rounded-xl border border-amber-200/60 text-left">
-          <h4 class="font-serif font-bold text-amber-900 flex items-center gap-2 mb-2">
+          <h5 class="text-lg font-serif font-semibold text-amber-900 mb-2 flex items-center gap-2">
             <i class="fa-solid fa-circle-chevron-up text-amber-700"></i> Deseja migrar para o Vitalício?
-          </h4>
+          </h5>
           <p class="text-xs text-amber-800 leading-relaxed mb-4">
             O plano anual dá acesso à edição atual por um ano. Com o upgrade único para o plano Vitalício, você garante o arquivo perpétuo do jornal, a exportação de PDF completa, além de cartas mensais para o céu, sem cobranças futuras.
           </p>
-          <a href="/#planos" class="inline-flex items-center gap-2 bg-[#C5A059] text-white text-xs font-serif font-bold px-4 py-2.5 rounded-lg hover:bg-ink transition-colors shadow-md">
+          <a href="/#planos" class="inline-flex items-center gap-2 bg-[#C5A059] text-ink text-xs font-sans font-bold px-4 py-2.5 rounded-lg hover:bg-ink hover:text-paper transition-colors shadow-md">
             <span>Ver Benefícios do Vitalício</span> <i class="fa-solid fa-star"></i>
           </a>
         </div>

@@ -1,0 +1,130 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+export const prerender = false;
+---
+
+<Layout title="Entrar | Notícias do Céu">
+  <Navbar showCreateMemorial={false} />
+
+  <main class="flex-grow pt-32 pb-20 px-4 flex items-center justify-center bg-gradient-to-b from-paper/30 to-white relative overflow-hidden min-h-[80vh]">
+    <!-- Background cloud animations for visual appeal -->
+    <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -top-10 -left-10 opacity-30 pointer-events-none animate-cloud-slow-1"></i>
+    <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -bottom-10 -right-10 opacity-30 pointer-events-none animate-cloud-slow-2"></i>
+
+    <div class="w-full max-w-md relative z-10">
+      <div class="newspaper-container border-double-thick p-8 fade-in text-ink bg-white">
+        <!-- Newspaper Header style -->
+        <div class="text-center border-b-2 border-ink pb-4 mb-6">
+          <p class="text-[10px] font-bold uppercase tracking-widest mb-1">Acesso à Área do Leitor</p>
+          <h1 class="font-serif text-3xl font-black uppercase tracking-tighter text-ink">Notícias do Céu</h1>
+        </div>
+
+        <div class="text-center mb-6">
+          <h3 class="font-serif text-2xl font-semibold text-ink">Seja bem-vindo</h3>
+          <p class="text-xs text-gray-600 mt-1">Insira suas credenciais para gerenciar sua homenagem.</p>
+        </div>
+
+        <form id="login-form" class="space-y-4" onsubmit="handleLogin(event)">
+          <div>
+            <label for="email" class="block text-xs font-bold uppercase tracking-wider mb-1.5">E-mail</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              required 
+              placeholder="seuemail@exemplo.com"
+              class="w-full px-4 py-3 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl font-sans"
+            />
+          </div>
+
+          <div>
+            <label for="password" class="block text-xs font-bold uppercase tracking-wider mb-1.5">Senha</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              required 
+              placeholder="••••••••"
+              class="w-full px-4 py-3 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl font-sans"
+            />
+          </div>
+
+          <!-- Error Message Display -->
+          <div id="error-message" class="hidden text-red-700 bg-red-50 border border-red-200 px-4 py-3 rounded-xl text-sm font-medium text-center"></div>
+
+          <button 
+            type="submit" 
+            id="submit-btn" 
+            class="w-full bg-accent text-white py-3.5 rounded-xl font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg flex justify-center items-center gap-2 cursor-pointer"
+          >
+            <span>Entrar</span> <i class="fa-solid fa-right-to-bracket"></i>
+          </button>
+        </form>
+
+        <div class="separator-line my-6"></div>
+
+        <p class="text-center text-sm text-gray-700 font-sans">
+          Ainda não tem uma conta? 
+          <a href="/cadastro" class="text-accent font-bold hover:underline">Cadastre-se aqui</a>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script is:inline>
+  async function handleLogin(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const submitBtn = document.getElementById('submit-btn');
+    const errorEl = document.getElementById('error-message');
+    
+    if (errorEl) {
+      errorEl.classList.add('hidden');
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Entrando...`;
+    }
+
+    const email = form.email.value.trim();
+    const password = form.password.value;
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Falha ao autenticar.');
+      }
+
+      // Check user status to redirect appropriately
+      if (data.user && data.user.status === 'pending_payment') {
+        window.location.href = '/checkout';
+      } else {
+        window.location.href = '/dashboard';
+      }
+    } catch (err) {
+      if (errorEl) {
+        errorEl.innerText = err.message;
+        errorEl.classList.remove('hidden');
+      }
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Entrar</span> <i class="fa-solid fa-right-to-bracket"></i>`;
+      }
+    }
+  }
+</script>

@@ -1,0 +1,147 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+export const prerender = false;
+
+// The middleware guarantees that context.locals.user exists and has status = 'pending_payment'
+const user = Astro.locals.user;
+const planName = user?.plan === 'lifetime' ? 'Plano Vitalício' : 'Plano Anual';
+const planPrice = user?.plan === 'lifetime' ? 'R$ 39,90' : 'R$ 9,90';
+const isLifetime = user?.plan === 'lifetime';
+---
+
+<Layout title="Pagamento | Notícias do Céu">
+  <Navbar showCreateMemorial={false} />
+
+  <main class="flex-grow pt-32 pb-20 px-4 flex items-center justify-center bg-gradient-to-b from-paper/30 to-white relative overflow-hidden min-h-[85vh]">
+    <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -top-10 -left-10 opacity-30 pointer-events-none animate-cloud-slow-1"></i>
+    <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -bottom-10 -right-10 opacity-30 pointer-events-none animate-cloud-slow-2"></i>
+
+    <div class="w-full max-w-xl relative z-10">
+      <div class="newspaper-container border-double-thick p-8 fade-in text-ink bg-white">
+        
+        <!-- Newspaper Header style -->
+        <div class="text-center border-b-2 border-ink pb-4 mb-6">
+          <p class="text-[10px] font-bold uppercase tracking-widest mb-1">Área de Faturamento Fictício</p>
+          <h1 class="font-serif text-3xl font-black uppercase tracking-tighter text-ink">Notícias do Céu</h1>
+        </div>
+
+        <div class="text-center mb-6">
+          <h3 class="font-serif text-2xl font-semibold text-ink">Simular Pagamento</h3>
+          <p class="text-xs text-gray-600 mt-1">Conclua o seu plano para liberar a área de criação do seu pet.</p>
+        </div>
+
+        <!-- Plan details summary card -->
+        <div class="bg-gray-50 border border-gray-200 p-5 rounded-2xl mb-6">
+          <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-3">
+            <span class="text-xs font-bold uppercase text-gray-500 tracking-wider">Plano Selecionado</span>
+            <span class="font-serif font-bold text-lg text-ink">{planName}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold uppercase text-gray-500 tracking-wider">Valor total</span>
+            <span class="text-xl font-serif font-black text-accent">{planPrice}</span>
+          </div>
+        </div>
+
+        <!-- Pix Simulation Area -->
+        <div class="border-2 border-ink rounded-2xl p-6 mb-6 text-center space-y-4 bg-white/40">
+          <h4 class="font-serif font-bold text-lg text-ink">Pague com PIX</h4>
+          <p class="text-xs text-gray-600 max-w-sm mx-auto">
+            Este é um checkout simulado. Escaneie o QR Code abaixo ou clique no botão para simular a aprovação instantânea da API.
+          </p>
+
+          <!-- Mock QR Code visual -->
+          <div class="inline-flex flex-col items-center justify-center p-4 bg-white border border-gray-200 rounded-2xl shadow-sm">
+            <div class="w-40 h-40 flex items-center justify-center bg-gray-50 border border-dashed border-gray-300 rounded-xl relative">
+              <i class="fa-solid fa-qrcode text-8xl text-ink"></i>
+              <div class="absolute inset-0 flex items-center justify-center bg-white/90 rounded-xl opacity-0 hover:opacity-100 transition-opacity">
+                <span class="text-[10px] font-sans font-bold uppercase text-accent">QR Code Simulado</span>
+              </div>
+            </div>
+            <span class="text-[9px] font-mono text-gray-400 mt-2">pix.noticiasdoceu.com/fake-qr-code</span>
+          </div>
+
+          <!-- Pix Copy Paste -->
+          <div class="space-y-1.5 max-w-sm mx-auto">
+            <span class="block text-[10px] font-bold uppercase text-gray-500 tracking-wider">Pix Copia e Cola</span>
+            <div class="flex gap-2">
+              <input 
+                type="text" 
+                readonly 
+                value="00020126360014br.gov.bcb.pix0114noticiasdoceu0204fake" 
+                class="flex-1 font-mono text-[10px] bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg text-gray-500 overflow-x-hidden text-ellipsis focus:outline-none"
+              />
+              <button 
+                onclick="navigator.clipboard.writeText('00020126360014br.gov.bcb.pix0114noticiasdoceu0204fake'); alert('Código copiado!')"
+                class="bg-ink text-paper px-3 py-2 rounded-lg font-sans text-xs font-semibold hover:bg-accent transition-colors cursor-pointer"
+              >
+                Copiar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <div id="error-message" class="hidden text-red-700 bg-red-50 border border-red-200 px-4 py-3 rounded-xl text-sm font-medium text-center mb-4"></div>
+
+        <button 
+          onclick="confirmSimulatedPayment()"
+          id="payment-btn" 
+          class="w-full bg-accent text-white py-4 rounded-xl font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg flex justify-center items-center gap-2 cursor-pointer"
+        >
+          <span>Simular Confirmação de Pagamento</span> <i class="fa-solid fa-circle-check"></i>
+        </button>
+
+        <p class="text-center text-xs text-gray-500 mt-4 leading-relaxed">
+          * Nenhuma cobrança real será realizada. Apenas simulamos o retorno do webhook do gateway de pagamento para liberar o memorial.
+        </p>
+
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script is:inline>
+  async function confirmSimulatedPayment() {
+    const btn = document.getElementById('payment-btn');
+    const errorEl = document.getElementById('error-message');
+
+    if (errorEl) {
+      errorEl.classList.add('hidden');
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Processando transação...`;
+    }
+
+    try {
+      const res = await fetch('/api/checkout/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Erro ao processar o pagamento.');
+      }
+
+      // Successful simulated payment
+      window.location.href = '/dashboard';
+    } catch (err) {
+      if (errorEl) {
+        errorEl.innerText = err.message;
+        errorEl.classList.remove('hidden');
+      }
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Simular Confirmação de Pagamento</span> <i class="fa-solid fa-circle-check"></i>`;
+      }
+    }
+  }
+</script>

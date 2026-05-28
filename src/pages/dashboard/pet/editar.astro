@@ -1,0 +1,571 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Navbar from '../../../components/Navbar.astro';
+import Footer from '../../../components/Footer.astro';
+import { PetService } from '../../../services/pet-service.js';
+
+export const prerender = false;
+
+// Middleware guarantees user is authenticated
+const user = Astro.locals.user;
+
+// Fetch current pet. If none exists, redirect to new pet page.
+const pet = await PetService.getPetByUserId(user.id);
+if (!pet) {
+  return Astro.redirect('/dashboard/pet/novo');
+}
+
+const suggestedPersonalities = [
+  "Carinhoso", "Brincalhão", "Dorminhoco", "Protetor", "Guloso", 
+  "Preguiçoso", "Carismático", "Teimoso", "Protetor", "Espevitado"
+];
+---
+
+<Layout title="Editar Pet | Notícias do Céu">
+  <Navbar showCreateMemorial={false} />
+
+  <main class="flex-grow pt-32 pb-20 bg-gradient-to-b from-paper/30 to-white text-ink">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Back button -->
+      <div class="mb-6">
+        <a href="/dashboard" class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-accent hover:text-ink transition-colors">
+          <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
+        </a>
+      </div>
+
+      <div class="newspaper-container border-double-thick p-8 bg-white space-y-6">
+        
+        <!-- Newspaper Header style -->
+        <div class="text-center border-b-2 border-ink pb-4 mb-6">
+          <p class="text-[10px] font-bold uppercase tracking-widest mb-1">Edição do Histórico do Memorial</p>
+          <h1 class="font-serif text-3xl font-black uppercase tracking-tighter text-ink">Notícias do Céu</h1>
+        </div>
+
+        <div class="text-center mb-8">
+          <h2 class="font-serif text-2xl font-bold text-ink">Atualizar dados do {pet.name}</h2>
+          <p class="text-xs text-gray-600 mt-1 max-w-md mx-auto">
+            Edite os detalhes abaixo. Suas histórias diárias se adaptarão automaticamente com as novas informações.
+          </p>
+        </div>
+
+        <form id="pet-form" class="space-y-6 font-sans" onsubmit="handlePetSubmit(event)">
+          
+          <!-- Basic Info -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="md:col-span-1">
+              <label for="name" class="block text-xs font-bold uppercase tracking-wider mb-1.5">Nome do Pet</label>
+              <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                required 
+                value={pet.name}
+                placeholder="Ex: Rex"
+                class="w-full px-4 py-2.5 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl"
+              />
+            </div>
+            
+            <div>
+              <label for="breed" class="block text-xs font-bold uppercase tracking-wider mb-1.5">Raça</label>
+              <input 
+                type="text" 
+                id="breed" 
+                name="breed" 
+                required 
+                value={pet.breed}
+                placeholder="Ex: Golden Retriever"
+                class="w-full px-4 py-2.5 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider mb-1.5">Gênero</label>
+              <div class="flex gap-4 py-2.5">
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                  <input type="radio" name="gender" value="Macho" required checked={pet.gender === 'Macho'} class="h-4 w-4 text-accent border-gray-300 focus:ring-accent" />
+                  <span class="text-sm font-medium">Macho</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                  <input type="radio" name="gender" value="Fêmea" checked={pet.gender === 'Fêmea'} class="h-4 w-4 text-accent border-gray-300 focus:ring-accent" />
+                  <span class="text-sm font-medium">Fêmea</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Tags: Nicknames -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider mb-1.5">Apelidos Carinhosos</label>
+            <div class="flex gap-2 mb-3">
+              <input 
+                type="text" 
+                id="nickname-input" 
+                placeholder="Ex: Rexinho"
+                class="flex-1 px-4 py-2 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl text-sm"
+                onkeydown="if(event.key === 'Enter') { event.preventDefault(); addNicknameTag(); }"
+              />
+              <button 
+                type="button" 
+                onclick="addNicknameTag()"
+                class="bg-ink text-paper px-4 py-2 rounded-xl text-sm font-bold hover:bg-accent transition-colors cursor-pointer"
+              >
+                Adicionar
+              </button>
+            </div>
+            <!-- Nickname Tags Container -->
+            <div id="nickname-tags-container" class="flex flex-wrap gap-2 min-h-8 p-3 border-2 border-dashed border-vintage rounded-xl bg-gray-50/50">
+              <!-- JS Injected -->
+            </div>
+            <!-- Hidden input for submission -->
+            <input type="hidden" name="nicknames" id="hidden-nicknames" value="[]" />
+          </div>
+
+          <!-- Favorite Place and Favorite Object -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="favoritePlace" class="block text-xs font-bold uppercase tracking-wider mb-1.5">Lugar Favorito do Pet</label>
+              <input 
+                type="text" 
+                id="favoritePlace" 
+                name="favoritePlace" 
+                value={pet.favoritePlace}
+                placeholder="Ex: O tapete ensolarado da sala"
+                class="w-full px-4 py-2.5 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl"
+              />
+            </div>
+            
+            <div>
+              <label for="favoriteObject" class="block text-xs font-bold uppercase tracking-wider mb-1.5">Objeto / Brinquedo Favorito</label>
+              <input 
+                type="text" 
+                id="favoriteObject" 
+                name="favoriteObject" 
+                value={pet.favoriteObject}
+                placeholder="Ex: A bolinha amarela de tênis roída"
+                class="w-full px-4 py-2.5 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl"
+              />
+            </div>
+          </div>
+
+          <!-- Dynamic Tags: Personalities -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider mb-1.5">Personalidade</label>
+            <p class="text-[10px] text-gray-500 mb-2">Clique nas sugestões ou adicione novos traços de personalidade.</p>
+            
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              {suggestedPersonalities.map(pers => (
+                <button 
+                  type="button" 
+                  onclick={`togglePersonalityPill('${pers}', this)`}
+                  class="text-xs bg-white text-gray-700 border border-gray-300 hover:border-accent hover:bg-accent/5 px-2.5 py-1.5 rounded-full transition-all cursor-pointer font-medium"
+                >
+                  + {pers}
+                </button>
+              ))}
+            </div>
+
+            <div class="flex gap-2 mb-3">
+              <input 
+                type="text" 
+                id="personality-input" 
+                placeholder="Ex: Protetor dos brinquedos"
+                class="flex-1 px-4 py-2 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl text-sm"
+                onkeydown="if(event.key === 'Enter') { event.preventDefault(); addCustomPersonality(); }"
+              />
+              <button 
+                type="button" 
+                onclick="addCustomPersonality()"
+                class="bg-ink text-paper px-4 py-2 rounded-xl text-sm font-bold hover:bg-accent transition-colors cursor-pointer"
+              >
+                Adicionar
+              </button>
+            </div>
+
+            <!-- Selected Personalities Container -->
+            <div id="personality-tags-container" class="flex flex-wrap gap-2 min-h-8 p-3 border-2 border-dashed border-vintage rounded-xl bg-gray-50/50">
+              <!-- JS Injected -->
+            </div>
+            <!-- Hidden input for submission -->
+            <input type="hidden" name="personalities" id="hidden-personalities" value="[]" />
+          </div>
+
+          <!-- Photo Upload & Existing Photos Management -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider mb-1.5">Galeria de Fotos (Mínimo 1, Máximo 5)</label>
+            
+            <!-- Upload Box -->
+            <div 
+              id="dropzone"
+              class="border-2 border-dashed border-ink rounded-2xl p-6 text-center cursor-pointer bg-gray-50/50 hover:bg-paper/10 transition-colors flex flex-col items-center justify-center space-y-1 select-none"
+              onclick="document.getElementById('photos-input').click()"
+            >
+              <i class="fa-solid fa-cloud-arrow-up text-3xl text-accent"></i>
+              <div class="text-xs font-bold">Arraste novas fotos ou clique aqui para selecionar</div>
+              <input 
+                type="file" 
+                id="photos-input" 
+                multiple 
+                accept="image/*" 
+                class="hidden" 
+                onchange="handleFileSelection(this)"
+              />
+            </div>
+
+            <!-- Previews Grid (shows both existing and newly added files) -->
+            <div id="previews-grid" class="grid grid-cols-2 sm:grid-cols-5 gap-4 mt-4">
+              <!-- Dynamically populated via JS -->
+            </div>
+            
+            <div class="text-right text-xs text-gray-500 mt-2 font-semibold">
+              <span id="photo-counter">0</span> / 5 fotos no total
+            </div>
+
+            <!-- Hidden input to submit remaining existing photo paths -->
+            <input type="hidden" name="existingPhotos" id="hidden-existing-photos" value="[]" />
+          </div>
+
+          <!-- Error Alert -->
+          <div id="error-message" class="hidden text-red-700 bg-red-50 border border-red-200 px-4 py-3 rounded-xl text-sm font-medium text-center"></div>
+
+          <!-- Action buttons -->
+          <div class="flex gap-4 pt-4 justify-end border-t border-gray-100">
+            <a 
+              href="/dashboard" 
+              class="bg-white text-ink border-2 border-ink px-6 py-3 rounded-full font-serif font-bold hover:bg-gray-50 transition-colors inline-flex items-center"
+            >
+              Cancelar
+            </a>
+            
+            <button 
+              type="submit" 
+              id="submit-btn" 
+              class="bg-accent text-white px-8 py-3 rounded-full font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg flex justify-center items-center gap-2 cursor-pointer"
+            >
+              <span>Salvar Alterações</span> <i class="fa-solid fa-floppy-disk"></i>
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<!-- define:vars to seamlessly pass server data into browser client-side JS -->
+<script is:inline define:vars={{ initialNicknames: pet.nicknames, initialPersonalities: pet.personalities, initialPhotos: pet.photos }}>
+  // Client state arrays
+  const nicknames = [...initialNicknames];
+  const personalities = [...initialPersonalities];
+  const existingPhotos = [...initialPhotos];
+  const filesToUpload = []; // Array of new File objects to upload
+
+  // NICKNAMES LOGIC
+  function updateNicknamesUI() {
+    const container = document.getElementById('nickname-tags-container');
+    const hiddenInput = document.getElementById('hidden-nicknames');
+    
+    if (!container || !hiddenInput) return;
+    
+    hiddenInput.value = JSON.stringify(nicknames);
+
+    if (nicknames.length === 0) {
+      container.innerHTML = `<span class="text-xs text-gray-400 italic pointer-events-none self-center">Nenhum apelido adicionado ainda...</span>`;
+      return;
+    }
+
+    container.innerHTML = nicknames.map((nick, idx) => `
+      <span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-800 text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 font-medium">
+        ${nick}
+        <button type="button" onclick="removeNicknameTag(${idx})" class="text-gray-400 hover:text-red-600 transition-colors font-bold cursor-pointer text-[10px]">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </span>
+    `).join('');
+  }
+
+  function addNicknameTag() {
+    const input = document.getElementById('nickname-input');
+    if (!input) return;
+    
+    const value = input.value.trim();
+    if (!value) return;
+
+    if (!nicknames.includes(value)) {
+      nicknames.push(value);
+      updateNicknamesUI();
+    }
+    
+    input.value = '';
+    input.focus();
+  }
+
+  function removeNicknameTag(idx) {
+    nicknames.splice(idx, 1);
+    updateNicknamesUI();
+  }
+
+  // PERSONALITIES LOGIC
+  function updatePersonalitiesUI() {
+    const container = document.getElementById('personality-tags-container');
+    const hiddenInput = document.getElementById('hidden-personalities');
+    
+    if (!container || !hiddenInput) return;
+    
+    hiddenInput.value = JSON.stringify(personalities);
+
+    if (personalities.length === 0) {
+      container.innerHTML = `<span class="text-xs text-gray-400 italic pointer-events-none self-center">Nenhum traço selecionado ainda...</span>`;
+      return;
+    }
+
+    container.innerHTML = personalities.map((pers, idx) => `
+      <span class="inline-flex items-center gap-1.5 bg-accent/10 text-accent text-xs px-2.5 py-1.5 rounded-lg border border-accent/15 font-medium">
+        ${pers}
+        <button type="button" onclick="removePersonalityTag(${idx})" class="text-accent/65 hover:text-red-600 transition-colors font-bold cursor-pointer text-[10px]">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </span>
+    `).join('');
+  }
+
+  function addCustomPersonality() {
+    const input = document.getElementById('personality-input');
+    if (!input) return;
+    
+    const value = input.value.trim();
+    if (!value) return;
+
+    if (!personalities.includes(value)) {
+      personalities.push(value);
+      updatePersonalitiesUI();
+    }
+    
+    input.value = '';
+    input.focus();
+  }
+
+  function removePersonalityTag(idx) {
+    personalities.splice(idx, 1);
+    updatePersonalitiesUI();
+  }
+
+  function togglePersonalityPill(name, btn) {
+    if (personalities.includes(name)) {
+      const idx = personalities.indexOf(name);
+      personalities.splice(idx, 1);
+    } else {
+      personalities.push(name);
+    }
+    updatePersonalitiesUI();
+  }
+
+  // PHOTOS UI INTEGRATED (Existing + New uploads)
+  function updatePhotosUI() {
+    const grid = document.getElementById('previews-grid');
+    const counter = document.getElementById('photo-counter');
+    const hiddenExistingInput = document.getElementById('hidden-existing-photos');
+    
+    if (!grid || !counter || !hiddenExistingInput) return;
+
+    const totalCount = existingPhotos.length + filesToUpload.length;
+    counter.innerText = totalCount;
+    hiddenExistingInput.value = JSON.stringify(existingPhotos);
+
+    grid.innerHTML = '';
+
+    // 1. Render existing database photos
+    existingPhotos.forEach((photoUrl, idx) => {
+      const card = document.createElement('div');
+      card.className = 'relative aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-50 shadow-sm group';
+      card.innerHTML = `
+        <img src="${photoUrl}" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <span class="text-[9px] font-sans text-white font-bold uppercase tracking-wider bg-black/60 px-1.5 py-0.5 rounded">Salva no Banco</span>
+        </div>
+        <button 
+          type="button" 
+          onclick="removeExistingPhoto(${idx})"
+          class="absolute top-1.5 right-1.5 bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center shadow hover:bg-red-700 transition-colors cursor-pointer text-xs"
+        >
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      `;
+      grid.appendChild(card);
+    });
+
+    // 2. Render new files in queue
+    filesToUpload.forEach((file, idx) => {
+      const objUrl = URL.createObjectURL(file);
+      const card = document.createElement('div');
+      card.className = 'relative aspect-square rounded-xl overflow-hidden border border-accent/30 bg-gray-50 shadow-sm group';
+      card.innerHTML = `
+        <img src="${objUrl}" class="w-full h-full object-cover border-2 border-accent" />
+        <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <span class="text-[9px] font-sans text-white font-bold uppercase tracking-wider bg-accent px-1.5 py-0.5 rounded">Novo Arquivo</span>
+        </div>
+        <button 
+          type="button" 
+          onclick="removeUploadedPhoto(${idx})"
+          class="absolute top-1.5 right-1.5 bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center shadow hover:bg-red-700 transition-colors cursor-pointer text-xs"
+        >
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function handleFileSelection(input) {
+    if (!input.files) return;
+
+    const files = Array.from(input.files);
+    
+    for (const file of files) {
+      const totalCount = existingPhotos.length + filesToUpload.length;
+      if (totalCount >= 5) {
+        alert("O memorial suporta no máximo 5 fotos.");
+        break;
+      }
+      
+      if (!file.type.startsWith('image/')) {
+        alert(`O arquivo "${file.name}" não é uma imagem válida.`);
+        continue;
+      }
+
+      filesToUpload.push(file);
+    }
+
+    input.value = '';
+    updatePhotosUI();
+  }
+
+  function removeExistingPhoto(idx) {
+    existingPhotos.splice(idx, 1);
+    updatePhotosUI();
+  }
+
+  function removeUploadedPhoto(idx) {
+    filesToUpload.splice(idx, 1);
+    updatePhotosUI();
+  }
+
+  // Drag and drop setup
+  document.addEventListener('DOMContentLoaded', () => {
+    // Populate default elements on load
+    updateNicknamesUI();
+    updatePersonalitiesUI();
+    updatePhotosUI();
+
+    const dropzone = document.getElementById('dropzone');
+    if (dropzone) {
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropzone.classList.add('bg-paper/20', 'border-accent');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('bg-paper/20', 'border-accent');
+        }, false);
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files && files.length > 0) {
+          const mockInput = { files: files };
+          handleFileSelection(mockInput);
+        }
+      }, false);
+    }
+  });
+
+  // SUBMIT
+  async function handlePetSubmit(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const submitBtn = document.getElementById('submit-btn');
+    const errorEl = document.getElementById('error-message');
+
+    if (errorEl) {
+      errorEl.classList.add('hidden');
+    }
+
+    // Validation: total photos
+    const totalPhotos = existingPhotos.length + filesToUpload.length;
+    if (totalPhotos === 0) {
+      if (errorEl) {
+        errorEl.innerText = "Por favor, mantenha ou envie pelo menos 1 foto do seu pet.";
+        errorEl.classList.remove('hidden');
+      }
+      return;
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Salvando alterações...`;
+    }
+
+    const formData = new FormData();
+    formData.append('name', form.name.value);
+    formData.append('breed', form.breed.value);
+    formData.append('gender', form.gender.value);
+    formData.append('favoritePlace', form.favoritePlace.value);
+    formData.append('favoriteObject', form.favoriteObject.value);
+    
+    // Arrays
+    formData.append('nicknames', JSON.stringify(nicknames));
+    formData.append('personalities', JSON.stringify(personalities));
+
+    // Send surviving existing photos
+    formData.append('existingPhotos', JSON.stringify(existingPhotos));
+
+    // Send new files to upload
+    filesToUpload.forEach(file => {
+      formData.append('photos', file);
+    });
+
+    try {
+      const res = await fetch('/api/pet/save', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Erro ao atualizar dados do pet.');
+      }
+
+      window.location.href = '/dashboard';
+    } catch (err) {
+      if (errorEl) {
+        errorEl.innerText = err.message;
+        errorEl.classList.remove('hidden');
+      }
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Salvar Alterações</span> <i class="fa-solid fa-floppy-disk"></i>`;
+      }
+    }
+  }
+
+  // Expose triggers
+  window.addNicknameTag = addNicknameTag;
+  window.removeNicknameTag = removeNicknameTag;
+  window.addCustomPersonality = addCustomPersonality;
+  window.removePersonalityTag = removePersonalityTag;
+  window.togglePersonalityPill = togglePersonalityPill;
+  window.handleFileSelection = handleFileSelection;
+  window.removeUploadedPhoto = removeUploadedPhoto;
+  window.removeExistingPhoto = removeExistingPhoto;
+</script>

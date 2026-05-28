@@ -3447,27 +3447,27 @@ export const sidebarData = [
     {
         "title": "Mensagem do Céu",
         "icon": "fa-cloud",
-        "content": "<p class=\"text-sm italic font-body text-justify\">\"Olá, {dono}! Hoje eu vi você olhando para as minhas fotos e abanei o rabinho forte aqui de cima. Estou muito feliz, correndo pelas nuvens. Continue sorrindo por mim!\"</p>"
+        "content": "<p class=\"text-sm italic font-body text-left md:text-justify\">\"Olá, {dono}! Hoje eu vi você olhando para as minhas fotos e abanei o rabinho forte aqui de cima. Estou muito feliz, correndo pelas nuvens. Continue sorrindo por mim!\"</p>"
     },
     {
         "title": "Horóscopo Pet",
         "icon": "fa-star",
-        "content": "<p class=\"text-sm font-body text-justify\"><strong>Signo de Shih Tzu:</strong> O alinhamento das estrelas de ossos indica que hoje é um dia excelente para tirar três sonecas prolongadas no {lugar} celestial e fugir de qualquer nuvem que pareça com o {odio}. Cor número da sorte: Azul-Bolinha.</p>"
+        "content": "<p class=\"text-sm font-body text-left md:text-justify\"><strong>Signo de Shih Tzu:</strong> O alinhamento das estrelas de ossos indica que hoje é um dia excelente para tirar três sonecas prolongadas no {lugar} celestial e fugir de qualquer nuvem que pareça com o {odio}. Cor número da sorte: Azul-Bolinha.</p>"
     },
     {
         "title": "Classificado Celestial",
         "icon": "fa-tag",
-        "content": "<p class=\"text-sm font-body text-justify\"><strong>PROCURA-SE:</strong> Parceiro de corrida para disputar quem chega primeiro ao topo da nuvem de bifinhos. Requisitos: Gostar de {comida} e não se importar com orelhas abanando no vento. Tratar com Baiacu na taverna.</p>"
+        "content": "<p class=\"text-sm font-body text-left md:text-justify\"><strong>PROCURA-SE:</strong> Parceiro de corrida para disputar quem chega primeiro ao topo da nuvem de bifinhos. Requisitos: Gostar de {comida} e não se importar com orelhas abanando no vento. Tratar com Baiacu na taverna.</p>"
     },
     {
         "title": "Bastidores do Paraíso",
         "icon": "fa-compass",
-        "content": "<p class=\"text-sm font-body text-justify\">Você sabia? A horta celestial dos pets tem árvores que dão biscoitos de carne que nunca acabam. O {nome} passou a tarde testando três sabores diferentes e aprovou todos com louvor!</p>"
+        "content": "<p class=\"text-sm font-body text-left md:text-justify\">Você sabia? A horta celestial dos pets tem árvores que dão biscoitos de carne que nunca acabam. O {nome} passou a tarde testando três sabores diferentes e aprovou todos com louvor!</p>"
     },
     {
         "title": "Carta ao Dono",
         "icon": "fa-envelope",
-        "content": "<p class=\"text-sm italic font-body text-justify\">\"Querida família Luchesi, o amor que recebi de vocês na Terra me mantém brilhando como a estrela mais linda daqui. Sinto saudades de deitar para {amor}, mas sei que estamos conectados. Amo vocês!\"</p>"
+        "content": "<p class=\"text-sm italic font-body text-left md:text-justify\">\"Querida família Luchesi, o amor que recebi de vocês na Terra me mantém brilhando como a estrela mais linda daqui. Sinto saudades de deitar para {amor}, mas sei que estamos conectados. Amo vocês!\"</p>"
     },
     {
         "title": "Charge Pet",

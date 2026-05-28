@@ -4,6 +4,7 @@ interface Props {
 }
 
 const { showCreateMemorial = true } = Astro.props;
+const user = Astro.locals.user;
 ---
 
 <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200 transition-all duration-300">
@@ -13,20 +14,141 @@ const { showCreateMemorial = true } = Astro.props;
         <i class="fa-solid fa-cloud text-accent text-2xl"></i>
         <span class="font-serif font-bold text-2xl tracking-wider uppercase text-ink">Notícias do Céu</span>
       </a>
-      <div class="hidden md:flex space-x-8 items-center">
-        <a href="/#como-funciona" class="text-gray-600 hover:text-accent font-medium transition-colors">Como Funciona</a>
-        <a href="/#demonstracao" class="text-gray-600 hover:text-accent font-medium transition-colors">Demonstração</a>
-        <a href="/blog" class="text-gray-600 hover:text-accent font-medium transition-colors">Blog</a>
-        {showCreateMemorial ? (
-          <a href="/#planos" class="bg-ink text-paper px-6 py-2 rounded-full font-serif font-semibold hover:bg-accent transition-colors shadow-md">
-            Criar Memorial
-          </a>
+      
+      <!-- Desktop Navigation Menu -->
+      <div class="hidden md:flex space-x-6 items-center font-sans">
+        <a href="/#como-funciona" class="text-gray-600 hover:text-accent text-sm font-medium transition-colors">Como Funciona</a>
+        <a href="/#demonstracao" class="text-gray-600 hover:text-accent text-sm font-medium transition-colors">Demonstração</a>
+        <a href="/blog" class="text-gray-600 hover:text-accent text-sm font-medium transition-colors">Blog</a>
+        
+        {user ? (
+          <>
+            <a href="/dashboard" class="text-gray-600 hover:text-accent text-sm font-medium transition-colors">Meu Painel</a>
+            <button onclick="handleNavbarLogout()" class="text-gray-600 hover:text-red-600 text-sm font-medium transition-colors cursor-pointer bg-transparent border-0 p-0">Sair</button>
+            <span class="text-xs bg-accent/10 text-accent border border-accent/20 px-3 py-1.5 rounded-full font-semibold">
+              <i class="fa-solid fa-user text-[10px] mr-1"></i> {user.name.split(' ')[0]}
+            </span>
+          </>
         ) : (
-          <a href="/gift-card" class="bg-ink text-paper px-6 py-2 rounded-full font-serif font-semibold hover:bg-accent transition-colors shadow-md">
-            Presenteie um Amigo
-          </a>
+          <>
+            <a href="/login" class="text-gray-600 hover:text-accent text-sm font-medium transition-colors">Entrar</a>
+            {showCreateMemorial ? (
+              <a href="/#planos" class="bg-ink text-paper px-6 py-2 rounded-full font-semibold hover:bg-accent transition-colors shadow-md text-sm">
+                Criar Memorial
+              </a>
+            ) : (
+              <a href="/gift-card" class="bg-ink text-paper px-6 py-2 rounded-full font-semibold hover:bg-accent transition-colors shadow-md text-sm">
+                Presenteie um Amigo
+              </a>
+            )}
+          </>
         )}
+      </div>
+
+      <!-- Hamburger Menu Button (Mobile) -->
+      <div class="flex items-center md:hidden">
+        <button
+          id="mobile-menu-toggle"
+          type="button"
+          class="text-ink hover:text-accent p-2 rounded-md focus:outline-none cursor-pointer"
+          aria-label="Menu principal"
+        >
+          <i class="fa-solid fa-bars text-2xl"></i>
+        </button>
       </div>
     </div>
   </div>
+
+  <!-- Mobile Menu Drawer (Dropdown) -->
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200 px-4 pt-2 pb-6 space-y-4 shadow-lg">
+    <a href="/#como-funciona" class="block text-gray-600 hover:text-accent font-medium transition-colors py-2 font-sans mobile-link">Como Funciona</a>
+    <a href="/#demonstracao" class="block text-gray-600 hover:text-accent font-medium transition-colors py-2 font-sans mobile-link">Demonstração</a>
+    <a href="/blog" class="block text-gray-600 hover:text-accent font-medium transition-colors py-2 font-sans mobile-link">Blog</a>
+    
+    {user ? (
+      <>
+        <a href="/dashboard" class="block text-gray-600 hover:text-accent font-medium transition-colors py-2 font-sans mobile-link">Meu Painel</a>
+        <button onclick="handleNavbarLogout()" class="block w-full text-left text-gray-600 hover:text-red-600 font-medium transition-colors py-2 font-sans cursor-pointer bg-transparent border-0 p-0">Sair</button>
+        <div class="text-xs text-accent font-semibold pt-2 border-t border-gray-100">
+          Logado como {user.name}
+        </div>
+      </>
+    ) : (
+      <>
+        <a href="/login" class="block text-gray-600 hover:text-accent font-medium transition-colors py-2 font-sans mobile-link">Entrar</a>
+        {showCreateMemorial ? (
+          <a href="/#planos" class="block text-center bg-ink text-paper px-6 py-3 rounded-full font-sans font-semibold hover:bg-accent transition-colors shadow-md mobile-link">
+            Criar Memorial
+          </a>
+        ) : (
+          <a href="/gift-card" class="block text-center bg-ink text-paper px-6 py-3 rounded-full font-sans font-semibold hover:bg-accent transition-colors shadow-md mobile-link">
+            Presenteie um Amigo
+          </a>
+        )}
+      </>
+    )}
+  </div>
 </nav>
+
+<script is:inline>
+  async function handleNavbarLogout() {
+    try {
+      const res = await fetch('/api/auth/logout', { method: 'POST' });
+      if (res.ok) {
+        window.location.href = '/login';
+      }
+    } catch (e) {
+      console.error('Erro ao fazer logout:', e);
+    }
+  }
+  window.handleNavbarLogout = handleNavbarLogout;
+
+  function setupMobileMenu() {
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (toggleBtn && mobileMenu) {
+      // Toggle menu on button click
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('hidden');
+        const icon = toggleBtn.querySelector('i');
+        if (icon) {
+          icon.classList.toggle('fa-bars');
+          icon.classList.toggle('fa-xmark');
+        }
+      });
+
+      // Close menu when clicking on a link
+      const links = mobileMenu.querySelectorAll('.mobile-link');
+      links.forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+          const icon = toggleBtn.querySelector('i');
+          if (icon) {
+            icon.classList.add('fa-bars');
+            icon.classList.remove('fa-xmark');
+          }
+        });
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!mobileMenu.contains(e.target) && !toggleBtn.contains(e.target)) {
+          mobileMenu.classList.add('hidden');
+          const icon = toggleBtn.querySelector('i');
+          if (icon) {
+            icon.classList.add('fa-bars');
+            icon.classList.remove('fa-xmark');
+          }
+        }
+      });
+    }
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', setupMobileMenu);
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    setupMobileMenu();
+  }
+</script>

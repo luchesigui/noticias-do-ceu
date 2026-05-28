@@ -18,7 +18,7 @@ import Footer from '../components/Footer.astro';
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent font-semibold text-sm mb-6 border border-accent/20">
           <i class="fa-solid fa-gift"></i> Um gesto de amor que atravessa o céu
         </div>
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-black leading-tight mb-6 text-ink">
+        <h1 class="text-4xl font-serif font-black leading-tight mb-6 text-ink">
           Presenteie um Amigo<br/>
           <span class="italic text-accent">com um Memorial Eterno</span>
         </h1>
@@ -57,20 +57,20 @@ import Footer from '../components/Footer.astro';
         <!-- STEP 1: Personalization Form -->
         <div id="step-1" class="step-content active">
           <div class="text-center mb-8">
-            <h2 class="text-2xl md:text-3xl font-serif font-bold text-ink mb-2">Personalize o Presente</h2>
+            <h2 class="text-3xl font-serif font-bold text-ink mb-2">Personalize o Presente</h2>
             <p class="text-gray-600 font-body">Preencha os dados para criar o presente perfeito</p>
           </div>
 
           <form id="gift-form" class="space-y-6">
             <!-- Plan Selection -->
             <div class="bg-paper/50 rounded-xl p-5 border border-ink/10">
-              <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+              <h5 class="font-serif font-semibold text-lg mb-4 flex items-center gap-2 text-ink">
                 <i class="fa-solid fa-list-check text-accent"></i> Escolha o plano do presente
-              </h3>
+              </h5>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <!-- Vitalício (Default) -->
                 <label for="plan-lifetime" class="cursor-pointer relative bg-white border-2 border-accent rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-all select-none" id="plan-card-lifetime">
-                  <div class="absolute -top-3 right-4 bg-[#C5A059] text-white font-serif font-bold text-[8px] uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
+                  <div class="absolute -top-3 right-4 bg-[#C5A059] text-ink font-sans font-bold text-[8px] uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
                     ★ Mais Escolhido ★
                   </div>
                   <div class="flex items-start gap-3">
@@ -105,9 +105,9 @@ import Footer from '../components/Footer.astro';
 
             <!-- Giver Info -->
             <div class="bg-paper/50 rounded-xl p-5 border border-ink/10">
-              <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+              <h5 class="font-serif font-semibold text-lg mb-4 flex items-center gap-2 text-ink">
                 <i class="fa-solid fa-user text-accent"></i> Seus dados (quem presenteia)
-              </h3>
+              </h5>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-sm font-bold text-ink mb-1">Seu nome *</label>
@@ -126,9 +126,9 @@ import Footer from '../components/Footer.astro';
 
             <!-- Recipient Info -->
             <div class="bg-paper/50 rounded-xl p-5 border border-ink/10">
-              <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+              <h5 class="font-serif font-semibold text-lg mb-4 flex items-center gap-2 text-ink">
                 <i class="fa-solid fa-heart text-accent"></i> Dados do amigo (quem recebe)
-              </h3>
+              </h5>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-sm font-bold text-ink mb-1">Nome do amigo *</label>
@@ -148,9 +148,9 @@ import Footer from '../components/Footer.astro';
 
             <!-- Personal Message -->
             <div class="bg-paper/50 rounded-xl p-5 border border-ink/10">
-              <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+              <h5 class="font-serif font-semibold text-lg mb-4 flex items-center gap-2 text-ink">
                 <i class="fa-solid fa-pen-fancy text-accent"></i> Mensagem de carinho
-              </h3>
+              </h5>
               <div>
                 <label class="block text-sm font-bold text-ink mb-1">Sua mensagem *</label>
                 <textarea id="gift-message" required rows="4" maxlength="300"
@@ -162,9 +162,9 @@ import Footer from '../components/Footer.astro';
 
             <!-- Gift Card Preview -->
             <div class="bg-paper/50 rounded-xl p-5 border border-ink/10">
-              <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+              <h5 class="font-serif font-semibold text-lg mb-4 flex items-center gap-2 text-ink">
                 <i class="fa-solid fa-eye text-accent"></i> Pré-visualização do presente
-              </h3>
+              </h5>
               <div class="gift-card-preview rounded-xl p-6 max-w-sm mx-auto text-center relative bg-gradient-to-br from-paper to-vintage">
                 <div class="gift-card-stamp absolute top-3 right-3 w-16 h-16 rounded-sm flex items-center justify-center">
                   <span class="text-[9px] font-serif uppercase text-accent/60 font-bold text-center leading-none">PRESENTE<br/>CELESTIAL</span>
@@ -172,7 +172,7 @@ import Footer from '../components/Footer.astro';
                 <div class="mb-3">
                   <i class="fa-solid fa-cloud text-accent text-3xl"></i>
                 </div>
-                <h4 id="gift-preview-title" class="font-serif font-bold text-lg text-ink mb-1">Plano Vitalício</h4>
+                <h5 id="gift-preview-title" class="font-serif font-semibold text-lg text-ink mb-1">Plano Vitalício</h5>
                 <p class="text-xs text-gray-600 font-body mb-3">Notícias do Céu</p>
                 <div class="separator-line"></div>
                 <p class="text-sm font-body italic text-ink/70 mb-2" id="preview-message">
@@ -197,13 +197,13 @@ import Footer from '../components/Footer.astro';
         <!-- STEP 2: Payment -->
         <div id="step-2" class="step-content">
           <div class="text-center mb-8">
-            <h2 class="text-2xl md:text-3xl font-serif font-bold text-ink mb-2">Pagamento</h2>
+            <h2 class="text-3xl font-serif font-bold text-ink mb-2">Pagamento</h2>
             <p class="text-gray-600 font-body">Pagamento seguro via cartão de crédito (Simulação)</p>
           </div>
 
           <!-- Order Summary -->
           <div class="bg-paper/50 rounded-xl p-5 border border-ink/10 mb-6">
-            <h3 class="font-serif font-bold text-lg mb-3">Resumo do Pedido</h3>
+            <h5 class="font-serif font-semibold text-lg mb-3 text-ink">Resumo do Pedido</h5>
             <div class="flex justify-between items-center py-2 border-b border-ink/10">
               <span id="summary-product-name" class="font-body">Gift Card - Plano Vitalício</span>
               <span id="summary-product-price" class="font-serif font-bold text-accent">R$ 39,90</span>
@@ -220,9 +220,9 @@ import Footer from '../components/Footer.astro';
 
           <!-- Stripe Payment Element -->
           <div class="bg-paper/50 rounded-xl p-5 border border-ink/10 mb-6">
-            <h3 class="font-serif font-bold text-lg mb-4 flex items-center gap-2">
+            <h5 class="font-serif font-semibold text-lg mb-4 flex items-center gap-2 text-ink">
               <i class="fa-solid fa-credit-card text-accent"></i> Dados do Cartão
-            </h3>
+            </h5>
             <div id="payment-element" class="mb-4">
               <!-- Stripe Payment Element mounts here -->
               <div id="stripe-card-element" class="p-4 border-2 border-ink/20 rounded-lg bg-white"></div>
@@ -249,13 +249,13 @@ import Footer from '../components/Footer.astro';
             <div class="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
               <i class="fa-solid fa-check text-green-600 text-4xl"></i>
             </div>
-            <h2 class="text-2xl md:text-3xl font-serif font-bold text-ink mb-2">Presente Criado com Sucesso!</h2>
+            <h2 class="text-3xl font-serif font-bold text-ink mb-2">Presente Criado com Sucesso!</h2>
             <p class="text-gray-600 font-body">O gift card foi criado e está pronto para ser entregue</p>
           </div>
 
           <!-- Gift Card Code -->
           <div class="bg-paper/50 rounded-xl p-6 border-2 border-accent/40 mb-6 text-center">
-            <h3 class="font-serif font-bold text-lg mb-2">Código do Gift Card</h3>
+            <h5 class="font-serif font-semibold text-lg mb-2 text-ink">Código do Gift Card</h5>
             <div class="bg-white rounded-lg p-4 border-2 border-dashed border-accent/40 inline-block mb-3">
               <span id="gift-code" class="font-mono text-2xl font-bold text-ink tracking-widest">----</span>
             </div>
@@ -281,7 +281,7 @@ import Footer from '../components/Footer.astro';
               <div class="mb-4">
                 <i class="fa-solid fa-cloud text-accent text-4xl"></i>
               </div>
-              <h4 class="font-serif font-bold text-2xl text-ink mb-1">Notícias do Céu</h4>
+              <h3 class="font-serif font-semibold text-2xl text-ink mb-1">Notícias do Céu</h3>
               <p class="text-sm text-gray-600 font-body mb-4">Um presente de amor eterno</p>
               <div class="separator-line"></div>
               <p class="text-base font-body italic text-ink/70 mb-3" id="print-message"></p>
@@ -299,7 +299,7 @@ import Footer from '../components/Footer.astro';
             <div class="flex items-start gap-3">
               <i class="fa-solid fa-envelope text-accent text-xl mt-0.5"></i>
               <div>
-                <h4 class="font-serif font-bold text-ink" id="email-status-title">E-mail enviado!</h4>
+                <h5 class="font-serif font-semibold text-lg text-ink" id="email-status-title">E-mail enviado!</h5>
                 <p class="text-sm text-gray-600 font-body" id="email-status-message">
                   Uma mensagem carinhosa foi enviada para o seu amigo com o código e instruções para ativar o presente.
                 </p>

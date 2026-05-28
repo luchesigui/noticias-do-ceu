@@ -8,6 +8,7 @@
 
   --font-serif: "Playfair Display", serif;
   --font-body: "Lora", serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
 }
 
 /* Custom Newspaper Theme Styles */
@@ -197,4 +198,12 @@ body {
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* Custom Accordion Details/Summary styling */
+summary::-webkit-details-marker {
+  display: none;
+}
+summary {
+  list-style: none;
 }

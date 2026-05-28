@@ -9,7 +9,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
   <Navbar showCreateMemorial={true} />
 
   <!-- Hero Section -->
-  <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-b from-paper/30 to-white">
+  <section class="relative pt-32 pb-16 md:pb-24 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-b from-paper/30 to-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <!-- Text Content -->
@@ -17,7 +17,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
           <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent font-semibold text-sm mb-6 border border-accent/20">
             <i class="fa-solid fa-paw"></i> Uma homenagem viva e eterna
           </div>
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-black leading-tight mb-6 text-ink">
+          <h1 class="text-4xl font-serif font-black leading-tight mb-6 text-ink">
             O amor não morre, <br />
             <span class="italic text-accent">ele vira notícia no céu.</span>
           </h1>
@@ -51,12 +51,12 @@ import WaitingListModal from '../components/WaitingListModal.astro';
               <p class="text-xs font-bold uppercase tracking-widest mb-1">
                 Edição Especial do Amor Que Nunca Termina
               </p>
-              <h2 class="font-serif text-4xl font-black uppercase tracking-tighter">
+              <h1 class="font-serif text-3xl font-black uppercase tracking-tighter text-ink">
                 Notícias do Céu
-              </h2>
+              </h1>
             </div>
             <div class="text-center">
-              <h3 class="font-serif text-2xl font-bold mb-2">
+              <h3 class="font-serif text-2xl font-semibold mb-2">
                 FLOKINHO FAZ NOVOS AMIGOS NAS NUVENS
               </h3>
               <img
@@ -64,7 +64,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
                 alt="Cachorro feliz"
                 class="w-full h-48 object-cover rounded filter grayscale contrast-125 mb-4 border border-ink/30"
               />
-              <p class="text-sm text-justify font-body">
+              <p class="text-sm text-left md:text-justify font-body">
                 "Hoje nosso amado anjinho de quatro patas foi visto correndo
                 pelo imenso campo de grama verde esmeralda. Ele manda avisar
                 que os petiscos aqui são infinitos..."
@@ -80,70 +80,70 @@ import WaitingListModal from '../components/WaitingListModal.astro';
   </section>
 
   <!-- How it works -->
-  <section id="como-funciona" class="newspaper-container py-24">
+  <section id="como-funciona" class="newspaper-container py-16 md:py-24">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-20">
+      <div class="text-center mb-8 md:mb-16">
         <div class="font-serif italic text-accent text-base mb-3">
           — Como Funciona —
         </div>
-        <h2 class="text-4xl md:text-6xl font-serif font-black uppercase tracking-tight text-ink" style="text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.05)">
+        <h2 class="text-3xl font-serif font-bold uppercase tracking-tight text-ink" style="text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.05)">
           Apenas 3 Passos
         </h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-14 md:gap-0">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Step 1 -->
-        <div class="relative px-2 md:px-8 md:border-r md:border-ink/20">
-          <div class="font-serif font-black text-7xl md:text-8xl leading-none text-ink text-center">
+        <div class="bg-white/60 backdrop-blur-sm border border-vintage/50 rounded-2xl p-8 relative flex flex-col items-center text-center hover:shadow-md transition-shadow duration-300">
+          <div class="font-serif font-black text-7xl leading-none text-ink">
             01
           </div>
-          <div class="flex items-center justify-center gap-4 my-3">
+          <div class="flex items-center justify-center gap-4 my-4 w-full">
             <div class="h-px flex-1 max-w-[60px] bg-ink/30"></div>
             <i class="fa-solid fa-camera-retro text-accent text-sm"></i>
             <div class="h-px flex-1 max-w-[60px] bg-ink/30"></div>
           </div>
-          <h3 class="text-2xl font-serif font-bold uppercase tracking-wide text-ink text-center mb-3">
+          <h3 class="text-2xl font-serif font-semibold uppercase tracking-wide text-ink mb-3">
             Conte a História
           </h3>
-          <p class="font-body text-[15px] leading-relaxed text-ink/80 text-center text-balance">
+          <p class="font-body text-[15px] leading-relaxed text-ink/80 text-balance">
             Você nos envia a foto mais linda, o nome, os apelidos carinhosos e
             as <em>manias inesquecíveis</em> do seu pet.
           </p>
         </div>
 
         <!-- Step 2 -->
-        <div class="relative px-2 md:px-8 md:border-r md:border-ink/20">
-          <div class="font-serif font-black text-7xl md:text-8xl leading-none text-ink text-center">
+        <div class="bg-white/60 backdrop-blur-sm border border-vintage/50 rounded-2xl p-8 relative flex flex-col items-center text-center hover:shadow-md transition-shadow duration-300">
+          <div class="font-serif font-black text-7xl leading-none text-ink">
             02
           </div>
-          <div class="flex items-center justify-center gap-4 my-3">
+          <div class="flex items-center justify-center gap-4 my-4 w-full">
             <div class="h-px flex-1 max-w-[60px] bg-ink/30"></div>
             <i class="fa-solid fa-feather-pointed text-accent text-sm"></i>
             <div class="h-px flex-1 max-w-[60px] bg-ink/30"></div>
           </div>
-          <h3 class="text-2xl font-serif font-bold uppercase tracking-wide text-ink text-center mb-3">
+          <h3 class="text-2xl font-serif font-semibold uppercase tracking-wide text-ink mb-3">
             Página Exclusiva
           </h3>
-          <p class="font-body text-[15px] leading-relaxed text-ink/80 text-center text-balance">
+          <p class="font-body text-[15px] leading-relaxed text-ink/80 text-balance">
             Em poucos minutos, montamos uma página web única — estilizada como
             um jornal clássico, só para o seu pet.
           </p>
         </div>
 
         <!-- Step 3 -->
-        <div class="relative px-2 md:px-8">
-          <div class="font-serif font-black text-7xl md:text-8xl leading-none text-ink text-center">
+        <div class="bg-white/60 backdrop-blur-sm border border-vintage/50 rounded-2xl p-8 relative flex flex-col items-center text-center hover:shadow-md transition-shadow duration-300">
+          <div class="font-serif font-black text-7xl leading-none text-ink">
             03
           </div>
-          <div class="flex items-center justify-center gap-4 my-3">
+          <div class="flex items-center justify-center gap-4 my-4 w-full">
             <div class="h-px flex-1 max-w-[60px] bg-ink/30"></div>
             <i class="fa-regular fa-calendar-check text-accent text-sm"></i>
             <div class="h-px flex-1 max-w-[60px] bg-ink/30"></div>
           </div>
-          <h3 class="text-2xl font-serif font-bold uppercase tracking-wide text-ink text-center mb-3">
+          <h3 class="text-2xl font-serif font-semibold uppercase tracking-wide text-ink mb-3">
             Notícias Diárias
           </h3>
-          <p class="font-body text-[15px] leading-relaxed text-ink/80 text-center text-balance">
+          <p class="font-body text-[15px] leading-relaxed text-ink/80 text-balance">
             <strong>O grande diferencial:</strong> todo dia, ao abrir o link,
             uma <em>nova edição</em> com aventuras e recados do céu.
           </p>
@@ -153,14 +153,14 @@ import WaitingListModal from '../components/WaitingListModal.astro';
   </section>
 
   <!-- Interactive Demo Section -->
-  <section id="demonstracao" class="py-24 bg-gray-50 overflow-hidden relative">
+  <section id="demonstracao" class="py-16 md:py-24 bg-gray-50 overflow-hidden relative">
     <!-- Background decorations -->
     <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute top-10 left-10 opacity-50 animate-cloud-slow-1"></i>
     <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute bottom-10 right-10 opacity-50 animate-cloud-slow-2"></i>
 
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-serif font-bold text-ink mb-4">
+      <div class="text-center mb-8 md:mb-16">
+        <h2 class="text-3xl font-serif font-bold text-ink mb-4">
           Experimente a Homenagem
         </h2>
         <p class="text-gray-600 max-w-2xl mx-auto mb-6">
@@ -205,7 +205,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
             </div>
           </div>
 
-          <h1 class="font-serif text-5xl sm:text-6xl md:text-7xl font-black uppercase tracking-tighter mb-2 text-ink" style="text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1)">
+          <h1 class="font-serif text-3xl sm:text-5xl font-black uppercase tracking-tighter mb-2 text-ink" style="text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1)">
             Notícias do Céu
           </h1>
           <p class="font-serif text-sm sm:text-base italic mb-4">
@@ -222,22 +222,22 @@ import WaitingListModal from '../components/WaitingListModal.astro';
           <!-- Left Column: Two Rotating Sidebar Sections -->
           <div class="md:col-span-3 border-b-2 md:border-b-0 md:border-r-2 border-ink/30 pb-6 md:pb-0 md:pr-6">
             <div class="text-center mb-4" id="sidebar-rotativa-top">
-              <h3 class="font-serif font-black text-lg uppercase mb-2 flex items-center justify-center gap-2">
+              <h5 class="font-serif font-bold text-lg uppercase mb-2 flex items-center justify-center gap-2">
                 <i class="fa-solid fa-cloud text-accent" id="sidebar-top-icon"></i>
                 <span id="sidebar-top-title">Mensagem do Céu</span>
-              </h3>
-              <div class="text-sm italic font-body text-justify" id="sidebar-top-content">
+              </h5>
+              <div class="text-sm italic font-body text-left md:text-justify" id="sidebar-top-content">
                 "Não chore por mim. Estou feliz, livre e em paz. Espere-me um
                 dia... vamos correr juntos de novo."
               </div>
             </div>
             <div class="separator-line"></div>
             <div class="text-center mt-4" id="sidebar-rotativa-bottom">
-              <h3 class="font-serif font-black text-lg uppercase mb-2 flex items-center justify-center gap-2">
+              <h5 class="font-serif font-bold text-lg uppercase mb-2 flex items-center justify-center gap-2">
                 <i class="fa-solid fa-cloud text-accent" id="sidebar-bottom-icon"></i>
                 <span id="sidebar-bottom-title">Mensagem do Céu</span>
-              </h3>
-              <div class="text-sm italic font-body text-justify" id="sidebar-bottom-content">
+              </h5>
+              <div class="text-sm italic font-body text-left md:text-justify" id="sidebar-bottom-content">
                 "Não chore por mim. Estou feliz, livre e em paz. Espere-me um
                 dia... vamos correr juntos de novo."
               </div>
@@ -262,12 +262,12 @@ import WaitingListModal from '../components/WaitingListModal.astro';
 
             <!-- Content injected via JS -->
             <div class="text-center mb-6">
-              <h2 class="font-serif font-black text-3xl sm:text-4xl uppercase leading-none mb-3" id="news-headline">
+              <h2 class="font-serif font-bold text-3xl uppercase leading-none mb-3" id="news-headline">
                 FLOKINHO ENCONTRA O ESTOQUE INFINITO DE PETISCOS
               </h2>
-              <h3 class="font-serif text-lg sm:text-xl italic text-gray-700 mb-4" id="news-subheadline">
+              <h4 class="font-serif text-xl font-medium italic text-gray-700 mb-4" id="news-subheadline">
                 Uma tarde inteira de brincadeiras sem fim e a barriguinha cheia.
-              </h3>
+              </h4>
             </div>
 
             <div class="flex flex-col sm:flex-row gap-6 items-start">
@@ -290,7 +290,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
               </div>
 
               <!-- Article Text -->
-              <div class="w-full sm:w-1/2 text-justify font-body text-sm sm:text-base columns-1" id="news-text">
+              <div class="w-full sm:w-1/2 text-left md:text-justify font-body text-sm sm:text-base columns-1" id="news-text">
                 <p class="mb-3">
                   <span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">H</span>oje, nossos correspondentes celestiais avistaram Flokinho correndo a toda velocidade pelo gramado sagrado. O motivo? Ele finalmente descobriu onde os anjos guardam os bifinhos de carne.
                 </p>
@@ -318,7 +318,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
   </section>
 
   <!-- Value Proposition -->
-  <section class="py-20 bg-white">
+  <section class="py-16 md:py-24 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <div>
@@ -329,39 +329,39 @@ import WaitingListModal from '../components/WaitingListModal.astro';
           />
         </div>
         <div>
-          <h2 class="text-3xl md:text-4xl font-serif font-bold text-ink mb-6">
+          <h2 class="text-3xl font-serif font-bold text-ink mb-6">
             Transforme a dor em um sorriso diário.
           </h2>
           <div class="space-y-6">
             <div class="flex items-start gap-4">
-              <div class="mt-1 bg-accent/20 p-2 rounded-full text-accent">
-                <i class="fa-solid fa-mobile-screen-button"></i>
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-accent/15 flex items-center justify-center text-accent">
+                <i class="fa-solid fa-mobile-screen-button text-lg"></i>
               </div>
               <div>
-                <h4 class="text-xl font-bold font-serif">Acesse de Qualquer Lugar</h4>
-                <p class="text-gray-600">
+                <h4 class="text-xl font-serif font-semibold text-ink">Acesse de Qualquer Lugar</h4>
+                <p class="text-gray-600 font-body">
                   Um link exclusivo do seu pet, protegido e seguro. Acesse pelo celular, tablet ou computador sempre que a saudade bater.
                 </p>
               </div>
             </div>
             <div class="flex items-start gap-4">
-              <div class="mt-1 bg-accent/20 p-2 rounded-full text-accent">
-                <i class="fa-solid fa-share-nodes"></i>
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-accent/15 flex items-center justify-center text-accent">
+                <i class="fa-solid fa-share-nodes text-lg"></i>
               </div>
               <div>
-                <h4 class="text-xl font-bold font-serif">Compartilhe com a Família</h4>
-                <p class="text-gray-600">
+                <h4 class="text-xl font-serif font-semibold text-ink">Compartilhe com a Família</h4>
+                <p class="text-gray-600 font-body">
                   Envie o link para todos que amavam seu cãopanheiro. Todos podem se emocionar com as Notícias Diárias.
                 </p>
               </div>
             </div>
             <div class="flex items-start gap-4">
-              <div class="mt-1 bg-accent/20 p-2 rounded-full text-accent">
-                <i class="fa-solid fa-infinity"></i>
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-accent/15 flex items-center justify-center text-accent">
+                <i class="fa-solid fa-infinity text-lg"></i>
               </div>
               <div>
-                <h4 class="text-xl font-bold font-serif">Uma Lembrança Viva</h4>
-                <p class="text-gray-600">
+                <h4 class="text-xl font-serif font-semibold text-ink">Uma Lembrança Viva</h4>
+                <p class="text-gray-600 font-body">
                   Diferente de um quadro estático, nosso algoritmo gerador de histórias garante que todo dia haja uma nova mensagem carinhosa.
                 </p>
               </div>
@@ -373,11 +373,11 @@ import WaitingListModal from '../components/WaitingListModal.astro';
   </section>
 
   <!-- Cartas para o Céu Section -->
-  <section id="cartas-para-o-ceu" class="py-24 bg-[#EFE6DB] relative overflow-hidden">
+  <section id="cartas-para-o-ceu" class="py-16 md:py-24 bg-[#EFE6DB] relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-      <div class="text-center mb-16">
+      <div class="text-center mb-8 md:mb-16">
         <span class="font-serif italic text-accent text-lg">Correio do Coração</span>
-        <h2 class="text-3xl md:text-5xl font-serif font-black uppercase text-ink mt-2">
+        <h2 class="text-3xl font-serif font-bold uppercase tracking-tight text-ink mt-2">
           Cartas para o Céu
         </h2>
         <p class="text-gray-700 text-lg max-w-2xl mx-auto mt-4 font-body">
@@ -397,7 +397,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
             <div class="font-serif italic text-accent border-b border-ink/20 pb-2 mb-4">
               Correspondência
             </div>
-            <p class="font-body text-sm text-justify italic leading-relaxed text-ink/80">
+            <p class="font-body text-sm text-left md:text-justify italic leading-relaxed text-ink/80">
               "Querido amigo, hoje vi um passarinho na janela e lembrei de como você tentava caçá-los. A casa está silenciosa, mas meu coração ainda guarda o som da sua patinha correndo no corredor. Sinto tanta saudade..."
             </p>
             <div class="separator-line white-bg"></div>
@@ -409,7 +409,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
           <!-- Cost Card -->
           <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-accent/40 flex justify-between items-center flex-wrap gap-4 w-full max-w-sm">
             <div>
-              <h4 class="text-lg font-serif font-bold text-ink">Custo de Envio Simples</h4>
+              <h5 class="text-lg font-serif font-semibold text-ink">Custo de Envio Simples</h5>
               <p class="text-gray-600 font-body text-xs">Sem assinaturas extras ou complicação.</p>
             </div>
             <div class="text-right">
@@ -420,54 +420,54 @@ import WaitingListModal from '../components/WaitingListModal.astro';
         </div>
 
         <!-- Right Column: Explanatory Content -->
-        <div class="lg:col-span-7 space-y-6">
+        <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch">
           <!-- Point 1 -->
-          <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-vintage/50 flex gap-4">
-            <div class="bg-accent/15 text-accent p-3 rounded-xl h-fit">
+          <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-vintage/50 flex flex-col gap-4 hover:shadow-md transition-shadow duration-300">
+            <div class="bg-accent/15 text-accent p-3 rounded-xl w-fit">
               <i class="fa-solid fa-pen-nib text-xl"></i>
             </div>
             <div>
-              <h3 class="text-xl font-serif font-bold text-ink">Escreva para o seu pet</h3>
-              <p class="text-gray-700 mt-1 font-body text-sm leading-relaxed">
+              <h4 class="text-xl font-serif font-semibold text-ink mb-2">Escreva para o seu pet</h4>
+              <p class="text-gray-700 font-body text-sm leading-relaxed">
                 O tutor escreve uma carta (desabafo, saudade, novidades) expressando todo o seu sentimento para o seu companheiro querido.
               </p>
             </div>
           </div>
 
           <!-- Point 2 -->
-          <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-vintage/50 flex gap-4">
-            <div class="bg-accent/15 text-accent p-3 rounded-xl h-fit">
+          <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-vintage/50 flex flex-col gap-4 hover:shadow-md transition-shadow duration-300">
+            <div class="bg-accent/15 text-accent p-3 rounded-xl w-fit">
               <i class="fa-solid fa-clock-rotate-left text-xl"></i>
             </div>
             <div>
-              <h3 class="text-xl font-serif font-bold text-ink">Publicação Garantida</h3>
-              <p class="text-gray-700 mt-1 font-body text-sm leading-relaxed">
+              <h4 class="text-xl font-serif font-semibold text-ink mb-2">Publicação Garantida</h4>
+              <p class="text-gray-700 font-body text-sm leading-relaxed">
                 É garantido que a carta será publicada na <strong class="text-ink">PRÓXIMA edição</strong> do jornal do tutor, com todo o destaque que merece.
               </p>
             </div>
           </div>
 
           <!-- Point 3 -->
-          <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-vintage/50 flex gap-4">
-            <div class="bg-accent/15 text-accent p-3 rounded-xl h-fit">
+          <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-vintage/50 flex flex-col gap-4 hover:shadow-md transition-shadow duration-300">
+            <div class="bg-accent/15 text-accent p-3 rounded-xl w-fit">
               <i class="fa-solid fa-earth-americas text-xl"></i>
             </div>
             <div>
-              <h3 class="text-xl font-serif font-bold text-ink">Opção de Tornar a Carta PÚBLICA</h3>
-              <p class="text-gray-700 mt-1 font-body text-sm leading-relaxed">
+              <h4 class="text-xl font-serif font-semibold text-ink mb-2">Opção de Tornar a Carta PÚBLICA</h4>
+              <p class="text-gray-700 font-body text-sm leading-relaxed">
                 Caso opte por tornar a carta pública, ela pode ser publicada aleatoriamente em outros jornais, permitindo que outros pets e tutores também a vejam.
               </p>
             </div>
           </div>
 
           <!-- Point 4 -->
-          <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-vintage/50 flex gap-4">
-            <div class="bg-accent/15 text-accent p-3 rounded-xl h-fit">
+          <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-vintage/50 flex flex-col gap-4 hover:shadow-md transition-shadow duration-300">
+            <div class="bg-accent/15 text-accent p-3 rounded-xl w-fit">
               <i class="fa-solid fa-reply text-xl"></i>
             </div>
             <div>
-              <h3 class="text-xl font-serif font-bold text-ink">A Resposta do Pet</h3>
-              <p class="text-gray-700 mt-1 font-body text-sm leading-relaxed">
+              <h4 class="text-xl font-serif font-semibold text-ink mb-2">A Resposta do Pet</h4>
+              <p class="text-gray-700 font-body text-sm leading-relaxed">
                 Uma edição DEPOIS da carta ser publicada, o pet responde com uma carta de volta, visível <strong class="text-ink">APENAS na edição do tutor</strong> que enviou (uma carta pessoal e íntima do pet).
               </p>
             </div>
@@ -477,18 +477,62 @@ import WaitingListModal from '../components/WaitingListModal.astro';
     </div>
   </section>
 
+  <!-- Testimonials (Depoimentos) Section -->
+  <section class="py-16 md:py-24 bg-[#EFE6DB] relative overflow-hidden border-t border-ink/10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="mb-10 text-center md:text-left">
+        <span class="font-sans font-bold text-accent text-xs uppercase tracking-[0.2em] block mb-2">Depoimentos</span>
+        <h2 class="text-3xl font-serif font-bold text-ink">
+          Cartas escritas no vento.
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+        <!-- Card 1 -->
+        <div class="bg-[#FAF6EE]/90 border border-ink/10 rounded-2xl p-6 flex flex-col justify-between hover:shadow-md transition-shadow duration-300">
+          <p class="font-body text-base italic text-ink/90 leading-relaxed mb-6">
+            "A primeira manhã sem ele foi mais leve. Tinha uma notícia esperando na caixa de entrada."
+          </p>
+          <span class="font-sans text-xs text-ink/75 font-semibold mt-auto block">
+            — Marina, sobre o Theo
+          </span>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-[#FAF6EE]/90 border border-ink/10 rounded-2xl p-6 flex flex-col justify-between hover:shadow-md transition-shadow duration-300">
+          <p class="font-body text-base italic text-ink/90 leading-relaxed mb-6">
+            "Imprimi o jornal e dei de presente para a minha mãe. Ela chorou. Depois sorriu."
+          </p>
+          <span class="font-sans text-xs text-ink/75 font-semibold mt-auto block">
+            — Ricardo, sobre a Lola
+          </span>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bg-[#FAF6EE]/90 border border-ink/10 rounded-2xl p-6 flex flex-col justify-between hover:shadow-md transition-shadow duration-300">
+          <p class="font-body text-base italic text-ink/90 leading-relaxed mb-6">
+            "Não acreditava que ia gostar. Hoje espero a notícia do dia como quem espera um abraço."
+          </p>
+          <span class="font-sans text-xs text-ink/75 font-semibold mt-auto block">
+            — Aline, sobre o Pingo
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Pricing -->
-  <section id="planos" class="py-24 bg-gray-50 relative overflow-hidden">
+  <section id="planos" class="py-16 md:py-24 bg-gray-50 relative overflow-hidden">
     <!-- Background decorations -->
     <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute top-10 left-10 opacity-50 pointer-events-none animate-cloud-slow-1"></i>
     <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute bottom-10 right-10 opacity-50 pointer-events-none animate-cloud-slow-2"></i>
 
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
       <div class="font-serif italic text-accent text-base mb-3">— Planos —</div>
-      <h2 class="text-4xl md:text-6xl font-serif font-black uppercase tracking-tight text-ink mb-4" style="text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.05)">
+      <h2 class="text-3xl font-serif font-bold uppercase tracking-tight text-ink mb-4" style="text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.05)">
         Eternize o Seu Amor
       </h2>
-      <p class="font-serif italic text-ink/70 text-base md:text-lg max-w-xl mx-auto mb-16">
+      <p class="font-serif italic text-ink/70 text-base md:text-lg max-w-xl mx-auto mb-8 md:mb-16">
         Escolha o plano ideal para guardar a memória do seu pet em uma edição diária do céu.
       </p>
 
@@ -498,7 +542,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
           <div>
             <div class="text-center pb-6 border-b border-ink/15">
               <p class="font-serif italic text-accent text-sm mb-2">Acesso por um ano</p>
-              <h3 class="font-serif font-bold uppercase tracking-[0.18em] text-base mb-5">Plano Anual</h3>
+              <h3 class="text-2xl font-serif font-semibold uppercase tracking-[0.18em] text-ink mb-5">Plano Anual</h3>
               <div class="flex items-baseline justify-center gap-1">
                 <span class="font-serif text-sm text-ink/60 self-start mt-2">R$</span>
                 <span class="font-serif font-black text-6xl leading-none">9</span>
@@ -533,13 +577,13 @@ import WaitingListModal from '../components/WaitingListModal.astro';
 
         <!-- PLANO VITALÍCIO -->
         <div class="bg-white rounded-2xl p-8 flex flex-col justify-between border-double-gold shadow-lg hover:shadow-xl transition-shadow relative">
-          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#C5A059] text-white font-serif font-bold text-[10px] uppercase tracking-[0.22em] px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
-            ★ Recomendado ★
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#C5A059] text-ink font-sans font-bold text-[10px] uppercase tracking-[0.22em] px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
+            Mais escolhido
           </div>
           <div>
             <div class="text-center pb-6 border-b border-ink/15">
               <p class="font-serif italic text-accent text-sm mb-2 mt-2">Acesso para sempre</p>
-              <h3 class="font-serif font-bold uppercase tracking-[0.18em] text-base mb-5">Plano Vitalício</h3>
+              <h3 class="text-2xl font-serif font-semibold uppercase tracking-[0.18em] text-accent mb-5">Plano Vitalício</h3>
               <div class="flex items-baseline justify-center gap-1 text-accent">
                 <span class="font-serif text-sm self-start mt-2 text-accent/80">R$</span>
                 <span class="font-serif font-black text-6xl leading-none">39</span>
@@ -592,7 +636,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
       </div>
 
       <!-- Donation Notice -->
-      <div class="mt-14 max-w-2xl mx-auto flex items-center gap-4 px-6 py-4 rounded-2xl border border-ink/15 bg-white text-left shadow-sm">
+      <div class="mt-8 md:mt-16 max-w-2xl mx-auto flex items-center gap-4 px-6 py-4 rounded-2xl border border-ink/15 bg-white text-left shadow-sm">
         <div class="flex-shrink-0 w-11 h-11 rounded-full bg-accent/15 flex items-center justify-center">
           <i class="fa-solid fa-paw text-accent text-lg"></i>
         </div>
@@ -605,7 +649,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
   </section>
 
   <!-- Gift Card Promo Section -->
-  <section id="presentear" class="py-24 bg-white relative overflow-hidden">
+  <section id="presentear" class="py-16 md:py-24 bg-white relative overflow-hidden">
     <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -top-10 -right-10 opacity-30 pointer-events-none animate-cloud-slow-1"></i>
     <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -bottom-10 -left-10 opacity-30 pointer-events-none animate-cloud-slow-2"></i>
 
@@ -616,7 +660,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
           <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent font-semibold text-sm border border-accent/20">
             <i class="fa-solid fa-gift"></i> Presente de Acolhimento
           </div>
-          <h2 class="text-3xl md:text-5xl font-serif font-black uppercase text-ink leading-tight">
+          <h2 class="text-3xl font-serif font-bold uppercase tracking-tight text-ink leading-tight">
             Apoie um amigo no momento da perda
           </h2>
           <p class="text-gray-700 text-lg font-body leading-relaxed max-w-2xl mx-auto lg:mx-0">
@@ -669,7 +713,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
             <div class="mb-4">
               <i class="fa-solid fa-cloud text-accent text-3xl"></i>
             </div>
-            <h4 id="gift-home-title" class="font-serif font-bold text-xl text-ink mb-1">Plano Vitalício</h4>
+            <h5 id="gift-home-title" class="font-serif font-semibold text-lg text-ink mb-1">Plano Vitalício</h5>
             <p class="text-xs text-gray-600 font-body mb-4">Notícias do Céu</p>
             <div class="separator-line"></div>
             <p class="text-sm font-body italic text-ink/70 mb-4 text-center">
@@ -686,6 +730,101 @@ import WaitingListModal from '../components/WaitingListModal.astro';
             Acesso vitalício • arquivo completo • 1 carta/mês inclusa
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section (Accordion) -->
+  <section class="py-16 md:py-24 bg-gray-50 border-t border-ink/10 relative overflow-hidden">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="mb-12 text-center">
+        <span class="font-sans font-bold text-accent text-xs uppercase tracking-[0.2em] block mb-2">FAQ</span>
+        <h2 class="text-3xl font-serif font-bold text-ink">
+          Perguntas Frequentes
+        </h2>
+        <p class="text-gray-600 font-body text-sm mt-3 max-w-md mx-auto">
+          Tudo o que você precisa saber sobre o funcionamento das impressoras celestiais e o diário do seu pet.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <!-- FAQ 1 -->
+        <details class="group border border-ink/10 rounded-2xl bg-white p-5 font-sans" name="faq-accordion">
+          <summary class="flex justify-between items-center font-serif font-bold text-lg md:text-xl text-ink cursor-pointer list-none focus:outline-none select-none">
+            <span>Como as histórias são geradas diariamente?</span>
+            <span class="transition-transform duration-300 group-open:rotate-180 text-accent">
+              <i class="fa-solid fa-chevron-down text-sm"></i>
+            </span>
+          </summary>
+          <div class="mt-4 text-gray-750 font-body text-[15px] leading-relaxed text-left md:text-justify border-t border-ink/5 pt-4">
+            Utilizamos um algoritmo inteligente combinado com as informações fornecidas sobre o seu pet (como nome, apelidos, brinquedos e manias) para gerar crônicas diárias exclusivas e ilustradas, celebrando a memória dele de forma leve e alegre.
+          </div>
+        </details>
+
+        <!-- FAQ 2 -->
+        <details class="group border border-ink/10 rounded-2xl bg-white p-5 font-sans" name="faq-accordion">
+          <summary class="flex justify-between items-center font-serif font-bold text-lg md:text-xl text-ink cursor-pointer list-none focus:outline-none select-none">
+            <span>Posso alterar a foto ou os dados do pet depois de criado?</span>
+            <span class="transition-transform duration-300 group-open:rotate-180 text-accent">
+              <i class="fa-solid fa-chevron-down text-sm"></i>
+            </span>
+          </summary>
+          <div class="mt-4 text-gray-750 font-body text-[15px] leading-relaxed text-left md:text-justify border-t border-ink/5 pt-4">
+            Sim, com certeza! Na sua área do tutor, você pode atualizar a foto de perfil do pet, alterar apelidos, adicionar novas manias ou atualizar os dados de envio a qualquer momento. As próximas edições refletirão as novas informações de forma orgânica.
+          </div>
+        </details>
+
+        <!-- FAQ 3 -->
+        <details class="group border border-ink/10 rounded-2xl bg-white p-5 font-sans" name="faq-accordion">
+          <summary class="flex justify-between items-center font-serif font-bold text-lg md:text-xl text-ink cursor-pointer list-none focus:outline-none select-none">
+            <span>Como funciona o envio de "Cartas para o Céu"?</span>
+            <span class="transition-transform duration-300 group-open:rotate-180 text-accent">
+              <i class="fa-solid fa-chevron-down text-sm"></i>
+            </span>
+          </summary>
+          <div class="mt-4 text-gray-750 font-body text-[15px] leading-relaxed text-left md:text-justify border-t border-ink/5 pt-4">
+            Você pode escrever uma mensagem contando sobre a sua saudade, novidades do dia ou um desabafo de amor. Ela será publicada na edição do dia seguinte do seu jornal. Na edição subsequente, o seu pet responderá com uma carta carinhosa e exclusiva.
+          </div>
+        </details>
+
+        <!-- FAQ 4 -->
+        <details class="group border border-ink/10 rounded-2xl bg-white p-5 font-sans" name="faq-accordion">
+          <summary class="flex justify-between items-center font-serif font-bold text-lg md:text-xl text-ink cursor-pointer list-none focus:outline-none select-none">
+            <span>O que acontece após o término do Plano Anual?</span>
+            <span class="transition-transform duration-300 group-open:rotate-180 text-accent">
+              <i class="fa-solid fa-chevron-down text-sm"></i>
+            </span>
+          </summary>
+          <div class="mt-4 text-gray-750 font-body text-[15px] leading-relaxed text-left md:text-justify border-t border-ink/5 pt-4">
+            Ao final de um ano, você poderá renovar a assinatura ou migrar para o Plano Vitalício. Caso opte por não renovar, a página do memorial ficará congelada na última edição gerada, mantendo todo o histórico seguro e disponível para leitura.
+          </div>
+        </details>
+
+        <!-- FAQ 5 -->
+        <details class="group border border-ink/10 rounded-2xl bg-white p-5 font-sans" name="faq-accordion">
+          <summary class="flex justify-between items-center font-serif font-bold text-lg md:text-xl text-ink cursor-pointer list-none focus:outline-none select-none">
+            <span>O site é seguro e os dados são privados?</span>
+            <span class="transition-transform duration-300 group-open:rotate-180 text-accent">
+              <i class="fa-solid fa-chevron-down text-sm"></i>
+            </span>
+          </summary>
+          <div class="mt-4 text-gray-750 font-body text-[15px] leading-relaxed text-left md:text-justify border-t border-ink/5 pt-4">
+            Sim. A privacidade da sua família é prioridade. Você pode configurar o jornal do seu pet para ser totalmente privado (acessível apenas por link direto compartilhado por você) ou público, caso queira que outras pessoas leiam e se emocionem com as crônicas celestes.
+          </div>
+        </details>
+
+        <!-- FAQ 6 -->
+        <details class="group border border-ink/10 rounded-2xl bg-white p-5 font-sans" name="faq-accordion">
+          <summary class="flex justify-between items-center font-serif font-bold text-lg md:text-xl text-ink cursor-pointer list-none focus:outline-none select-none">
+            <span>Como funciona o Gift Card do Notícias do Céu?</span>
+            <span class="transition-transform duration-300 group-open:rotate-180 text-accent">
+              <i class="fa-solid fa-chevron-down text-sm"></i>
+            </span>
+          </summary>
+          <div class="mt-4 text-gray-750 font-body text-[15px] leading-relaxed text-left md:text-justify border-t border-ink/5 pt-4">
+            O Gift Card é um gesto inestimável de acolhimento para apoiar um amigo que perdeu um pet. Ao comprar, você recebe um código de ativação exclusivo (e nós também enviamos por e-mail para seu amigo, se desejar). Ele poderá ativar o plano correspondente sem custos e criar o memorial.
+          </div>
+        </details>
       </div>
     </div>
   </section>
@@ -880,7 +1019,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
         imageEl.alt = newsToRender.imageAlt || "";
       }
       if (captionEl) captionEl.innerText = newsToRender.caption || "";
-      if (textEl) textEl.className = "w-full sm:w-1/2 text-justify font-body text-sm sm:text-base columns-1";
+      if (textEl) textEl.className = "w-full sm:w-1/2 text-left md:text-justify font-body text-sm sm:text-base columns-1";
     } else {
       if (imageContainerEl) imageContainerEl.classList.add("hidden");
       if (imageEl) {
@@ -888,7 +1027,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
         imageEl.alt = "";
       }
       if (captionEl) captionEl.innerText = "";
-      if (textEl) textEl.className = "w-full text-justify font-body text-sm sm:text-base columns-1 sm:columns-2 gap-6";
+      if (textEl) textEl.className = "w-full text-left md:text-justify font-body text-sm sm:text-base columns-1 sm:columns-2 gap-6";
     }
 
     if (isSun) {
@@ -896,7 +1035,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
       if (sidebarBottomIconEl) sidebarBottomIconEl.className = "fa-solid fa-heart text-accent";
       if (sidebarBottomTitleEl) sidebarBottomTitleEl.innerText = "Poema do Pet";
       if (sidebarBottomContentEl) {
-        sidebarBottomContentEl.innerHTML = `<p class="text-sm italic font-body text-justify">
+        sidebarBottomContentEl.innerHTML = `<p class="text-sm italic font-body text-left md:text-justify">
                   "Se pelas nuvens eu correr,<br/>
                   E de repente não me ver,<br/>
                   Olhe para o céu ao anoitecer.<br/>
@@ -910,7 +1049,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
       if (sidebarTopIconEl) sidebarTopIconEl.className = "fa-solid fa-dove text-accent";
       if (sidebarTopTitleEl) sidebarTopTitleEl.innerText = "Reflexão de Domingo";
       if (sidebarTopContentEl) {
-        sidebarTopContentEl.innerHTML = `<p class="text-sm italic font-body text-justify">
+        sidebarTopContentEl.innerHTML = `<p class="text-sm italic font-body text-left md:text-justify">
                   "Um dia de paz e silêncio no céu. Os pets descansam sob a sombra da grande árvore da vida, enviando raios de sol e brisas suaves para aquecer os corações de quem ficou na Terra."
               </p>`;
       }

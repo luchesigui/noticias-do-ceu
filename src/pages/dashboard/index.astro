@@ -1,0 +1,240 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import { PetService } from '../../services/pet-service.js';
+
+export const prerender = false;
+
+// Middleware guarantees that context.locals.user is defined and active
+const user = Astro.locals.user;
+const pet = await PetService.getPetByUserId(user.id);
+
+const isLifetime = user.plan === 'lifetime';
+const planLabel = isLifetime ? 'Plano Vitalício' : 'Plano Anual';
+---
+
+<Layout title="Meu Painel | Notícias do Céu">
+  <Navbar showCreateMemorial={false} />
+
+  <main class="flex-grow pt-32 pb-20 bg-gradient-to-b from-paper/30 to-white text-ink">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Top Greetings Header -->
+      <div class="flex flex-col md:flex-row md:justify-between md:items-end border-b-2 border-ink pb-6 mb-8 gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-accent">Leitor Autenticado</span>
+          <h1 class="font-serif text-4xl font-black mt-1">Olá, {user.name}</h1>
+          <p class="text-sm text-gray-600 mt-1">Bem-vindo à sua central de memórias do céu.</p>
+        </div>
+
+        <div class="flex gap-3">
+          <button 
+            id="logout-btn" 
+            class="bg-white text-ink border-2 border-ink px-5 py-2.5 rounded-full font-serif font-bold text-sm hover:bg-red-50 hover:border-red-600 hover:text-red-700 transition-all inline-flex items-center gap-2 cursor-pointer"
+          >
+            Sair da Conta <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Account Info Sidebar (1 Column) -->
+        <div class="space-y-6">
+          <div class="newspaper-container border-double-thick p-6 bg-white">
+            <h3 class="font-serif font-bold text-xl uppercase mb-4 pb-2 border-b border-gray-200 text-ink">
+              <i class="fa-solid fa-user-gear mr-2 text-accent"></i> Sua Conta
+            </h3>
+            
+            <div class="space-y-4 font-sans text-sm">
+              <div>
+                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">E-mail</span>
+                <span class="font-medium text-ink">{user.email}</span>
+              </div>
+              
+              <div>
+                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Assinatura</span>
+                <span class="font-serif font-bold text-accent">{planLabel}</span>
+              </div>
+
+              <div>
+                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Status do Pagamento</span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200">
+                  <i class="fa-solid fa-circle-check text-[10px]"></i> Ativo
+                </span>
+              </div>
+
+              <div class="pt-2">
+                {isLifetime ? (
+                  <p class="text-[11px] text-amber-800 bg-amber-50 p-3 rounded-lg border border-amber-200/50 leading-relaxed">
+                    <i class="fa-solid fa-star mr-1"></i> Você possui acesso permanente. Sem cobranças ou renovações adicionais.
+                  </p>
+                ) : (
+                  <p class="text-[11px] text-gray-500 leading-relaxed">
+                    Renovação anual correspondente a R$ 9,90.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pet Memorial Content (2 Columns) -->
+        <div class="lg:col-span-2 space-y-6">
+          
+          {!pet ? (
+            /* Empty State: No pet registered yet */
+            <div class="newspaper-container border-double-thick p-10 bg-white text-center space-y-6">
+              <div class="inline-flex items-center justify-center w-20 h-20 bg-paper rounded-full text-accent shadow-md">
+                <i class="fa-solid fa-paw text-4xl"></i>
+              </div>
+              
+              <div class="max-w-md mx-auto space-y-2">
+                <h3 class="font-serif text-2xl font-bold text-ink">Inicie a Homenagem do Seu Melhor Amigo</h3>
+                <p class="text-sm text-gray-600 leading-relaxed font-body">
+                  Você ainda não cadastrou o seu pet. Conte para nós os apelidos, brinquedos prediletos, traços de personalidade e coloque as fotos preferidas dele para montarmos a sua edição do jornal do céu.
+                </p>
+              </div>
+
+              <div class="pt-2">
+                <a 
+                  href="/dashboard/pet/novo" 
+                  class="bg-accent text-white px-8 py-4 rounded-full font-serif font-bold text-lg hover:bg-ink transition-all shadow-lg inline-flex items-center gap-2"
+                >
+                  Registrar Meu Pet <i class="fa-solid fa-plus"></i>
+                </a>
+              </div>
+            </div>
+          ) : (
+            /* Pet card summary */
+            <div class="newspaper-container border-double-thick p-8 bg-white space-y-6">
+              
+              <!-- Pet Card Header -->
+              <div class="flex justify-between items-start border-b border-gray-200 pb-4">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-accent"><i class="fa-solid fa-paw mr-1"></i> Memorial Cadastrado</span>
+                  <h2 class="font-serif text-3xl font-bold text-ink mt-1">{pet.name}</h2>
+                  <p class="text-xs text-gray-500 font-body mt-0.5">{pet.breed} • {pet.gender}</p>
+                </div>
+                
+                <a 
+                  href="/dashboard/pet/editar" 
+                  class="bg-white text-ink border border-ink px-4 py-2 rounded-xl font-sans text-xs font-semibold hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5 shadow-sm"
+                >
+                  <i class="fa-solid fa-pen-to-square"></i> Editar Dados
+                </a>
+              </div>
+
+              <!-- Pet details columns -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <div class="space-y-4">
+                  <div>
+                    <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider mb-1">Apelidos Carinhosos</span>
+                    <div class="flex flex-wrap gap-1.5">
+                      {pet.nicknames.map((nick) => (
+                        <span class="bg-gray-100 text-gray-800 text-xs px-2.5 py-1 rounded-md font-medium border border-gray-200">
+                          {nick}
+                        </span>
+                      ))}
+                      {pet.nicknames.length === 0 && <span class="text-gray-400 italic text-xs">Nenhum apelido cadastrado</span>}
+                    </div>
+                  </div>
+
+                  <div>
+                    <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider mb-1">Traços de Personalidade</span>
+                    <div class="flex flex-wrap gap-1.5">
+                      {pet.personalities.map((pers) => (
+                        <span class="bg-accent/10 text-accent text-xs px-2.5 py-1 rounded-md font-medium border border-accent/15">
+                          {pers}
+                        </span>
+                      ))}
+                      {pet.personalities.length === 0 && <span class="text-gray-400 italic text-xs">Nenhuma personalidade cadastrada</span>}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  <div>
+                    <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Lugar Favorito</span>
+                    <span class="font-body text-gray-800 block mt-0.5">{pet.favoritePlace || <span class="text-gray-400 italic text-xs">Não cadastrado</span>}</span>
+                  </div>
+
+                  <div>
+                    <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Objeto/Brinquedo Favorito</span>
+                    <span class="font-body text-gray-800 block mt-0.5">{pet.favoriteObject || <span class="text-gray-400 italic text-xs">Não cadastrado</span>}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Photo Gallery Preview -->
+              <div>
+                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider mb-3">Galeria de Fotos (Até 5 fotos)</span>
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                  {pet.photos.map((photo, index) => (
+                    <div class="relative aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-50 shadow-sm group">
+                      <img 
+                        src={photo} 
+                        alt={`Foto ${index + 1} de ${pet.name}`}
+                        class="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
+                      />
+                    </div>
+                  ))}
+                  
+                  {/* Empty photo placeholders */}
+                  {Array.from({ length: Math.max(0, 5 - pet.photos.length) }).map((_, i) => (
+                    <div class="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-300 bg-gray-50/50">
+                      <i class="fa-regular fa-image text-lg"></i>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div class="separator-line"></div>
+
+              <!-- Sky Newspaper CTA placeholder -->
+              <div class="p-6 rounded-2xl bg-paper/20 border border-vintage/60 text-center">
+                <h4 class="font-serif font-bold text-lg text-ink">A Edição Diária do {pet.name} está no ar!</h4>
+                <p class="text-xs text-gray-600 mt-1 max-w-md mx-auto leading-relaxed">
+                  Histórias amorosas vindas diretamente do paraíso dos animais. O memorial interativo já pode ser compartilhado com familiares e amigos.
+                </p>
+                <div class="mt-4 flex flex-wrap justify-center gap-3">
+                  <a 
+                    href="/#demonstracao"
+                    class="bg-ink text-paper px-6 py-2.5 rounded-full font-serif font-bold text-sm hover:bg-accent transition-colors shadow-md inline-flex items-center gap-1.5"
+                  >
+                    Visualizar Memorial <i class="fa-solid fa-eye text-xs"></i>
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          )}
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script is:inline>
+  document.getElementById('logout-btn')?.addEventListener('click', async () => {
+    try {
+      const res = await fetch('/api/auth/logout', {
+        method: 'POST'
+      });
+      if (res.ok) {
+        window.location.href = '/login';
+      } else {
+        alert('Erro ao sair da conta. Tente novamente.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao se conectar ao servidor.');
+    }
+  });
+</script>

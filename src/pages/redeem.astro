@@ -19,11 +19,11 @@ import Footer from '../components/Footer.astro';
       <div id="step-input" class="newspaper-container border-double-thick p-8 fade-in text-ink">
         <div class="text-center border-b-2 border-ink pb-4 mb-6">
           <p class="text-xs font-bold uppercase tracking-widest mb-1">Edição Especial de Resgate</p>
-          <h2 class="font-serif text-3xl font-black uppercase tracking-tighter">Notícias do Céu</h2>
+          <h1 class="font-serif text-3xl font-black uppercase tracking-tighter text-ink">Notícias do Céu</h1>
         </div>
 
         <div class="text-center mb-8">
-          <h3 class="font-serif text-2xl font-bold mb-3 text-ink">Insira o seu Código de Presente</h3>
+          <h3 class="font-serif text-2xl font-semibold mb-3 text-ink">Insira o seu Código de Presente</h3>
           <p class="text-sm text-gray-700 max-w-md mx-auto leading-relaxed">
             Se você recebeu um cartão de presente para eternizar a memória do seu querido pet, insira o código de 12 dígitos abaixo.
           </p>
@@ -46,17 +46,17 @@ import Footer from '../components/Footer.astro';
       <!-- Step 2: Show Gift Card Details -->
       <div id="step-details" class="hidden newspaper-container border-double-thick p-8 fade-in text-ink relative">
         <!-- Design Badge & Theme Details -->
-        <div id="theme-banner" class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#C5A059] text-white font-serif font-bold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md whitespace-nowrap flex items-center gap-2">
+        <div id="theme-banner" class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[#C5A059] text-ink font-sans font-bold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md whitespace-nowrap flex items-center gap-2">
           <span id="theme-icon"><i class="fa-solid fa-star"></i></span> <span id="theme-name">Design</span>
         </div>
 
         <div class="text-center border-b-2 border-ink pb-4 mb-6 mt-2">
           <p class="text-xs font-bold uppercase tracking-widest mb-1">Uma Lembrança do Coração</p>
-          <h2 class="font-serif text-3xl font-black uppercase tracking-tighter">Notícias do Céu</h2>
+          <h1 class="font-serif text-3xl font-black uppercase tracking-tighter text-ink">Notícias do Céu</h1>
         </div>
 
         <div class="text-center mb-6">
-          <h3 class="font-serif text-2xl font-bold mb-1 text-accent">Uma mensagem especial espera por você</h3>
+          <h3 class="font-serif text-2xl font-semibold mb-1 text-accent">Uma mensagem especial espera por você</h3>
           <p class="text-sm font-serif italic text-gray-700">Enviada com carinho por <strong id="sender-display" class="text-ink">Remetente</strong></p>
         </div>
 
@@ -90,7 +90,7 @@ import Footer from '../components/Footer.astro';
 
         <!-- Message Quote Block -->
         <div id="message-container" class="my-6">
-          <div class="relative bg-white/60 p-6 rounded-xl border border-vintage/50 italic text-justify font-body text-gray-800">
+          <div class="relative bg-white/60 p-6 rounded-xl border border-vintage/50 italic text-left md:text-justify font-body text-gray-800">
             <i class="fa-solid fa-quote-left text-3xl text-accent/20 absolute top-2 left-2"></i>
             <p id="message-display" class="relative z-10 pl-6 leading-relaxed">
               "Mensagem"
@@ -308,58 +308,7 @@ import Footer from '../components/Footer.astro';
 
   async function handleRedeemClick() {
     if (!currentCode) return;
-    
-    const btn = document.getElementById('redeem-btn') as HTMLButtonElement | null;
-    if (btn) {
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Processando resgate...`;
-    }
-    
-    hideError();
-
-    try {
-      const userId = getOrCreateUserId();
-      const res = await fetch(`${API_BASE_URL}/gift-cards/${currentCode}/redeem`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId })
-      });
-
-      if (res.status === 409) {
-        showError('Erro: Este cartão já foi resgatado por outra pessoa.', 'details');
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = `<span>Resgatar Homenagem</span> <i class="fa-solid fa-gift"></i>`;
-        }
-        return;
-      }
-
-      if (res.status === 410) {
-        showError('Erro: Este cartão já está expirado e não pode ser resgatado.', 'details');
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = `<span>Resgatar Homenagem</span> <i class="fa-solid fa-gift"></i>`;
-        }
-        return;
-      }
-
-      if (!res.ok) {
-        showError('Ocorreu um erro no servidor ao resgatar. Tente novamente.', 'details');
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = `<span>Resgatar Homenagem</span> <i class="fa-solid fa-gift"></i>`;
-        }
-        return;
-      }
-
-      goToSuccess(currentCode, currentCardDetails, false);
-    } catch (err) {
-      showError('Erro ao se conectar ao servidor. Verifique a rede.', 'details');
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = `<span>Resgatar Homenagem</span> <i class="fa-solid fa-gift"></i>`;
-      }
-    }
+    window.location.href = `/cadastro?code=${currentCode}`;
   }
 
   function goToSuccess(code, card, alreadyRedeemed = false) {
