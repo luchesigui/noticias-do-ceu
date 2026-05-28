@@ -1,49 +1,38 @@
-import { createSupabaseServerClient } from '../../../lib/supabaseSSR';
+import { AuthService } from '../../../services/auth-service.js';
 
 export const prerender = false;
 
 export async function POST(context) {
-  const supabase = createSupabaseServerClient(context);
-
   try {
     const body = await context.request.json();
     const email = body.email?.trim();
+    const password = body.password;
 
-    if (!email) {
-      return new Response(JSON.stringify({ error: 'E-mail é obrigatório.' }), {
+    if (!email || !password) {
+      return new Response(JSON.stringify({ error: 'E-mail e senha são obrigatórios.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    const redirectTo = new URL('/api/auth/callback', context.url.origin).href;
+    const { sessionToken, user } = await AuthService.login(email, password);
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: redirectTo,
-      },
+    context.cookies.set('session_token', sessionToken, {
+      path: '/',
+      httpOnly: true,
+      secure: import.meta.env.PROD,
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      sameSite: 'lax',
     });
 
-    if (error) {
-      console.error('Login OTP error:', error);
-      return new Response(JSON.stringify({ error: 'Erro ao enviar link. Tente novamente.' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    return new Response(
-      JSON.stringify({ success: true, message: 'Link mágico enviado para seu e-mail.' }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    return new Response(JSON.stringify({ success: true, user: { id: user.id, name: user.name, email: user.email, plan: user.plan, status: user.status } }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (error) {
-    console.error('Login error:', error);
-    return new Response(JSON.stringify({ error: 'Erro inesperado. Tente novamente.' }), {
-      status: 500,
+    const message = error instanceof Error ? error.message : 'Erro inesperado. Tente novamente.';
+    return new Response(JSON.stringify({ error: message }), {
+      status: 400,
       headers: { 'Content-Type': 'application/json' },
     });
   }

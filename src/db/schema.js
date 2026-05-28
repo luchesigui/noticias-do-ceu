@@ -31,8 +31,13 @@ export const pets = sqliteTable('pets', {
   favoriteObject: text('favorite_object').notNull(),
   personalities: text('personalities').notNull(), // JSON string representing string[]
   photos: text('photos').notNull(), // JSON string representing string[] (up to 5 photo paths/URLs)
+  slug: text('slug').unique(),
+  seed: text('seed'),
   createdAt: text('created_at').notNull(),
 });
+
+// Pets slug (added after initial schema)
+// Note: pets table already has slug via migration
 
 // Gift cards table
 export const giftCards = sqliteTable('gift_cards', {
@@ -51,5 +56,42 @@ export const giftCards = sqliteTable('gift_cards', {
   redeemedAt: text('redeemed_at'),
   redeemedBy: text('redeemed_by').references(() => users.id, { onDelete: 'set null' }),
   buyerId: text('buyer_id').references(() => users.id, { onDelete: 'set null' }),
+});
+
+// Orders table
+export const orders = sqliteTable('orders', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  mpPaymentId: text('mp_payment_id'),
+  amount: integer('amount'), // in cents
+  status: text('status').notNull().default('pending'), // 'pending' | 'approved' | 'rejected'
+  paymentMethod: text('payment_method'),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at'),
+});
+
+// Subscriptions table
+export const subscriptions = sqliteTable('subscriptions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  preapprovalId: text('preapproval_id'),
+  status: text('status').notNull().default('active'),
+  plan: text('plan').notNull(),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at'),
+});
+
+// Letters table
+export const letters = sqliteTable('letters', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  petId: text('pet_id').references(() => pets.id, { onDelete: 'set null' }),
+  petName: text('pet_name'),
+  tutorName: text('tutor_name'),
+  body: text('body').notNull(),
+  privacy: text('privacy').default('private'),
+  isPrivate: integer('is_private', { mode: 'boolean' }).notNull().default(true),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at'),
 });
 

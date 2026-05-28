@@ -1,15 +1,15 @@
-import { createSupabaseServerClient } from '../../../lib/supabaseSSR';
+import { AuthService } from '../../../services/auth-service.js';
 
 export const prerender = false;
 
 export async function POST(context) {
-  const supabase = createSupabaseServerClient(context);
+  const sessionToken = context.cookies.get('session_token')?.value;
 
-  const { error } = await supabase.auth.signOut();
-
-  if (error) {
-    console.error('Logout error:', error);
+  if (sessionToken) {
+    await AuthService.logout(sessionToken);
   }
+
+  context.cookies.delete('session_token', { path: '/' });
 
   return new Response(JSON.stringify({ success: true }), {
     status: 200,
