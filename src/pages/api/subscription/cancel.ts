@@ -1,8 +1,6 @@
 import type { APIRoute } from 'astro';
-import { cancelPreapproval, suspendPreapproval } from '../../../services/mercadopago';
-import { db } from '../../../db/index.js';
-import { subscriptions, users } from '../../../db/schema.js';
-import { eq, and } from 'drizzle-orm';
+import { MPService } from '../../../services/mercado-pago-service.js';
+import { users as usersApi, subscriptions as subscriptionsApi } from '../../../lib/data.js';
 
 export const prerender = false;
 
@@ -38,14 +36,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const { reason = 'user_request' } = body;
 
     // Find active subscription for user
-    const subs = await db.select().from(subscriptions).where(
-      and(
-        eq(subscriptions.userId, user.id),
-        eq(subscriptions.status, 'active')
-      )
-    ).limit(1);
+    const { data: subs, error: subsError } = await subscriptionsApi.findByUser(user.id);
+    if (subsError) {
+      console.error('[Cancel Subscription] DB error:', subsError);
+      return new Response(JSON.stringify({
+        error: 'db_error',
+        message: 'Erro ao buscar assinatura.',
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
-    if (subs.length === 0) {
+    const activeSub = (subs || []).find((s: any) => s.status === 'active');
+
+    if (!activeSub) {
       return new Response(JSON.stringify({
         error: 'no_subscription',
         message: 'Nenhuma assinatura ativa encontrada.',
@@ -55,18 +60,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    const sub = subs[0];
     const now = new Date().toISOString();
 
-    // Cancel in Mercado Pago if we have the subscription ID
-    if (sub.orderId) {
+    // Cancel in Mercado Pago if we have the preapproval ID
+    if (activeSub.preapprovalId) {
       try {
-        // Get the order to find the MP subscription ID
-        // For now we cancel the preapproval if stored in user.mpSubscriptionId
-        if (user.mpSubscriptionId) {
-          await cancelPreapproval(user.mpSubscriptionId);
-          console.log(`[Cancel Subscription] MP preapproval ${user.mpSubscriptionId} cancelled`);
-        }
+        await MPService.cancelSubscription(activeSub.preapprovalId);
+        console.log(`[Cancel Subscription] MP preapproval ${activeSub.preapprovalId} cancelled`);
       } catch (mpError: any) {
         // Log but continue — we still need to cancel locally for BR law compliance
         console.error('[Cancel Subscription] MP cancel error (proceeding with local cancel):', mpError.message);
@@ -74,25 +74,18 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Update subscription locally
-    await db.update(subscriptions)
-      .set({
-        status: 'cancelled',
-        cancelledAt: now,
-        cancellationReason: reason,
-        updatedAt: now,
-      })
-      .where(eq(subscriptions.id, sub.id));
+    await subscriptionsApi.update(activeSub.id, {
+      status: 'cancelled',
+      updatedAt: now,
+    });
 
-    // Update user status
-    await db.update(users)
-      .set({
-        status: 'cancelled',
-        cancelledAt: now,
-        updatedAt: now,
-      })
-      .where(eq(users.id, user.id));
+    // Update user status — set to 'cancelled' but they keep access until period ends
+    await usersApi.update(user.id, {
+      status: 'cancelled',
+      updatedAt: now,
+    });
 
-    console.log(`[Cancel Subscription] User ${user.id} cancelled subscription ${sub.id}`);
+    console.log(`[Cancel Subscription] User ${user.id} cancelled subscription ${activeSub.id}`);
 
     return new Response(JSON.stringify({
       success: true,

@@ -17,5 +17,7 @@ export default defineConfig({
     },
   },
 
-  adapter: vercel()
+  adapter: vercel({
+    functionPerRoute: false,
+  })
 });

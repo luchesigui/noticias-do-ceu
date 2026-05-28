@@ -25,7 +25,7 @@ export async function POST({ params, request }) {
       });
     }
 
-    const result = GiftCardService.redeemGiftCard(code, user_id);
+    const result = await GiftCardService.redeemGiftCard(code, user_id);
 
     if (result.error === 'not_found') {
       return new Response(JSON.stringify({ error: 'Gift card not found' }), {

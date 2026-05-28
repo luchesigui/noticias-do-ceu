@@ -1,11 +1,11 @@
-import { PetService } from '../../services/pet-service.js';
+import { PetService } from '../../../services/pet-service.js';
 
 export const prerender = false;
 
 /**
- * POST — Create a new pet for the authenticated user
+ * POST — Create a new pet for the authenticated user (onboarding)
  */
-async function handlePost({ request, locals }) {
+export async function POST({ request, locals }) {
   const user = locals.user;
 
   if (!user) {
@@ -29,11 +29,11 @@ async function handlePost({ request, locals }) {
       name: body.name?.trim(),
       breed: body.breed?.trim(),
       gender: body.gender,
-      nicknames: body.nicknames || [],
+      nicknames: Array.isArray(body.nicknames) ? body.nicknames : [],
       favoritePlace: body.favoritePlace?.trim() || '',
       favoriteObject: body.favoriteObject?.trim() || '',
-      personalities: body.personalities || [],
-      photos: body.photos || [],
+      personalities: Array.isArray(body.personalities) ? body.personalities : [],
+      photos: Array.isArray(body.photos) ? body.photos : [],
     };
 
     // Validate required fields
@@ -75,7 +75,7 @@ async function handlePost({ request, locals }) {
 /**
  * GET — List pets for the authenticated user
  */
-async function handleGet({ locals }) {
+export async function GET({ locals }) {
   const user = locals.user;
 
   if (!user) {
@@ -103,6 +103,3 @@ async function handleGet({ locals }) {
     });
   }
 }
-
-export const POST = handlePost;
-export const GET = handleGet;

@@ -366,6 +366,30 @@ export const pets = {
       .eq('user_id', userId)
       .select();
     return { data: data && data.length > 0 ? mapPetToJS(data[0]) : null, error };
+  },
+  async listByUser(userId) {
+    const { data, error } = await supabaseAdmin
+      .from('pets')
+      .select('*')
+      .eq('user_id', userId);
+    return { data: data ? data.map(mapPetToJS) : [], error };
+  },
+  async getWithDay(slug) {
+    const { data, error } = await supabaseAdmin
+      .from('pets')
+      .select('*')
+      .eq('slug', slug)
+      .limit(1);
+    if (error || !data || data.length === 0) return { data: null, error };
+    const pet = mapPetToJS(data[0]);
+    if (pet) {
+      const createdDate = new Date(pet.createdAt);
+      const now = new Date();
+      const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      pet.daysSinceCreation = diffDays;
+    }
+    return { data: pet, error: null };
   }
 };
 

@@ -59,7 +59,7 @@ export async function POST({ request }) {
       });
     }
 
-    const card = GiftCardService.createGiftCard(body);
+    const card = await GiftCardService.createGiftCard(body);
     return new Response(JSON.stringify(card), {
       status: 201,
       headers: { 'Content-Type': 'application/json' }
@@ -91,7 +91,7 @@ export async function GET({ url }) {
       });
     }
 
-    const data = GiftCardService.listGiftCards(page, limit);
+    const data = await GiftCardService.listGiftCards(page, limit);
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }

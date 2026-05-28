@@ -398,8 +398,8 @@ import Footer from '../components/Footer.astro';
 
     const cardLifetime = document.getElementById('plan-card-lifetime');
     const cardAnnual = document.getElementById('plan-card-annual');
-    const radioLifetime = document.getElementById('plan-lifetime') as HTMLInputElement | null;
-    const radioAnnual = document.getElementById('plan-annual') as HTMLInputElement | null;
+    const radioLifetime = document.getElementById('plan-lifetime');
+    const radioAnnual = document.getElementById('plan-annual');
 
     const previewTitle = document.getElementById('gift-preview-title');
     const previewFeatures = document.getElementById('gift-preview-features');
@@ -450,8 +450,8 @@ import Footer from '../components/Footer.astro';
   }
 
   function initFormListeners() {
-    const msgField = document.getElementById('gift-message') as HTMLTextAreaElement | null;
-    const giverName = document.getElementById('giver-name') as HTMLInputElement | null;
+    const msgField = document.getElementById('gift-message');
+    const giverName = document.getElementById('giver-name');
 
     if (msgField) msgField.addEventListener('input', updatePreview);
     if (giverName) giverName.addEventListener('input', updatePreview);
@@ -467,7 +467,7 @@ import Footer from '../components/Footer.astro';
   }
 
   function initCharCount() {
-    const msgField = document.getElementById('gift-message') as HTMLTextAreaElement | null;
+    const msgField = document.getElementById('gift-message');
     const charCount = document.getElementById('char-count');
     if (msgField && charCount) {
       msgField.addEventListener('input', () => {
@@ -524,8 +524,8 @@ import Footer from '../components/Footer.astro';
   // ============================================================
 
   function updatePreview() {
-    const message = (document.getElementById('gift-message') as HTMLTextAreaElement | null)?.value || '';
-    const giver = (document.getElementById('giver-name') as HTMLInputElement | null)?.value || '';
+    const message = (document.getElementById('gift-message'))?.value || '';
+    const giver = (document.getElementById('giver-name'))?.value || '';
 
     const previewMsg = document.getElementById('preview-message');
     const previewGiver = document.getElementById('preview-giver');
@@ -539,11 +539,11 @@ import Footer from '../components/Footer.astro';
   }
 
   function handleFormSubmit() {
-    const giverName = (document.getElementById('giver-name') as HTMLInputElement | null)?.value.trim() || '';
-    const giverEmail = (document.getElementById('giver-email') as HTMLInputElement | null)?.value.trim() || '';
-    const recipientName = (document.getElementById('recipient-name') as HTMLInputElement | null)?.value.trim() || '';
-    const recipientEmail = (document.getElementById('recipient-email') as HTMLInputElement | null)?.value.trim() || '';
-    const message = (document.getElementById('gift-message') as HTMLTextAreaElement | null)?.value.trim() || '';
+    const giverName = (document.getElementById('giver-name'))?.value.trim() || '';
+    const giverEmail = (document.getElementById('giver-email'))?.value.trim() || '';
+    const recipientName = (document.getElementById('recipient-name'))?.value.trim() || '';
+    const recipientEmail = (document.getElementById('recipient-email'))?.value.trim() || '';
+    const message = (document.getElementById('gift-message'))?.value.trim() || '';
 
     if (!giverName || !giverEmail || !recipientName || !message) {
       showToast('Por favor, preencha todos os campos obrigatórios.', 'error');

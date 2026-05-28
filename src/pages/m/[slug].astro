@@ -1,5 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
 import { PetService } from '../../services/pet-service.js';
 
 export const prerender = false;
@@ -10,267 +12,127 @@ if (!slug) {
   return Astro.redirect('/');
 }
 
-// Fetch pet with day counter from Supabase
+// Fetch pet with day counter directly from DB service
 const pet = await PetService.getPetWithDay(slug);
 
 if (!pet) {
   return Astro.redirect('/');
 }
-
-// Calculate day number (at least 1)
-const dayNumber = Math.max(1, pet.day_number || 1);
-
-// Seed-based PRNG (seeded hash for procedural grammar)
-function seededRandom(seed) {
-  let hash = 0;
-  const str = seed + String(dayNumber);
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
-  }
-  const x = Math.sin(hash) * 10000;
-  return x - Math.floor(x);
-}
-
-// Procedural content generation
-function generateHeadline() {
-  const templates = [
-    `${pet.name} completa ${dayNumber} dia(s) de memórias no céu`,
-    `O ${dayNumber}º dia de ${pet.name} além das nuvens`,
-    `Homenagem: ${pet.name} brilha no dia ${dayNumber}`,
-    `Há ${dayNumber} dia(s), ${pet.name} escreve sua história no paraíso`,
-  ];
-  const idx = Math.floor(seededRandom(pet.seed + 'headline') * templates.length);
-  return templates[idx];
-}
-
-function generateDayDescriptor() {
-  const descriptors = [
-    'sereno', 'luminoso', 'pacífico', 'radiante',
-    'gentil', 'acolhedor', 'dourado', 'misterioso',
-    'calmo', 'feliz', 'brilhante', 'tranquilo',
-  ];
-  const idx = Math.floor(seededRandom(pet.seed + 'descriptor') * descriptors.length);
-  return descriptors[idx];
-}
-
-function generateBodyParagraph() {
-  const nick = pet.nicknames?.length > 0
-    ? pet.nicknames[Math.floor(seededRandom(pet.seed + 'nick') * pet.nicknames.length)]
-    : pet.name;
-
-  const traits = pet.personalities?.length > 0
-    ? pet.personalities[Math.floor(seededRandom(pet.seed + 'trait') * pet.personalities.length)]
-    : 'carinhoso';
-
-  const place = pet.favoritePlace || 'o paraíso dos animais';
-  const obj = pet.favoriteObject || 'seus brinquedos favoritos';
-
-  const openings = [
-    `Neste ${generateDayDescriptor()} dia ${dayNumber}, ${nick} corre livre pelos campos do céu,`,
-    `Hoje marca o dia ${dayNumber} de uma jornada ${generateDayDescriptor()}, e ${nick} está no centro de tudo,`,
-    `No ${dayNumber}º dia no paraíso, ${nick} nos lembra que o amor não tem fim,`,
-  ];
-
-  const middles = [
-    `com aquele espírito ${traits} que marcou a vida de todos que tiveram a sorte de conviver.`,
-    `trazendo para ${place} a energia ${traits} que sempre definiu sua essência.`,
-    `onde cada momento em ${place} é preenchido com alegria e travessuras ${traits}.`,
-  ];
-
-  const endings = [
-    `As lembranças de ${obj} fazem sorrir a todos os anjos ao redor.`,
-    `Dizem que ${obj} se transformou em relíquia celestial, guardada com carinho.`,
-    `Até os querubins param para admirar a alegria que ${nick} espalha.`,
-  ];
-
-  const oIdx = Math.floor(seededRandom(pet.seed + 'open') * openings.length);
-  const mIdx = Math.floor(seededRandom(pet.seed + 'mid') * middles.length);
-  const eIdx = Math.floor(seededRandom(pet.seed + 'end') * endings.length);
-
-  return `${openings[oIdx]} ${middles[mIdx]} ${endings[eIdx]}`;
-}
-
-function generateClosingQuote() {
-  const quotes = [
-    `"${pet.name} não se foi — apenas chegou antes de nós, para preparar o lugar."`,
-    `"O amor de um pet é eterno. Cada dia no céu é uma prova disso."`,
-    `"Aqueles que amamos nunca morrem, apenas mudam de lugar — para o céu."`,
-    `"${pet.name} nos ensinou que o amor mais puro anda em quatro patas."`,
-  ];
-  const idx = Math.floor(seededRandom(pet.seed + 'quote') * quotes.length);
-  return quotes[idx];
-}
-
-const headline = generateHeadline();
-const body = generateBodyParagraph();
-const quote = generateClosingQuote();
-const formattedDate = new Date().toLocaleDateString('pt-BR', {
-  weekday: 'long',
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
-
 ---
 
 <Layout title={`${pet.name} — Memorial | Notícias do Céu`}>
-  <main class="min-h-screen bg-gradient-to-b from-paper/40 to-white pt-24 pb-16">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+  <Navbar showCreateMemorial={false} />
 
-      <!-- Newspaper Container -->
-      <article class="newspaper-container border-double-thick bg-white p-8 md:p-12">
+  <main class="flex-grow pt-32 pb-20 bg-gradient-to-b from-paper/30 to-white text-ink">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <!-- Newspaper Masthead -->
-        <header class="text-center border-b-2 border-ink pb-6 mb-8">
-          <div class="flex justify-between items-center text-[10px] uppercase tracking-widest text-gray-500 mb-2">
-            <span>Edição Nº {dayNumber}</span>
-            <span>{formattedDate}</span>
-          </div>
-          <h1 class="font-serif text-4xl md:text-5xl font-black uppercase tracking-tighter text-ink">
-            Notícias do Céu
-          </h1>
-          <div class="w-24 h-0.5 bg-accent mx-auto mt-4"></div>
-        </header>
-
-        <!-- Headline -->
-        <div class="text-center mb-8">
-          <h2 class="font-serif text-2xl md:text-3xl font-bold text-ink leading-tight">
-            {headline}
-          </h2>
-          <p class="text-sm text-gray-500 mt-3 italic">
-            Em homenagem a {pet.name} • {pet.breed} • {pet.gender}
-          </p>
+      <!-- Memorial Header -->
+      <div class="newspaper-container border-double-thick p-8 bg-white mb-8">
+        <div class="text-center border-b-2 border-ink pb-4 mb-6">
+          <p class="text-[10px] font-bold uppercase tracking-widest mb-1 text-accent">Memorial Celestial</p>
+          <h1 class="font-serif text-4xl font-black uppercase tracking-tighter text-ink">{pet.name}</h1>
+          <p class="text-sm text-gray-600 mt-2">{pet.breed} · {pet.gender}</p>
         </div>
 
-        <!-- Photo Gallery (if available) -->
+        <!-- Day Counter -->
+        <div class="text-center mb-8">
+          <div class="inline-flex items-center gap-3 bg-accent/10 border border-accent/20 rounded-2xl px-8 py-4">
+            <i class="fa-solid fa-calendar-day text-accent text-2xl"></i>
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-accent">Contagem Celestial</p>
+              <p class="font-serif text-3xl font-black text-ink">Dia {pet.dayNumber}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo Gallery -->
         {pet.photos && pet.photos.length > 0 && (
           <div class="mb-8">
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {pet.photos.slice(0, 5).map((photo, idx) => (
-                <div class="aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-50 shadow-sm">
-                  <img
-                    src={photo}
-                    alt={`Foto ${idx + 1} de ${pet.name}`}
-                    class="w-full h-full object-cover"
-                    loading="lazy"
-                  />
+            <h3 class="font-serif font-bold text-lg uppercase mb-4 pb-2 border-b border-gray-200 text-ink">
+              <i class="fa-solid fa-images mr-2"></i> Galeria de Memórias
+            </h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+              {pet.photos.map((photo, idx) => (
+                <div key={idx} class="aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-50 shadow-sm">
+                  <img src={photo} alt={`Foto ${idx + 1} de ${pet.name}`} class="w-full h-full object-cover" />
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        <!-- Divider -->
-        <div class="separator-line mb-8"></div>
-
-        <!-- Body Content -->
-        <div class="prose prose-lg max-w-none font-body text-ink">
-          <p class="first-letter:text-5xl first-letter:font-serif first-letter:font-black first-letter:float-left first-letter:mr-3 first-letter:leading-none first-letter:text-accent">
-            {body}
-          </p>
-        </div>
-
-        <!-- Day Badge -->
-        <div class="text-center my-8">
-          <div class="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-2 rounded-full text-sm font-bold">
-            <i class="fa-solid fa-calendar-day"></i>
-            Dia {dayNumber} no paraíso
-          </div>
-        </div>
-
-        <!-- Nicknames & Personalities -->
-        {(pet.nicknames?.length > 0 || pet.personalities?.length > 0) && (
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
-            {pet.nicknames?.length > 0 && (
-              <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider mb-2">
-                  Apelidos Carinhosos
+        <!-- Nicknames -->
+        {pet.nicknames && pet.nicknames.length > 0 && (
+          <div class="mb-6">
+            <h3 class="font-serif font-bold text-sm uppercase tracking-wider mb-2 text-ink">
+              <i class="fa-solid fa-heart mr-2 text-accent"></i> Apelidos Carinhosos
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {pet.nicknames.map((nick, idx) => (
+                <span key={idx} class="inline-flex items-center bg-accent/10 text-accent text-xs px-3 py-1.5 rounded-lg border border-accent/15 font-medium">
+                  {nick}
                 </span>
-                <div class="flex flex-wrap gap-1.5">
-                  {pet.nicknames.map(n => (
-                    <span class="bg-white text-gray-700 text-xs px-2.5 py-1 rounded-md font-medium border border-gray-200">
-                      {n}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {pet.personalities?.length > 0 && (
-              <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider mb-2">
-                  Personalidade
-                </span>
-                <div class="flex flex-wrap gap-1.5">
-                  {pet.personalities.map(p => (
-                    <span class="bg-accent/10 text-accent text-xs px-2.5 py-1 rounded-md font-medium border border-accent/15">
-                      {p}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+              ))}
+            </div>
           </div>
         )}
 
-        <!-- Divider -->
-        <div class="separator-line my-8"></div>
+        <!-- Personalities -->
+        {pet.personalities && pet.personalities.length > 0 && (
+          <div class="mb-6">
+            <h3 class="font-serif font-bold text-sm uppercase tracking-wider mb-2 text-ink">
+              <i class="fa-solid fa-star mr-2 text-accent"></i> Personalidade
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {pet.personalities.map((trait, idx) => (
+                <span key={idx} class="inline-flex items-center bg-gray-100 text-gray-800 text-xs px-3 py-1.5 rounded-lg border border-gray-200 font-medium">
+                  {trait}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
-        <!-- Closing Quote -->
-        <blockquote class="text-center py-6">
-          <p class="font-serif text-xl md:text-2xl italic text-ink/80 leading-relaxed">
-            {quote}
-          </p>
-          <footer class="mt-4 text-sm text-gray-500">
-            — Com amor, diretamente do céu
-          </footer>
-        </blockquote>
-
-        <!-- Share / Back -->
-        <div class="text-center mt-10 flex flex-wrap justify-center gap-3">
-          <button
-            onclick="shareMemorial()"
-            class="bg-ink text-paper px-6 py-2.5 rounded-full font-serif font-bold text-sm hover:bg-accent transition-colors inline-flex items-center gap-1.5 cursor-pointer"
-          >
-            <i class="fa-solid fa-share-nodes"></i> Compartilhar Memorial
-          </button>
-          <button
-            onclick="window.print()"
-            class="bg-white text-ink border-2 border-ink px-6 py-2.5 rounded-full font-serif font-bold text-sm hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
-          >
-            <i class="fa-solid fa-print"></i> Imprimir
-          </button>
+        <!-- Favorite Place & Object -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {pet.favoritePlace && (
+            <div class="p-4 bg-paper/20 rounded-xl border border-gray-200">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-accent mb-1">Lugar Favorito</p>
+              <p class="font-serif text-sm text-ink">{pet.favoritePlace}</p>
+            </div>
+          )}
+          {pet.favoriteObject && (
+            <div class="p-4 bg-paper/20 rounded-xl border border-gray-200">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-accent mb-1">Objeto Favorito</p>
+              <p class="font-serif text-sm text-ink">{pet.favoriteObject}</p>
+            </div>
+          )}
         </div>
 
-      </article>
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-100">
+          <a
+            href={`/letter?petName=${encodeURIComponent(pet.name)}`}
+            class="bg-accent text-white px-6 py-3 rounded-full font-serif font-bold hover:bg-ink transition-colors text-center inline-flex items-center justify-center gap-2"
+          >
+            <i class="fa-solid fa-envelope-open-text"></i> Escrever uma Carta
+          </a>
+          <a
+            href="/"
+            class="bg-white text-ink border-2 border-ink px-6 py-3 rounded-full font-serif font-bold hover:bg-gray-50 transition-colors text-center inline-flex items-center justify-center gap-2"
+          >
+            <i class="fa-solid fa-house"></i> Voltar ao Início
+          </a>
+        </div>
+      </div>
 
-      <!-- Footer Note -->
-      <footer class="text-center mt-8 text-xs text-gray-400">
-        <p>Este memorial é gerado proceduralmente com base nas informações carinhosas de familiares e amigos.</p>
-        <p class="mt-1">Notícias do Céu — Onde memórias vivem para sempre.</p>
-      </footer>
-
+      <!-- Footer Info -->
+      <div class="text-center text-xs text-gray-500 mt-8">
+        <p>Memorial criado em {new Date(pet.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+        <p class="mt-1">Notícias do Céu — Lembranças que transcendem</p>
+      </div>
     </div>
   </main>
+
+  <Footer />
 </Layout>
-
-<script>
-  function shareMemorial() {
-    const url = window.location.href;
-    const title = `Memorial de ${document.querySelector('h2')?.textContent || 'pet'}`;
-
-    if (navigator.share) {
-      navigator.share({ title, url });
-    } else {
-      navigator.clipboard.writeText(url).then(() => {
-        alert('Link do memorial copiado!');
-      }).catch(() => {
-        prompt('Copie o link do memorial:', url);
-      });
-    }
-  }
-
-  window.shareMemorial = shareMemorial;
-</script>

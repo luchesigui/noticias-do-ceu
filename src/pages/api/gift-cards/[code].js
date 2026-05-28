@@ -15,7 +15,7 @@ export async function GET({ params }) {
       });
     }
 
-    const card = GiftCardService.getGiftCardByCode(code);
+    const card = await GiftCardService.getGiftCardByCode(code);
 
     if (!card) {
       return new Response(JSON.stringify({ error: 'Gift card not found' }), {

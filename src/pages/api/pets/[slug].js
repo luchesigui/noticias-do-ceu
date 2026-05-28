@@ -3,8 +3,7 @@ import { PetService } from '../../../services/pet-service.js';
 export const prerender = false;
 
 /**
- * GET — Fetch a single pet by slug with day counter
- * URL: /api/pets/[slug]
+ * GET — Fetch a single pet by slug with day counter (public endpoint)
  */
 export async function GET({ params }) {
   const { slug } = params;
