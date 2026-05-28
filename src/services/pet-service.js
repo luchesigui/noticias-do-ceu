@@ -1,6 +1,4 @@
-import { db } from '../db/index.js';
-import { pets } from '../db/schema.js';
-import { eq } from 'drizzle-orm';
+import { pets as petsApi } from '../lib/data.js';
 import crypto from 'crypto';
 
 export class PetService {
@@ -10,18 +8,11 @@ export class PetService {
    * @param {string} userId
    */
   static async getPetByUserId(userId) {
-    const matched = await db.select().from(pets).where(eq(pets.userId, userId)).limit(1);
-    if (matched.length === 0) return null;
-
-    const pet = matched[0];
-    
-    // Parse JSON columns back to standard JS arrays
-    return {
-      ...pet,
-      nicknames: JSON.parse(pet.nicknames || '[]'),
-      personalities: JSON.parse(pet.personalities || '[]'),
-      photos: JSON.parse(pet.photos || '[]'),
-    };
+    const { data: pet, error } = await petsApi.findByOwner(userId);
+    if (error) {
+      throw error;
+    }
+    return pet;
   }
 
   /**
@@ -33,19 +24,33 @@ export class PetService {
 
     const { name, breed, gender, nicknames, favoritePlace, favoriteObject, personalities, photos } = data;
 
-    await db.insert(pets).values({
+    // Generate a URL-friendly unique slug for the pet
+    const baseSlug = name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+    const slug = `${baseSlug}-${crypto.randomBytes(3).toString('hex')}`;
+
+    const { error } = await petsApi.create({
       id: petId,
       userId,
       name,
       breed,
       gender,
-      nicknames: JSON.stringify(nicknames || []),
+      nicknames: nicknames || [],
       favoritePlace,
       favoriteObject,
-      personalities: JSON.stringify(personalities || []),
-      photos: JSON.stringify(photos || []),
+      personalities: personalities || [],
+      photos: photos || [],
       createdAt,
+      slug,
     });
+
+    if (error) {
+      throw error;
+    }
 
     return this.getPetByUserId(userId);
   }
@@ -61,18 +66,20 @@ export class PetService {
 
     const { name, breed, gender, nicknames, favoritePlace, favoriteObject, personalities, photos } = data;
 
-    await db.update(pets)
-      .set({
-        name,
-        breed,
-        gender,
-        nicknames: JSON.stringify(nicknames || []),
-        favoritePlace,
-        favoriteObject,
-        personalities: JSON.stringify(personalities || []),
-        photos: JSON.stringify(photos || []),
-      })
-      .where(eq(pets.userId, userId));
+    const { error } = await petsApi.update(userId, {
+      name,
+      breed,
+      gender,
+      nicknames: nicknames || [],
+      favoritePlace,
+      favoriteObject,
+      personalities: personalities || [],
+      photos: photos || [],
+    });
+
+    if (error) {
+      throw error;
+    }
 
     return this.getPetByUserId(userId);
   }

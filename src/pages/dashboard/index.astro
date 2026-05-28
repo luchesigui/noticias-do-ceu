@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 import { PetService } from '../../services/pet-service.js';
+import { orders as ordersApi } from '../../lib/data.js';
 
 export const prerender = false;
 
@@ -12,6 +13,36 @@ const pet = await PetService.getPetByUserId(user.id);
 
 const isLifetime = user.plan === 'lifetime';
 const planLabel = isLifetime ? 'Plano Vitalício' : 'Plano Anual';
+
+// Fetch user's active payment
+const { data: userPayments } = await ordersApi.findByUser(user.id);
+const approvedPayments = (userPayments || [])
+  .filter(p => p.status === 'approved')
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+const activePayment = approvedPayments[0];
+const startDateStr = activePayment ? activePayment.createdAt : user.createdAt;
+
+const formatDate = (isoString) => {
+  if (!isoString) return '-';
+  try {
+    const date = new Date(isoString);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  } catch {
+    return '-';
+  }
+};
+
+let renewalDate = null;
+if (!isLifetime) {
+  const startDate = new Date(startDateStr);
+  startDate.setFullYear(startDate.getFullYear() + 1);
+  renewalDate = startDate.toISOString();
+}
 ---
 
 <Layout title="Meu Painel | Notícias do Céu">
@@ -59,10 +90,30 @@ const planLabel = isLifetime ? 'Plano Vitalício' : 'Plano Anual';
               </div>
 
               <div>
-                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Status do Pagamento</span>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200">
-                  <i class="fa-solid fa-circle-check text-[10px]"></i> Ativo
-                </span>
+                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Início da Assinatura</span>
+                <span class="font-medium text-ink">{formatDate(startDateStr)}</span>
+              </div>
+
+              {!isLifetime && (
+                <div>
+                  <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">
+                    {user.subscriptionStatus === 'cancelled' ? 'Expira em' : 'Próxima Renovação'}
+                  </span>
+                  <span class="font-medium text-ink">{formatDate(renewalDate)}</span>
+                </div>
+              )}
+
+              <div>
+                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Status da Assinatura</span>
+                {user.subscriptionStatus === 'cancelled' ? (
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    <i class="fa-solid fa-ban text-[10px]"></i> Cancelada
+                  </span>
+                ) : (
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200">
+                    <i class="fa-solid fa-circle-check text-[10px]"></i> Ativa
+                  </span>
+                )}
               </div>
 
               <div class="pt-2">
@@ -70,10 +121,23 @@ const planLabel = isLifetime ? 'Plano Vitalício' : 'Plano Anual';
                   <p class="text-[11px] text-amber-800 bg-amber-50 p-3 rounded-lg border border-amber-200/50 leading-relaxed">
                     <i class="fa-solid fa-star mr-1"></i> Você possui acesso permanente. Sem cobranças ou renovações adicionais.
                   </p>
-                ) : (
-                  <p class="text-[11px] text-gray-500 leading-relaxed">
-                    Renovação anual correspondente a R$ 9,90.
+                ) : user.subscriptionStatus === 'cancelled' ? (
+                  <p class="text-[11px] text-amber-800 bg-amber-50/50 p-3 rounded-lg border border-amber-250 leading-relaxed">
+                    <i class="fa-solid fa-info-circle mr-1"></i> Assinatura cancelada. O memorial continuará disponível até a data de expiração acima.
                   </p>
+                ) : (
+                  <div class="space-y-3">
+                    <p class="text-[11px] text-gray-500 leading-relaxed">
+                      Renovação anual correspondente a R$ 9,90.
+                    </p>
+                    <button 
+                      type="button"
+                      id="open-cancel-dialog-btn"
+                      class="w-full bg-white hover:bg-red-50 text-red-650 hover:text-red-700 border border-red-200 hover:border-red-300 py-2 rounded-xl text-xs font-semibold font-sans transition-all cursor-pointer text-center"
+                    >
+                      Cancelar Assinatura
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
@@ -221,7 +285,40 @@ const planLabel = isLifetime ? 'Plano Vitalício' : 'Plano Anual';
   <Footer />
 </Layout>
 
+<!-- Cancel Subscription Dialog Modal -->
+<dialog id="cancel-dialog" class="backdrop:bg-black/50 p-0 rounded-2xl border border-gray-200 shadow-2xl max-w-sm w-full bg-white text-ink overflow-hidden">
+  <div class="p-6 space-y-4">
+    <div class="text-center space-y-2">
+      <div class="inline-flex items-center justify-center w-12 h-12 bg-red-50 text-red-650 rounded-full border border-red-200">
+        <i class="fa-solid fa-circle-exclamation text-xl"></i>
+      </div>
+      <h3 class="font-serif text-xl font-bold">Cancelar Assinatura?</h3>
+      <p class="text-xs text-gray-500 leading-relaxed font-sans">
+        Você perderá o acesso à criação e edição do memorial do seu pet após o fim do período contratado. Tem certeza que deseja prosseguir?
+      </p>
+    </div>
+    
+    <div class="flex gap-3 pt-2">
+      <button 
+        type="button" 
+        onclick="document.getElementById('cancel-dialog').close()"
+        class="flex-1 bg-gray-50 hover:bg-gray-100 text-ink py-2.5 rounded-xl font-sans text-xs font-bold border border-gray-250 transition-colors cursor-pointer"
+      >
+        Manter
+      </button>
+      <button 
+        type="button" 
+        id="confirm-cancel-btn"
+        class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl font-sans text-xs font-bold transition-colors cursor-pointer"
+      >
+        Confirmar
+      </button>
+    </div>
+  </div>
+</dialog>
+
 <script is:inline>
+  // Handle log out
   document.getElementById('logout-btn')?.addEventListener('click', async () => {
     try {
       const res = await fetch('/api/auth/logout', {
@@ -235,6 +332,43 @@ const planLabel = isLifetime ? 'Plano Vitalício' : 'Plano Anual';
     } catch (err) {
       console.error(err);
       alert('Erro ao se conectar ao servidor.');
+    }
+  });
+
+  // Handle cancel subscription dialog trigger
+  document.getElementById('open-cancel-dialog-btn')?.addEventListener('click', () => {
+    document.getElementById('cancel-dialog')?.showModal();
+  });
+
+  // Handle confirm cancel subscription
+  document.getElementById('confirm-cancel-btn')?.addEventListener('click', async () => {
+    const btn = document.getElementById('confirm-cancel-btn');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Cancelando...`;
+    }
+    
+    try {
+      const res = await fetch('/api/subscription/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Erro ao cancelar a assinatura.');
+      }
+      
+      // Close dialog and reload page
+      document.getElementById('cancel-dialog')?.close();
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `Confirmar`;
+      }
     }
   });
 </script>

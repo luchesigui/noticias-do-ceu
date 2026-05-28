@@ -82,7 +82,7 @@ import Footer from '../components/Footer.astro';
                   </div>
                   <div class="mt-4 pt-3 border-t border-ink/5 flex justify-between items-baseline">
                     <span class="text-xs text-accent font-bold uppercase tracking-wider">Acesso Eterno</span>
-                    <span class="font-serif font-black text-xl text-accent">R$ 39,90</span>
+                    <span class="font-serif font-black text-xl text-accent">R$ 9,90</span>
                   </div>
                 </label>
 
@@ -97,7 +97,7 @@ import Footer from '../components/Footer.astro';
                   </div>
                   <div class="mt-4 pt-3 border-t border-ink/5 flex justify-between items-baseline">
                     <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">1 Ano</span>
-                    <span class="font-serif font-black text-xl text-ink">R$ 9,90</span>
+                    <span class="font-serif font-black text-xl text-ink">R$ 90,00</span>
                   </div>
                 </label>
               </div>
@@ -206,7 +206,7 @@ import Footer from '../components/Footer.astro';
             <h5 class="font-serif font-semibold text-lg mb-3 text-ink">Resumo do Pedido</h5>
             <div class="flex justify-between items-center py-2 border-b border-ink/10">
               <span id="summary-product-name" class="font-body">Gift Card - Plano Vitalício</span>
-              <span id="summary-product-price" class="font-serif font-bold text-accent">R$ 39,90</span>
+              <span id="summary-product-price" class="font-serif font-bold text-accent">R$ 9,90</span>
             </div>
             <div class="flex justify-between items-center py-2 text-sm text-gray-500">
               <span class="font-body">Para: <span id="summary-recipient" class="text-ink font-bold"></span></span>
@@ -238,7 +238,7 @@ import Footer from '../components/Footer.astro';
             </button>
             <button type="button" id="pay-button" onclick="handlePayment()"
               class="bg-accent text-white px-8 py-4 rounded-xl font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg flex items-center justify-center gap-2 flex-1 sm:flex-none cursor-pointer">
-              <i class="fa-solid fa-lock"></i> Pagar R$ 39,90
+              <i class="fa-solid fa-lock"></i> Pagar R$ 9,90
             </button>
           </div>
         </div>
@@ -348,8 +348,8 @@ import Footer from '../components/Footer.astro';
     // Backend API base URL
     API_BASE_URL: '/api',
 
-    // Gift card price in cents (R$ 39.90)
-    PRICE_CENTS: 3990,
+    // Gift card price in cents (R$ 9.90)
+    PRICE_CENTS: 990,
     CURRENCY: 'brl',
 
     // Product description
@@ -409,7 +409,7 @@ import Footer from '../components/Footer.astro';
     const payButton = document.getElementById('pay-button');
 
     if (plan === 'lifetime') {
-      CONFIG.PRICE_CENTS = 3990;
+      CONFIG.PRICE_CENTS = 990;
       CONFIG.PRODUCT_NAME = 'Gift Card - Plano Vitalício';
       CONFIG.PRODUCT_DESCRIPTION = 'Acesso vitalício ao memorial digital Notícias do Céu';
 
@@ -425,10 +425,10 @@ import Footer from '../components/Footer.astro';
       if (previewTitle) previewTitle.textContent = 'Plano Vitalício';
       if (previewFeatures) previewFeatures.textContent = 'Acesso vitalício • Jornal diário • 1 carta/mês';
       if (summaryProductName) summaryProductName.textContent = 'Gift Card - Plano Vitalício';
-      if (summaryProductPrice) summaryProductPrice.textContent = 'R$ 39,90';
-      if (payButton) payButton.innerHTML = `<i class="fa-solid fa-lock"></i> Pagar R$ 39,90`;
+      if (summaryProductPrice) summaryProductPrice.textContent = 'R$ 9,90';
+      if (payButton) payButton.innerHTML = `<i class="fa-solid fa-lock"></i> Pagar R$ 9,90`;
     } else {
-      CONFIG.PRICE_CENTS = 990;
+      CONFIG.PRICE_CENTS = 9000;
       CONFIG.PRODUCT_NAME = 'Gift Card - Plano Anual';
       CONFIG.PRODUCT_DESCRIPTION = '1 ano de acesso ao memorial digital Notícias do Céu';
 
@@ -444,8 +444,8 @@ import Footer from '../components/Footer.astro';
       if (previewTitle) previewTitle.textContent = 'Plano Anual';
       if (previewFeatures) previewFeatures.textContent = 'Acesso por 1 ano • Jornal diário • compartilhamento';
       if (summaryProductName) summaryProductName.textContent = 'Gift Card - Plano Anual';
-      if (summaryProductPrice) summaryProductPrice.textContent = 'R$ 9,90';
-      if (payButton) payButton.innerHTML = `<i class="fa-solid fa-lock"></i> Pagar R$ 9,90`;
+      if (summaryProductPrice) summaryProductPrice.textContent = 'R$ 90,00';
+      if (payButton) payButton.innerHTML = `<i class="fa-solid fa-lock"></i> Pagar R$ 90,00`;
     }
   }
 

@@ -1,7 +1,5 @@
 import crypto from 'crypto';
-import { db } from '../db/index.js';
-import { users, sessions } from '../db/schema.js';
-import { eq } from 'drizzle-orm';
+import { users as usersApi, sessions as sessionsApi } from '../lib/data.js';
 
 const SESSION_DURATION = 1000 * 60 * 60 * 24 * 30; // 30 days
 
@@ -45,8 +43,11 @@ export class AuthService {
    * Registers a new user
    */
   static async register(name, email, password, plan, status = 'pending_payment') {
-    const existing = await db.select().from(users).where(eq(users.email, email.toLowerCase().trim())).limit(1);
-    if (existing.length > 0) {
+    const { data: existing, error: existingError } = await usersApi.findByEmail(email);
+    if (existingError) {
+      throw existingError;
+    }
+    if (existing) {
       throw new Error('Este e-mail já está cadastrado.');
     }
 
@@ -54,7 +55,7 @@ export class AuthService {
     const pHash = await hashPassword(password);
     const createdAt = new Date().toISOString();
 
-    await db.insert(users).values({
+    const { error: createError } = await usersApi.create({
       id: userId,
       name,
       email: email.toLowerCase().trim(),
@@ -64,8 +65,15 @@ export class AuthService {
       createdAt,
     });
 
+    if (createError) {
+      throw createError;
+    }
+
     // Return the new user
-    const [newUser] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    const { data: newUser, error: fetchError } = await usersApi.findById(userId);
+    if (fetchError) {
+      throw fetchError;
+    }
     return newUser;
   }
 
@@ -73,12 +81,14 @@ export class AuthService {
    * Logs in a user, returning a session token
    */
   static async login(email, password) {
-    const matchedUsers = await db.select().from(users).where(eq(users.email, email.toLowerCase().trim())).limit(1);
-    if (matchedUsers.length === 0) {
+    const { data: user, error: findError } = await usersApi.findByEmail(email);
+    if (findError) {
+      throw findError;
+    }
+    if (!user) {
       throw new Error('E-mail ou senha incorretos.');
     }
 
-    const user = matchedUsers[0];
     const isCorrect = await verifyPassword(password, user.passwordHash);
     if (!isCorrect) {
       throw new Error('E-mail ou senha incorretos.');
@@ -88,11 +98,15 @@ export class AuthService {
     const sessionToken = crypto.randomBytes(32).toString('hex');
     const expiresAt = Date.now() + SESSION_DURATION;
 
-    await db.insert(sessions).values({
+    const { error: sessionError } = await sessionsApi.create({
       id: sessionToken,
       userId: user.id,
       expiresAt,
     });
+
+    if (sessionError) {
+      throw sessionError;
+    }
 
     return { sessionToken, user };
   }
@@ -103,23 +117,22 @@ export class AuthService {
   static async validateSession(sessionToken) {
     if (!sessionToken) return null;
 
-    const matchedSessions = await db.select().from(sessions).where(eq(sessions.id, sessionToken)).limit(1);
-    if (matchedSessions.length === 0) return null;
+    const { data: session, error: sessionError } = await sessionsApi.findById(sessionToken);
+    if (sessionError || !session) return null;
 
-    const session = matchedSessions[0];
     if (Date.now() > session.expiresAt) {
       // Session expired, delete it
-      await db.delete(sessions).where(eq(sessions.id, sessionToken));
+      await sessionsApi.delete(sessionToken);
       return null;
     }
 
     // Fetch user
-    const matchedUsers = await db.select().from(users).where(eq(users.id, session.userId)).limit(1);
-    if (matchedUsers.length === 0) return null;
+    const { data: user, error: userError } = await usersApi.findById(session.userId);
+    if (userError || !user) return null;
 
     return {
       session,
-      user: matchedUsers[0],
+      user,
     };
   }
 
@@ -128,15 +141,16 @@ export class AuthService {
    */
   static async logout(sessionToken) {
     if (!sessionToken) return;
-    await db.delete(sessions).where(eq(sessions.id, sessionToken));
+    await sessionsApi.delete(sessionToken);
   }
 
   /**
    * Activates a user's subscription (used in checkout)
    */
   static async activateUserPlan(userId) {
-    await db.update(users)
-      .set({ status: 'active' })
-      .where(eq(users.id, userId));
+    const { error } = await usersApi.update(userId, { status: 'active' });
+    if (error) {
+      throw error;
+    }
   }
 }

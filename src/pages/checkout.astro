@@ -9,7 +9,6 @@ export const prerender = false;
 const user = Astro.locals.user;
 const planName = user?.plan === 'lifetime' ? 'Plano Vitalício' : 'Plano Anual';
 const planPrice = user?.plan === 'lifetime' ? 'R$ 39,90' : 'R$ 9,90';
-const isLifetime = user?.plan === 'lifetime';
 ---
 
 <Layout title="Pagamento | Notícias do Céu">
@@ -24,13 +23,8 @@ const isLifetime = user?.plan === 'lifetime';
         
         <!-- Newspaper Header style -->
         <div class="text-center border-b-2 border-ink pb-4 mb-6">
-          <p class="text-[10px] font-bold uppercase tracking-widest mb-1">Área de Faturamento Fictício</p>
+          <p class="text-[10px] font-bold uppercase tracking-widest mb-1">Faturamento e Cobrança</p>
           <h1 class="font-serif text-3xl font-black uppercase tracking-tighter text-ink">Notícias do Céu</h1>
-        </div>
-
-        <div class="text-center mb-6">
-          <h3 class="font-serif text-2xl font-semibold text-ink">Simular Pagamento</h3>
-          <p class="text-xs text-gray-600 mt-1">Conclua o seu plano para liberar a área de criação do seu pet.</p>
         </div>
 
         <!-- Plan details summary card -->
@@ -45,57 +39,73 @@ const isLifetime = user?.plan === 'lifetime';
           </div>
         </div>
 
-        <!-- Pix Simulation Area -->
-        <div class="border-2 border-ink rounded-2xl p-6 mb-6 text-center space-y-4 bg-white/40">
-          <h4 class="font-serif font-bold text-lg text-ink">Pague com PIX</h4>
-          <p class="text-xs text-gray-600 max-w-sm mx-auto">
-            Este é um checkout simulado. Escaneie o QR Code abaixo ou clique no botão para simular a aprovação instantânea da API.
+        <!-- State 1: Loading (Default) -->
+        <div id="loading-state" class="text-center py-10 space-y-4">
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent border-t-transparent"></div>
+          <h3 class="font-serif text-xl font-bold text-ink">Criando cobrança segura...</h3>
+          <p class="text-xs text-gray-600 max-w-sm mx-auto leading-relaxed">
+            Estamos gerando sua preferência de pagamento no Mercado Pago. Você será redirecionado em instantes para concluir a transação.
           </p>
+        </div>
 
-          <!-- Mock QR Code visual -->
-          <div class="inline-flex flex-col items-center justify-center p-4 bg-white border border-gray-200 rounded-2xl shadow-sm">
-            <div class="w-40 h-40 flex items-center justify-center bg-gray-50 border border-dashed border-gray-300 rounded-xl relative">
-              <i class="fa-solid fa-qrcode text-8xl text-ink"></i>
-              <div class="absolute inset-0 flex items-center justify-center bg-white/90 rounded-xl opacity-0 hover:opacity-100 transition-opacity">
-                <span class="text-[10px] font-sans font-bold uppercase text-accent">QR Code Simulado</span>
-              </div>
-            </div>
-            <span class="text-[9px] font-mono text-gray-400 mt-2">pix.noticiasdoceu.com/fake-qr-code</span>
+        <!-- State 2: Pending Payment -->
+        <div id="pending-state" class="hidden text-center py-8 space-y-6">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-amber-50 text-amber-600 rounded-full border border-amber-200 shadow-sm animate-pulse">
+            <i class="fa-regular fa-clock text-3xl"></i>
           </div>
-
-          <!-- Pix Copy Paste -->
-          <div class="space-y-1.5 max-w-sm mx-auto">
-            <span class="block text-[10px] font-bold uppercase text-gray-500 tracking-wider">Pix Copia e Cola</span>
-            <div class="flex gap-2">
-              <input 
-                type="text" 
-                readonly 
-                value="00020126360014br.gov.bcb.pix0114noticiasdoceu0204fake" 
-                class="flex-1 font-mono text-[10px] bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg text-gray-500 overflow-x-hidden text-ellipsis focus:outline-none"
-              />
-              <button 
-                onclick="navigator.clipboard.writeText('00020126360014br.gov.bcb.pix0114noticiasdoceu0204fake'); alert('Código copiado!')"
-                class="bg-ink text-paper px-3 py-2 rounded-lg font-sans text-xs font-semibold hover:bg-accent transition-colors cursor-pointer"
-              >
-                Copiar
-              </button>
-            </div>
+          <div class="space-y-2">
+            <h3 class="font-serif text-2xl font-bold text-ink">Pagamento em Processamento</h3>
+            <p class="text-xs text-gray-600 max-w-sm mx-auto leading-relaxed">
+              O Mercado Pago está analisando seu pagamento. Assim que for confirmado, seu plano será ativado e você terá acesso total à plataforma.
+            </p>
+          </div>
+          
+          <div class="pt-4 space-y-3">
+            <button 
+              onclick="window.location.reload()" 
+              class="w-full bg-accent text-white py-3.5 rounded-xl font-serif font-bold text-md hover:bg-ink transition-colors shadow-md cursor-pointer flex justify-center items-center gap-2"
+            >
+              Recarregar Página <i class="fa-solid fa-rotate-right text-xs"></i>
+            </button>
+            <button 
+              id="pending-logout-btn" 
+              class="w-full bg-white text-ink border border-gray-300 py-3 rounded-xl font-sans text-xs font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
+            >
+              Sair da Conta
+            </button>
           </div>
         </div>
 
-        <!-- Action Button -->
-        <div id="error-message" class="hidden text-red-700 bg-red-50 border border-red-200 px-4 py-3 rounded-xl text-sm font-medium text-center mb-4"></div>
+        <!-- State 3: Failure / Error State -->
+        <div id="error-state" class="hidden text-center py-8 space-y-6">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-red-50 text-red-600 rounded-full border border-red-200 shadow-sm">
+            <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
+          </div>
+          <div class="space-y-2">
+            <h3 class="font-serif text-2xl font-bold text-ink">Falha no Pagamento</h3>
+            <p id="error-message-text" class="text-xs text-red-600 mt-2 bg-red-50 border border-red-200 p-3.5 rounded-xl max-w-sm mx-auto font-medium leading-relaxed">
+              Ocorreu um erro ao processar sua transação.
+            </p>
+          </div>
 
-        <button 
-          onclick="confirmSimulatedPayment()"
-          id="payment-btn" 
-          class="w-full bg-accent text-white py-4 rounded-xl font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg flex justify-center items-center gap-2 cursor-pointer"
-        >
-          <span>Simular Confirmação de Pagamento</span> <i class="fa-solid fa-circle-check"></i>
-        </button>
+          <div class="pt-4 space-y-3">
+            <button 
+              onclick="startCheckout()" 
+              class="w-full bg-accent text-white py-3.5 rounded-xl font-serif font-bold text-md hover:bg-ink transition-colors shadow-md cursor-pointer flex justify-center items-center gap-2"
+            >
+              Tentar Novamente <i class="fa-solid fa-arrow-rotate-right text-xs"></i>
+            </button>
+            <button 
+              id="error-logout-btn" 
+              class="w-full bg-white text-ink border border-gray-300 py-3 rounded-xl font-sans text-xs font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
+            >
+              Sair da Conta
+            </button>
+          </div>
+        </div>
 
-        <p class="text-center text-xs text-gray-500 mt-4 leading-relaxed">
-          * Nenhuma cobrança real será realizada. Apenas simulamos o retorno do webhook do gateway de pagamento para liberar o memorial.
+        <p class="text-center text-[10px] text-gray-500 mt-6 leading-relaxed border-t border-gray-100 pt-4">
+          O processamento de pagamentos é seguro e realizado diretamente em parceria com o Mercado Pago.
         </p>
 
       </div>
@@ -106,21 +116,29 @@ const isLifetime = user?.plan === 'lifetime';
 </Layout>
 
 <script is:inline>
-  async function confirmSimulatedPayment() {
-    const btn = document.getElementById('payment-btn');
-    const errorEl = document.getElementById('error-message');
+  // Parse query parameters
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('status');
+  const reason = params.get('reason') || '';
+  const message = params.get('message') || '';
 
-    if (errorEl) {
-      errorEl.classList.add('hidden');
-    }
+  const loadingState = document.getElementById('loading-state');
+  const pendingState = document.getElementById('pending-state');
+  const errorState = document.getElementById('error-state');
+  const errorMessage = document.getElementById('error-message-text');
 
-    if (btn) {
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Processando transação...`;
-    }
+  function hideAll() {
+    loadingState?.classList.add('hidden');
+    pendingState?.classList.add('hidden');
+    errorState?.classList.add('hidden');
+  }
+
+  async function startCheckout() {
+    hideAll();
+    if (loadingState) loadingState.classList.remove('hidden');
 
     try {
-      const res = await fetch('/api/checkout/confirm', {
+      const res = await fetch('/api/checkout/create-preference', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -128,20 +146,55 @@ const isLifetime = user?.plan === 'lifetime';
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Erro ao processar o pagamento.');
+        throw new Error(data.error || 'Erro ao gerar preferência de pagamento.');
       }
 
-      // Successful simulated payment
-      window.location.href = '/dashboard';
+      // Redirect to Mercado Pago Checkout Pro
+      window.location.href = data.init_point;
     } catch (err) {
-      if (errorEl) {
-        errorEl.innerText = err.message;
-        errorEl.classList.remove('hidden');
-      }
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = `<span>Simular Confirmação de Pagamento</span> <i class="fa-solid fa-circle-check"></i>`;
-      }
+      console.error(err);
+      hideAll();
+      if (errorState) errorState.classList.remove('hidden');
+      if (errorMessage) errorMessage.innerText = err.message || 'Erro inesperado. Por favor, tente novamente.';
     }
+  }
+
+  // Handle logout buttons
+  const setupLogout = (btnId) => {
+    document.getElementById(btnId)?.addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/auth/logout', { method: 'POST' });
+        if (res.ok) {
+          window.location.href = '/login';
+        } else {
+          alert('Erro ao sair da conta. Tente novamente.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Erro ao se conectar ao servidor.');
+      }
+    });
+  };
+
+  setupLogout('pending-logout-btn');
+  setupLogout('error-logout-btn');
+
+  // Initial routing based on query parameter
+  if (status === 'pending') {
+    hideAll();
+    if (pendingState) pendingState.classList.remove('hidden');
+  } else if (status === 'rejected' || status === 'error' || status === 'cancelled') {
+    hideAll();
+    if (errorState) errorState.classList.remove('hidden');
+    let customMsg = 'O pagamento foi cancelado ou ocorreu um erro na integração.';
+    if (status === 'rejected') {
+      customMsg = `Pagamento recusado pelo Mercado Pago. Motivo: ${reason || 'transação não autorizada'}. Por favor, tente novamente.`;
+    } else if (status === 'error' && message) {
+      customMsg = decodeURIComponent(message);
+    }
+    if (errorMessage) errorMessage.innerText = customMsg;
+  } else {
+    // Start automated checkout creation flow
+    startCheckout();
   }
 </script>

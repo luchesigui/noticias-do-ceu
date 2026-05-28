@@ -1,22 +1,5 @@
 import crypto from 'crypto';
-
-// In-memory store for gift cards (transient in serverless environments)
-const giftCards = [
-  {
-    code: "TEST-CARD-VITA",
-    sender_name: "Remetente de Teste",
-    recipient_email: "amigo@example.com",
-    recipient_name: "Amigo de Teste",
-    pet_name: "Rex",
-    plan: "lifetime",
-    message: "Uma mensagem carinhosa para testar o resgate.",
-    design: "nuvens",
-    created_at: new Date().toISOString(),
-    expires_at: null,
-    redeemed_at: null,
-    redeemed_by: null
-  }
-];
+import { giftCards as giftCardsApi } from '../lib/data.js';
 
 function generateCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -33,7 +16,7 @@ function generateCode() {
 }
 
 export class GiftCardService {
-  static createGiftCard(data) {
+  static async createGiftCard(data) {
     const { sender_name, recipient_email, recipient_name, pet_name, plan, message, design } = data;
 
     let code;
@@ -45,8 +28,8 @@ export class GiftCardService {
       code = generateCode();
       attempts++;
 
-      const exists = giftCards.some(c => c.code === code);
-      if (!exists) {
+      const { data: exists, error } = await giftCardsApi.findByCode(code);
+      if (!exists && !error) {
         success = true;
       }
     }
@@ -78,20 +61,25 @@ export class GiftCardService {
       redeemed_by: null
     };
 
-    giftCards.push(card);
+    const { data: createdCard, error } = await giftCardsApi.create(card);
+    if (error) {
+      throw error;
+    }
 
+    return createdCard;
+  }
+
+  static async getGiftCardByCode(code) {
+    const { data: card, error } = await giftCardsApi.findByCode(code);
+    if (error) {
+      throw error;
+    }
     return card;
   }
 
-  static getGiftCardByCode(code) {
-    const card = giftCards.find(c => c.code === code);
-    if (!card) return null;
-    return card;
-  }
-
-  static redeemGiftCard(code, userId) {
-    const card = giftCards.find(c => c.code === code);
-    if (!card) {
+  static async redeemGiftCard(code, userId) {
+    const { data: card, error: findError } = await giftCardsApi.findByCode(code);
+    if (findError || !card) {
       return { error: 'not_found' };
     }
 
@@ -114,29 +102,19 @@ export class GiftCardService {
       }
     }
 
-    const redeemed_at = new Date().toISOString();
-    card.redeemed_by = userId;
-    card.redeemed_at = redeemed_at;
+    const { data: redeemedCard, error: redeemError } = await giftCardsApi.redeem(code, userId);
+    if (redeemError || !redeemedCard) {
+      return { error: 'redeem_failed' };
+    }
 
-    return { success: true, redeemed_at, alreadyRedeemed: false };
+    return { success: true, redeemed_at: redeemedCard.redeemed_at, alreadyRedeemed: false };
   }
 
-  static listGiftCards(page = 1, limit = 10) {
-    const offset = (page - 1) * limit;
-    const total = giftCards.length;
-
-    // Sort by created_at DESC
-    const sorted = [...giftCards].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    const pageCards = sorted.slice(offset, offset + limit);
-
-    return {
-      cards: pageCards,
-      pagination: {
-        total,
-        page,
-        limit,
-        pages: Math.ceil(total / limit)
-      }
-    };
+  static async listGiftCards(page = 1, limit = 10) {
+    const { data, error } = await giftCardsApi.list({ page, limit });
+    if (error) {
+      throw error;
+    }
+    return data;
   }
 }
