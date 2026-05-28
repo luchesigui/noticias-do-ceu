@@ -27,7 +27,7 @@ export class WaitingListService {
           </tr>
           <tr>
             <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;">Plano Escolhido:</td>
-            <td style="padding: 10px; border: 1px solid #ddd; text-transform: uppercase;">${plan === 'lifetime' ? 'Vitalício (R$ 9,90)' : 'Anual (R$ 90,00/ano)'}</td>
+            <td style="padding: 10px; border: 1px solid #ddd; text-transform: uppercase;">${plan === 'lifetime' ? 'Vitalício (R$ 39,90)' : 'Anual (R$ 9,90/ano)'}</td>
           </tr>
           <tr>
             <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;">Data/Hora:</td>

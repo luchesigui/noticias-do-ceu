@@ -31,7 +31,7 @@ export class MPService {
 
     const isLifetime = plan === 'lifetime';
     const title = isLifetime ? 'Notícias do Céu - Plano Vitalício' : 'Notícias do Céu - Plano Anual';
-    const price = isLifetime ? 9.90 : 90.00;
+    const price = isLifetime ? 39.90 : 9.90;
 
     const requestBody = {
       items: [

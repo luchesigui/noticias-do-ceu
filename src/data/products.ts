@@ -10,14 +10,14 @@ export const PRODUCTS: Product[] = [
   {
     productId: 'annual_plan',
     name: 'Plano Anual',
-    priceCents: 9000,
+    priceCents: 990,
     interval: 'year',
     planTier: 'annual',
   },
   {
     productId: 'lifetime_plan',
     name: 'Plano Vitalício',
-    priceCents: 990,
+    priceCents: 3990,
     interval: 'one_time',
     planTier: 'lifetime',
   },
