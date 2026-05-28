@@ -31,16 +31,9 @@ const user = Astro.locals.user;
           </>
         ) : (
           <>
-            <a href="/login" class="text-gray-600 hover:text-accent text-sm font-medium transition-colors">Entrar</a>
-            {showCreateMemorial ? (
-              <a href="/#planos" class="bg-ink text-paper px-6 py-2 rounded-full font-semibold hover:bg-accent transition-colors shadow-md text-sm">
-                Criar Memorial
-              </a>
-            ) : (
-              <a href="/gift-card" class="bg-ink text-paper px-6 py-2 rounded-full font-semibold hover:bg-accent transition-colors shadow-md text-sm">
-                Presenteie um Amigo
-              </a>
-            )}
+            <a href="/login" class="bg-ink text-paper px-6 py-2 rounded-full font-semibold hover:bg-accent transition-colors shadow-md text-sm">
+              Entrar
+            </a>
           </>
         )}
       </div>
@@ -75,16 +68,9 @@ const user = Astro.locals.user;
       </>
     ) : (
       <>
-        <a href="/login" class="block text-gray-600 hover:text-accent font-medium transition-colors py-2 font-sans mobile-link">Entrar</a>
-        {showCreateMemorial ? (
-          <a href="/#planos" class="block text-center bg-ink text-paper px-6 py-3 rounded-full font-sans font-semibold hover:bg-accent transition-colors shadow-md mobile-link">
-            Criar Memorial
-          </a>
-        ) : (
-          <a href="/gift-card" class="block text-center bg-ink text-paper px-6 py-3 rounded-full font-sans font-semibold hover:bg-accent transition-colors shadow-md mobile-link">
-            Presenteie um Amigo
-          </a>
-        )}
+        <a href="/login" class="block text-center bg-ink text-paper px-6 py-3 rounded-full font-sans font-semibold hover:bg-accent transition-colors shadow-md mobile-link">
+          Entrar
+        </a>
       </>
     )}
   </div>
