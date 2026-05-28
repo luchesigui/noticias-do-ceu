@@ -2,15 +2,14 @@ import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client';
 import * as schema from './schema.js';
 
-// Fallbacks for environment variables in Astro (both dev and Vercel production)
 const url = 
   (typeof process !== 'undefined' ? process.env.TURSO_DATABASE_URL : null) || 
-  import.meta.env.TURSO_DATABASE_URL || 
+  (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.TURSO_DATABASE_URL : null) || 
   'file:local.db';
 
 const authToken = 
   (typeof process !== 'undefined' ? process.env.TURSO_AUTH_TOKEN : null) || 
-  import.meta.env.TURSO_AUTH_TOKEN || 
+  (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.TURSO_AUTH_TOKEN : null) || 
   undefined;
 
 export const client = createClient({

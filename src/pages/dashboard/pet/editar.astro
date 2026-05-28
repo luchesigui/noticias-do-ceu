@@ -153,16 +153,9 @@ const suggestedPersonalities = [
             <label class="block text-xs font-bold uppercase tracking-wider mb-1.5">Personalidade</label>
             <p class="text-[10px] text-gray-500 mb-2">Clique nas sugestões ou adicione novos traços de personalidade.</p>
             
-            <div class="flex flex-wrap gap-1.5 mb-3">
-              {suggestedPersonalities.map(pers => (
-                <button 
-                  type="button" 
-                  onclick={`togglePersonalityPill('${pers}', this)`}
-                  class="text-xs bg-white text-gray-700 border border-gray-300 hover:border-accent hover:bg-accent/5 px-2.5 py-1.5 rounded-full transition-all cursor-pointer font-medium"
-                >
-                  + {pers}
-                </button>
-              ))}
+            <!-- Suggestion pills -->
+            <div id="suggested-personalities-container" class="flex flex-wrap gap-1.5 mb-3">
+              <!-- Injetado via JavaScript -->
             </div>
 
             <div class="flex gap-2 mb-3">
@@ -221,8 +214,8 @@ const suggestedPersonalities = [
               <span id="photo-counter">0</span> / 5 fotos no total
             </div>
 
-            <!-- Hidden input to submit remaining existing photo paths -->
-            <input type="hidden" name="existingPhotos" id="hidden-existing-photos" value="[]" />
+            <!-- Hidden input to submit final photos array -->
+            <input type="hidden" name="photos" id="hidden-photos" value="[]" />
           </div>
 
           <!-- Error Alert -->
@@ -260,8 +253,7 @@ const suggestedPersonalities = [
   // Client state arrays
   const nicknames = [...initialNicknames];
   const personalities = [...initialPersonalities];
-  const existingPhotos = [...initialPhotos];
-  const filesToUpload = []; // Array of new File objects to upload
+  const photos = [...initialPhotos];
 
   // NICKNAMES LOGIC
   function updateNicknamesUI() {
@@ -309,27 +301,58 @@ const suggestedPersonalities = [
   }
 
   // PERSONALITIES LOGIC
+  const suggestedPersonalities = [
+    "Carinhoso", "Brincalhão", "Dorminhoco", "Protetor", "Guloso", 
+    "Preguiçoso", "Carismático", "Teimoso", "Espevitado"
+  ];
+
   function updatePersonalitiesUI() {
     const container = document.getElementById('personality-tags-container');
+    const suggestionsContainer = document.getElementById('suggested-personalities-container');
     const hiddenInput = document.getElementById('hidden-personalities');
     
     if (!container || !hiddenInput) return;
     
     hiddenInput.value = JSON.stringify(personalities);
 
+    // Render selected personalities
     if (personalities.length === 0) {
       container.innerHTML = `<span class="text-xs text-gray-400 italic pointer-events-none self-center">Nenhum traço selecionado ainda...</span>`;
-      return;
+    } else {
+      container.innerHTML = personalities.map((pers, idx) => `
+        <span class="inline-flex items-center gap-1.5 bg-accent/10 text-accent text-xs px-2.5 py-1.5 rounded-lg border border-accent/15 font-medium">
+          ${pers}
+          <button type="button" onclick="removePersonalityTag(${idx})" class="text-accent/65 hover:text-red-600 transition-colors font-bold cursor-pointer text-[10px]">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </span>
+      `).join('');
     }
 
-    container.innerHTML = personalities.map((pers, idx) => `
-      <span class="inline-flex items-center gap-1.5 bg-accent/10 text-accent text-xs px-2.5 py-1.5 rounded-lg border border-accent/15 font-medium">
-        ${pers}
-        <button type="button" onclick="removePersonalityTag(${idx})" class="text-accent/65 hover:text-red-600 transition-colors font-bold cursor-pointer text-[10px]">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </span>
-    `).join('');
+    // Render suggestions (only those not selected)
+    if (suggestionsContainer) {
+      const unselected = suggestedPersonalities.filter(p => !personalities.includes(p));
+      if (unselected.length === 0) {
+        suggestionsContainer.innerHTML = `<span class="text-xs text-gray-400 italic pointer-events-none">Todas as sugestões foram adicionadas!</span>`;
+      } else {
+        suggestionsContainer.innerHTML = unselected.map(pers => `
+          <button 
+            type="button" 
+            onclick="addSuggestedPersonality('${pers}')"
+            class="text-xs bg-white text-gray-700 border border-gray-300 hover:border-accent hover:bg-accent/5 px-2.5 py-1.5 rounded-full transition-all cursor-pointer font-medium animate-fade-in"
+          >
+            + ${pers}
+          </button>
+        `).join('');
+      }
+    }
+  }
+
+  function addSuggestedPersonality(name) {
+    if (!personalities.includes(name)) {
+      personalities.push(name);
+      updatePersonalitiesUI();
+    }
   }
 
   function addCustomPersonality() {
@@ -353,42 +376,34 @@ const suggestedPersonalities = [
     updatePersonalitiesUI();
   }
 
-  function togglePersonalityPill(name, btn) {
-    if (personalities.includes(name)) {
-      const idx = personalities.indexOf(name);
-      personalities.splice(idx, 1);
-    } else {
-      personalities.push(name);
-    }
-    updatePersonalitiesUI();
-  }
-
-  // PHOTOS UI INTEGRATED (Existing + New uploads)
+  // PHOTOS UI INTEGRATED (Assynchronous Upload & Immediate Delete)
   function updatePhotosUI() {
     const grid = document.getElementById('previews-grid');
     const counter = document.getElementById('photo-counter');
-    const hiddenExistingInput = document.getElementById('hidden-existing-photos');
+    const hiddenPhotosInput = document.getElementById('hidden-photos');
     
-    if (!grid || !counter || !hiddenExistingInput) return;
+    if (!grid || !counter || !hiddenPhotosInput) return;
 
-    const totalCount = existingPhotos.length + filesToUpload.length;
+    const loadingCardsCount = grid.querySelectorAll('.loading-card').length;
+    const totalCount = photos.length + loadingCardsCount;
     counter.innerText = totalCount;
-    hiddenExistingInput.value = JSON.stringify(existingPhotos);
+    
+    hiddenPhotosInput.value = JSON.stringify(photos);
+
+    // Keep active loading cards
+    const loadingElements = Array.from(grid.querySelectorAll('.loading-card'));
 
     grid.innerHTML = '';
 
-    // 1. Render existing database photos
-    existingPhotos.forEach((photoUrl, idx) => {
+    // Render uploaded photos
+    photos.forEach((photoUrl, idx) => {
       const card = document.createElement('div');
       card.className = 'relative aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-50 shadow-sm group';
       card.innerHTML = `
         <img src="${photoUrl}" class="w-full h-full object-cover" />
-        <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <span class="text-[9px] font-sans text-white font-bold uppercase tracking-wider bg-black/60 px-1.5 py-0.5 rounded">Salva no Banco</span>
-        </div>
         <button 
           type="button" 
-          onclick="removeExistingPhoto(${idx})"
+          onclick="removePhoto(${idx})"
           class="absolute top-1.5 right-1.5 bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center shadow hover:bg-red-700 transition-colors cursor-pointer text-xs"
         >
           <i class="fa-solid fa-trash-can"></i>
@@ -397,25 +412,9 @@ const suggestedPersonalities = [
       grid.appendChild(card);
     });
 
-    // 2. Render new files in queue
-    filesToUpload.forEach((file, idx) => {
-      const objUrl = URL.createObjectURL(file);
-      const card = document.createElement('div');
-      card.className = 'relative aspect-square rounded-xl overflow-hidden border border-accent/30 bg-gray-50 shadow-sm group';
-      card.innerHTML = `
-        <img src="${objUrl}" class="w-full h-full object-cover border-2 border-accent" />
-        <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <span class="text-[9px] font-sans text-white font-bold uppercase tracking-wider bg-accent px-1.5 py-0.5 rounded">Novo Arquivo</span>
-        </div>
-        <button 
-          type="button" 
-          onclick="removeUploadedPhoto(${idx})"
-          class="absolute top-1.5 right-1.5 bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center shadow hover:bg-red-700 transition-colors cursor-pointer text-xs"
-        >
-          <i class="fa-solid fa-trash-can"></i>
-        </button>
-      `;
-      grid.appendChild(card);
+    // Re-append active loading cards
+    loadingElements.forEach(el => {
+      grid.appendChild(el);
     });
   }
 
@@ -423,9 +422,12 @@ const suggestedPersonalities = [
     if (!input.files) return;
 
     const files = Array.from(input.files);
+    const grid = document.getElementById('previews-grid');
     
     for (const file of files) {
-      const totalCount = existingPhotos.length + filesToUpload.length;
+      const loadingCount = grid ? grid.querySelectorAll('.loading-card').length : 0;
+      const totalCount = photos.length + loadingCount;
+      
       if (totalCount >= 5) {
         alert("O memorial suporta no máximo 5 fotos.");
         break;
@@ -436,26 +438,108 @@ const suggestedPersonalities = [
         continue;
       }
 
-      filesToUpload.push(file);
+      if (file.size > 1024 * 1024) {
+        alert(`A imagem "${file.name}" excede o limite máximo de 1MB.`);
+        continue;
+      }
+
+      uploadFileImmediately(file);
     }
 
     input.value = '';
-    updatePhotosUI();
   }
 
-  function removeExistingPhoto(idx) {
-    existingPhotos.splice(idx, 1);
-    updatePhotosUI();
+  function uploadFileImmediately(file) {
+    const grid = document.getElementById('previews-grid');
+    if (!grid) return;
+
+    const tempId = `temp-card-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const localUrl = URL.createObjectURL(file);
+
+    // Create temporary loading card
+    const loadingCard = document.createElement('div');
+    loadingCard.id = tempId;
+    loadingCard.className = 'loading-card relative aspect-square rounded-xl overflow-hidden border border-accent/30 bg-gray-50 shadow-sm flex items-center justify-center';
+    loadingCard.innerHTML = `
+      <img src="${localUrl}" class="w-full h-full object-cover opacity-40 blur-[1px]" />
+      <div class="absolute inset-0 flex flex-col items-center justify-center space-y-1">
+        <i class="fa-solid fa-spinner fa-spin text-accent text-lg"></i>
+        <span class="text-[9px] text-accent font-bold uppercase tracking-wider bg-white/80 px-1.5 py-0.5 rounded">Enviando...</span>
+      </div>
+    `;
+    grid.appendChild(loadingCard);
+
+    // Update counter
+    const counter = document.getElementById('photo-counter');
+    if (counter) {
+      const loadingCount = grid.querySelectorAll('.loading-card').length;
+      counter.innerText = photos.length + loadingCount;
+    }
+
+    const formData = new FormData();
+    formData.append('photo', file);
+
+    fetch('/api/pet/upload-photo', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(data => { throw new Error(data.error || 'Erro no upload.'); });
+      }
+      return res.json();
+    })
+    .then(data => {
+      const tempCard = document.getElementById(tempId);
+      if (tempCard) tempCard.remove();
+      
+      photos.push(data.url);
+      updatePhotosUI();
+    })
+    .catch(err => {
+      alert(`Erro ao subir a imagem "${file.name}": ${err.message}`);
+      const tempCard = document.getElementById(tempId);
+      if (tempCard) tempCard.remove();
+      updatePhotosUI();
+    });
   }
 
-  function removeUploadedPhoto(idx) {
-    filesToUpload.splice(idx, 1);
-    updatePhotosUI();
+  function removePhoto(idx) {
+    const url = photos[idx];
+    if (!url) return;
+
+    // Visual loading indication for deletion
+    const grid = document.getElementById('previews-grid');
+    if (grid) {
+      const cards = grid.querySelectorAll('div:not(.loading-card)');
+      if (cards[idx]) {
+        cards[idx].classList.add('opacity-30');
+        const btn = cards[idx].querySelector('button');
+        if (btn) btn.disabled = true;
+      }
+    }
+
+    fetch('/api/pet/delete-photo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    })
+    .then(res => {
+      if (!res.ok) {
+        console.error('Falha ao deletar do R2, removendo apenas do frontend.');
+      }
+      photos.splice(idx, 1);
+      updatePhotosUI();
+    })
+    .catch(err => {
+      console.error('Erro na requisição de deleção:', err);
+      photos.splice(idx, 1);
+      updatePhotosUI();
+    });
   }
 
   // Drag and drop setup
   document.addEventListener('DOMContentLoaded', () => {
-    // Populate default elements on load
     updateNicknamesUI();
     updatePersonalitiesUI();
     updatePhotosUI();
@@ -500,16 +584,6 @@ const suggestedPersonalities = [
       errorEl.classList.add('hidden');
     }
 
-    // Validation: total photos
-    const totalPhotos = existingPhotos.length + filesToUpload.length;
-    if (totalPhotos === 0) {
-      if (errorEl) {
-        errorEl.innerText = "Por favor, mantenha ou envie pelo menos 1 foto do seu pet.";
-        errorEl.classList.remove('hidden');
-      }
-      return;
-    }
-
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Salvando alterações...`;
@@ -522,17 +596,9 @@ const suggestedPersonalities = [
     formData.append('favoritePlace', form.favoritePlace.value);
     formData.append('favoriteObject', form.favoriteObject.value);
     
-    // Arrays
     formData.append('nicknames', JSON.stringify(nicknames));
     formData.append('personalities', JSON.stringify(personalities));
-
-    // Send surviving existing photos
-    formData.append('existingPhotos', JSON.stringify(existingPhotos));
-
-    // Send new files to upload
-    filesToUpload.forEach(file => {
-      formData.append('photos', file);
-    });
+    formData.append('photos', JSON.stringify(photos));
 
     try {
       const res = await fetch('/api/pet/save', {
@@ -564,8 +630,8 @@ const suggestedPersonalities = [
   window.removeNicknameTag = removeNicknameTag;
   window.addCustomPersonality = addCustomPersonality;
   window.removePersonalityTag = removePersonalityTag;
-  window.togglePersonalityPill = togglePersonalityPill;
+  window.addSuggestedPersonality = addSuggestedPersonality;
   window.handleFileSelection = handleFileSelection;
-  window.removeUploadedPhoto = removeUploadedPhoto;
-  window.removeExistingPhoto = removeExistingPhoto;
+  window.removePhoto = removePhoto;
+  window.handlePetSubmit = handlePetSubmit;
 </script>

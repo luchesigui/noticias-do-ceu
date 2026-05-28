@@ -20,7 +20,8 @@
     "astro": "^6.3.8",
     "drizzle-orm": "^0.45.2",
     "tailwindcss": "^4.3.0",
-    "uuid": "^14.0.0"
+    "uuid": "^14.0.0",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "drizzle-kit": "^0.31.10"

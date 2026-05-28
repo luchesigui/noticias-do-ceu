@@ -1,7 +1,20 @@
 import { PetService } from '../../../services/pet-service.js';
 import { StorageService } from '../../../services/storage-service.js';
+import * as yup from 'yup';
 
 export const prerender = false;
+
+// Yup Validation Schema
+const petSchema = yup.object({
+  name: yup.string().required('O nome do pet é obrigatório.').trim(),
+  breed: yup.string().required('A raça do pet é obrigatória.').trim(),
+  gender: yup.string().required('Gênero é obrigatório.').oneOf(['Macho', 'Fêmea'], 'Gênero inválido.'),
+  favoritePlace: yup.string().trim().default(''),
+  favoriteObject: yup.string().trim().default(''),
+  nicknames: yup.array().of(yup.string().trim()).default([]),
+  personalities: yup.array().of(yup.string().trim()).default([]),
+  photos: yup.array().of(yup.string().trim()).max(5, 'O memorial suporta no máximo 5 fotos.').default([])
+});
 
 export async function POST({ request, locals }) {
   const user = locals.user;
@@ -23,110 +36,55 @@ export async function POST({ request, locals }) {
     const favoritePlace = formData.get('favoritePlace')?.toString().trim();
     const favoriteObject = formData.get('favoriteObject')?.toString().trim();
 
-    // Validations
-    if (!name) {
-      return new Response(JSON.stringify({ error: 'O nome do pet é obrigatório.' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-    if (!breed) {
-      return new Response(JSON.stringify({ error: 'A raça do pet é obrigatória.' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-    if (!gender || (gender !== 'Macho' && gender !== 'Fêmea')) {
-      return new Response(JSON.stringify({ error: 'Gênero inválido.' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-
-    // Parse dynamic arrays (nicknames & personalities)
+    // Parse array inputs
     let nicknames = [];
     try {
-      const nicknamesRaw = formData.get('nicknames');
-      nicknames = nicknamesRaw ? JSON.parse(nicknamesRaw.toString()) : [];
+      const val = formData.get('nicknames');
+      nicknames = val ? JSON.parse(val.toString()) : [];
     } catch (e) {
       nicknames = formData.get('nicknames')?.toString().split(',').map(n => n.trim()).filter(Boolean) || [];
     }
 
     let personalities = [];
     try {
-      const personalitiesRaw = formData.get('personalities');
-      personalities = personalitiesRaw ? JSON.parse(personalitiesRaw.toString()) : [];
+      const val = formData.get('personalities');
+      personalities = val ? JSON.parse(val.toString()) : [];
     } catch (e) {
       personalities = formData.get('personalities')?.toString().split(',').map(p => p.trim()).filter(Boolean) || [];
     }
 
-    // Parse existing photos (when updating, what photos to retain)
-    let existingPhotos = [];
+    let photos = [];
     try {
-      const existingPhotosRaw = formData.get('existingPhotos');
-      existingPhotos = existingPhotosRaw ? JSON.parse(existingPhotosRaw.toString()) : [];
+      const val = formData.get('photos');
+      photos = val ? JSON.parse(val.toString()) : [];
     } catch (e) {
-      // If error or not provided, default to empty
+      // Default to empty array
     }
 
-    // Fetch current pet database entry if it exists
-    const currentPet = await PetService.getPetByUserId(user.id);
-    
-    // Clean up photos that were deleted by the user during edit
-    if (currentPet && currentPet.photos) {
-      for (const oldPhoto of currentPet.photos) {
-        if (!existingPhotos.includes(oldPhoto)) {
-          // Photo was removed in UI, delete it from storage
-          await StorageService.deleteFile(oldPhoto);
-        }
-      }
-    }
-
-    // Handle new uploads
-    const newPhotos = [];
-    const files = formData.getAll('photos');
-    
-    for (const file of files) {
-      if (file && file.size > 0 && file.name) {
-        try {
-          const url = await StorageService.uploadFile(file);
-          newPhotos.push(url);
-        } catch (uploadError) {
-          console.error('Erro ao fazer upload de arquivo:', uploadError);
-          // If any upload fails, we delete the ones we uploaded in this transaction so far
-          for (const uploadedUrl of newPhotos) {
-            await StorageService.deleteFile(uploadedUrl);
-          }
-          return new Response(JSON.stringify({ error: `Falha no upload da foto: ${uploadError.message}` }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-      }
-    }
-
-    const finalPhotos = [...existingPhotos, ...newPhotos];
-
-    if (finalPhotos.length > 5) {
-      // Clean up newly uploaded files if they exceed limit
-      for (const newlyUploaded of newPhotos) {
-        await StorageService.deleteFile(newlyUploaded);
-      }
-      return new Response(JSON.stringify({ error: 'Você só pode cadastrar até 5 fotos.' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-
-    const petData = {
+    // Validate using Yup schema
+    const validated = await petSchema.validate({
       name,
       breed,
       gender,
+      favoritePlace,
+      favoriteObject,
       nicknames,
-      favoritePlace: favoritePlace || '',
-      favoriteObject: favoriteObject || '',
       personalities,
-      photos: finalPhotos
+      photos
+    }, { abortEarly: true });
+
+    // Fetch current pet database entry if it exists
+    const currentPet = await PetService.getPetByUserId(user.id);
+
+    const petData = {
+      name: validated.name,
+      breed: validated.breed,
+      gender: validated.gender,
+      nicknames: validated.nicknames,
+      favoritePlace: validated.favoritePlace,
+      favoriteObject: validated.favoriteObject,
+      personalities: validated.personalities,
+      photos: validated.photos
     };
 
     let savedPet;
