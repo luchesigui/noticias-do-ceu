@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import { MPService } from '../../../services/mercado-pago-service.js';
 import { users as usersApi, subscriptions as subscriptionsApi } from '../../../lib/data.js';
 
 export const prerender = false;
@@ -61,17 +60,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     const now = new Date().toISOString();
-
-    // Cancel in Mercado Pago if we have the preapproval ID
-    if (activeSub.preapprovalId) {
-      try {
-        await MPService.cancelSubscription(activeSub.preapprovalId);
-        console.log(`[Cancel Subscription] MP preapproval ${activeSub.preapprovalId} cancelled`);
-      } catch (mpError: any) {
-        // Log but continue — we still need to cancel locally for BR law compliance
-        console.error('[Cancel Subscription] MP cancel error (proceeding with local cancel):', mpError.message);
-      }
-    }
 
     // Update subscription locally
     await subscriptionsApi.update(activeSub.id, {

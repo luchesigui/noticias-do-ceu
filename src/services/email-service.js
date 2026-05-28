@@ -8,9 +8,14 @@ function getConfig() {
   const fromEmail =
     (typeof process !== 'undefined' ? process.env.FROM_EMAIL : null) ||
     (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.FROM_EMAIL : null) ||
-    'onboarding@resend.dev';
+    'contato@noticiasdoceu.com.br';
 
-  return { apiKey, fromEmail };
+  const siteUrl =
+    (typeof process !== 'undefined' ? process.env.SITE_URL : null) ||
+    (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.SITE_URL : null) ||
+    'https://noticiasdoceu.com';
+
+  return { apiKey, fromEmail, siteUrl };
 }
 
 async function sendEmail({ to, subject, html }) {
@@ -39,7 +44,8 @@ export class EmailService {
   }
 
   static async sendGiftCardToRecipient(card) {
-    const redeemUrl = `https://noticiasdoceu.com/redeem?code=${card.code}`;
+    const { siteUrl } = getConfig();
+    const redeemUrl = `${siteUrl}/redeem?code=${card.code}`;
 
     const html = `
       <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #faf9f6; border: 2px solid #2c2c2c; border-radius: 4px; overflow: hidden;">
@@ -77,7 +83,7 @@ export class EmailService {
           </div>
 
           <p style="font-size: 13px; color: #888; line-height: 1.6; text-align: center;">
-            Ou acesse <a href="https://noticiasdoceu.com/redeem" style="color: #d4a97a;">noticiasdoceu.com/redeem</a> e insira o código manualmente.
+            Ou acesse <a href="${siteUrl}/redeem" style="color: #d4a97a;">${siteUrl.replace('https://', '')}/redeem</a> e insira o código manualmente.
           </p>
         </div>
 

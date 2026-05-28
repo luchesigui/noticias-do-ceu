@@ -378,17 +378,6 @@ export const subscriptions = {
     }
   },
 
-  async findByPreapprovalId(id) {
-    try {
-      const rows = await db.select().from(subscriptionsTable)
-        .where(eq(subscriptionsTable.preapprovalId, id))
-        .limit(1);
-      return { data: rows[0] ?? null, error: null };
-    } catch (error) {
-      return { data: null, error };
-    }
-  },
-
   async update(id, updateData) {
     try {
       const set = {};

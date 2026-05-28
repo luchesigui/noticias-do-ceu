@@ -39,64 +39,18 @@ const planPrice = user?.plan === 'lifetime' ? 'R$ 39,90' : 'R$ 9,90';
           </div>
         </div>
 
-        <!-- State 1: Loading (Default) -->
-        <div id="loading-state" class="text-center py-10 space-y-4">
-          <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent border-t-transparent"></div>
-          <h3 class="font-serif text-xl font-bold text-ink">Criando cobrança segura...</h3>
-          <p class="text-xs text-gray-600 max-w-sm mx-auto leading-relaxed">
-            Estamos gerando sua preferência de pagamento no Mercado Pago. Você será redirecionado em instantes para concluir a transação.
-          </p>
-        </div>
-
-        <!-- State 2: Pending Payment -->
-        <div id="pending-state" class="hidden text-center py-8 space-y-6">
-          <div class="inline-flex items-center justify-center w-16 h-16 bg-amber-50 text-amber-600 rounded-full border border-amber-200 shadow-sm animate-pulse">
+        <!-- Placeholder: payment gateway coming soon -->
+        <div class="text-center py-10 space-y-4">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-amber-50 text-amber-600 rounded-full border border-amber-200 shadow-sm">
             <i class="fa-regular fa-clock text-3xl"></i>
           </div>
-          <div class="space-y-2">
-            <h3 class="font-serif text-2xl font-bold text-ink">Pagamento em Processamento</h3>
-            <p class="text-xs text-gray-600 max-w-sm mx-auto leading-relaxed">
-              O Mercado Pago está analisando seu pagamento. Assim que for confirmado, seu plano será ativado e você terá acesso total à plataforma.
-            </p>
-          </div>
-          
-          <div class="pt-4 space-y-3">
-            <button 
-              onclick="window.location.reload()" 
-              class="w-full bg-accent text-white py-3.5 rounded-xl font-serif font-bold text-md hover:bg-ink transition-colors shadow-md cursor-pointer flex justify-center items-center gap-2"
-            >
-              Recarregar Página <i class="fa-solid fa-rotate-right text-xs"></i>
-            </button>
-            <button 
-              id="pending-logout-btn" 
-              class="w-full bg-white text-ink border border-gray-300 py-3 rounded-xl font-sans text-xs font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
-            >
-              Sair da Conta
-            </button>
-          </div>
-        </div>
-
-        <!-- State 3: Failure / Error State -->
-        <div id="error-state" class="hidden text-center py-8 space-y-6">
-          <div class="inline-flex items-center justify-center w-16 h-16 bg-red-50 text-red-600 rounded-full border border-red-200 shadow-sm">
-            <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
-          </div>
-          <div class="space-y-2">
-            <h3 class="font-serif text-2xl font-bold text-ink">Falha no Pagamento</h3>
-            <p id="error-message-text" class="text-xs text-red-600 mt-2 bg-red-50 border border-red-200 p-3.5 rounded-xl max-w-sm mx-auto font-medium leading-relaxed">
-              Ocorreu um erro ao processar sua transação.
-            </p>
-          </div>
-
-          <div class="pt-4 space-y-3">
-            <button 
-              onclick="startCheckout()" 
-              class="w-full bg-accent text-white py-3.5 rounded-xl font-serif font-bold text-md hover:bg-ink transition-colors shadow-md cursor-pointer flex justify-center items-center gap-2"
-            >
-              Tentar Novamente <i class="fa-solid fa-arrow-rotate-right text-xs"></i>
-            </button>
-            <button 
-              id="error-logout-btn" 
+          <h3 class="font-serif text-xl font-bold text-ink">Pagamentos em breve</h3>
+          <p class="text-xs text-gray-600 max-w-sm mx-auto leading-relaxed">
+            Estamos configurando nosso sistema de pagamentos. Em breve você poderá ativar seu plano aqui. Entre em contato conosco se precisar de ajuda.
+          </p>
+          <div class="pt-4">
+            <button
+              id="logout-btn"
               class="w-full bg-white text-ink border border-gray-300 py-3 rounded-xl font-sans text-xs font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
             >
               Sair da Conta
@@ -105,7 +59,7 @@ const planPrice = user?.plan === 'lifetime' ? 'R$ 39,90' : 'R$ 9,90';
         </div>
 
         <p class="text-center text-[10px] text-gray-500 mt-6 leading-relaxed border-t border-gray-100 pt-4">
-          O processamento de pagamentos é seguro e realizado diretamente em parceria com o Mercado Pago.
+          Notícias do Céu · Memórias que ficam para sempre.
         </p>
 
       </div>
@@ -116,85 +70,17 @@ const planPrice = user?.plan === 'lifetime' ? 'R$ 39,90' : 'R$ 9,90';
 </Layout>
 
 <script is:inline>
-  // Parse query parameters
-  const params = new URLSearchParams(window.location.search);
-  const status = params.get('status');
-  const reason = params.get('reason') || '';
-  const message = params.get('message') || '';
-
-  const loadingState = document.getElementById('loading-state');
-  const pendingState = document.getElementById('pending-state');
-  const errorState = document.getElementById('error-state');
-  const errorMessage = document.getElementById('error-message-text');
-
-  function hideAll() {
-    loadingState?.classList.add('hidden');
-    pendingState?.classList.add('hidden');
-    errorState?.classList.add('hidden');
-  }
-
-  async function startCheckout() {
-    hideAll();
-    if (loadingState) loadingState.classList.remove('hidden');
-
+  document.getElementById('logout-btn')?.addEventListener('click', async () => {
     try {
-      const res = await fetch('/api/checkout/create-preference', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Erro ao gerar preferência de pagamento.');
+      const res = await fetch('/api/auth/logout', { method: 'POST' });
+      if (res.ok) {
+        window.location.href = '/login';
+      } else {
+        alert('Erro ao sair da conta. Tente novamente.');
       }
-
-      // Redirect to Mercado Pago Checkout Pro
-      window.location.href = data.init_point;
     } catch (err) {
       console.error(err);
-      hideAll();
-      if (errorState) errorState.classList.remove('hidden');
-      if (errorMessage) errorMessage.innerText = err.message || 'Erro inesperado. Por favor, tente novamente.';
+      alert('Erro ao se conectar ao servidor.');
     }
-  }
-
-  // Handle logout buttons
-  const setupLogout = (btnId) => {
-    document.getElementById(btnId)?.addEventListener('click', async () => {
-      try {
-        const res = await fetch('/api/auth/logout', { method: 'POST' });
-        if (res.ok) {
-          window.location.href = '/login';
-        } else {
-          alert('Erro ao sair da conta. Tente novamente.');
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Erro ao se conectar ao servidor.');
-      }
-    });
-  };
-
-  setupLogout('pending-logout-btn');
-  setupLogout('error-logout-btn');
-
-  // Initial routing based on query parameter
-  if (status === 'pending') {
-    hideAll();
-    if (pendingState) pendingState.classList.remove('hidden');
-  } else if (status === 'rejected' || status === 'error' || status === 'cancelled') {
-    hideAll();
-    if (errorState) errorState.classList.remove('hidden');
-    let customMsg = 'O pagamento foi cancelado ou ocorreu um erro na integração.';
-    if (status === 'rejected') {
-      customMsg = `Pagamento recusado pelo Mercado Pago. Motivo: ${reason || 'transação não autorizada'}. Por favor, tente novamente.`;
-    } else if (status === 'error' && message) {
-      customMsg = decodeURIComponent(message);
-    }
-    if (errorMessage) errorMessage.innerText = customMsg;
-  } else {
-    // Start automated checkout creation flow
-    startCheckout();
-  }
+  });
 </script>
