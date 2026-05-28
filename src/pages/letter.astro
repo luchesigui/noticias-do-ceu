@@ -1,0 +1,444 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import { PetService } from '../../services/pet-service.js';
+
+export const prerender = false;
+
+const user = Astro.locals.user;
+const pet = user ? await PetService.getPetByUserId(user.id) : null;
+
+// Redirect to login if not authenticated
+if (!user) {
+  return Astro.redirect('/login');
+}
+
+// If user hasn't paid yet, redirect to checkout
+if (user.status === 'pending_payment') {
+  return Astro.redirect('/checkout');
+}
+---
+
+<Layout title="Escreva uma Carta | Notícias do Céu">
+  <Navbar showCreateMemorial={false} />
+
+  <!-- Toast Container -->
+  <div id="toast" class="toast">
+    <span id="toast-message"></span>
+  </div>
+
+  <!-- Step 1: Composing -->
+  <main id="step-1" class="step-content active min-h-screen pt-24 pb-16 bg-gradient-to-b from-paper/40 to-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Stationery Paper Container -->
+      <div class="newspaper-container border-double-gold rounded-sm p-8 md:p-12 relative overflow-hidden" style="background-color: #FFFDF8;">
+
+        <!-- Watermark decoration -->
+        <div class="absolute top-4 right-4 text-accent/10 pointer-events-none">
+          <i class="fa-solid fa-dove text-6xl"></i>
+        </div>
+        <div class="absolute bottom-4 left-4 text-accent/10 pointer-events-none">
+          <i class="fa-solid fa-cloud text-5xl"></i>
+        </div>
+
+        <!-- Letter Header -->
+        <header class="text-center mb-8 pb-4 border-b border-accent/20">
+          <div class="inline-flex items-center gap-2 mb-2">
+            <i class="fa-solid fa-feather-pointed text-accent text-lg"></i>
+            <span class="font-sans text-xs font-bold uppercase tracking-[0.3em] text-accent">Correio do Coração</span>
+          </div>
+          <h1 class="font-serif text-3xl md:text-4xl font-black text-ink">Carta para o Céu</h1>
+          <p class="font-body text-sm text-gray-500 mt-2" id="current-date"></p>
+        </header>
+
+        <!-- Pet Name Integrated in Salutation -->
+        <div class="mb-6">
+          <div class="flex items-baseline gap-1 font-serif text-lg text-ink/70">
+            <span>Prezado(a)</span>
+            <input
+              type="text"
+              id="pet-name-input"
+              placeholder={pet ? pet.name : "nome do seu pet"}
+              value={pet ? pet.name : ""}
+              class="border-b-2 border-dashed border-accent/40 bg-transparent font-serif text-lg text-accent font-semibold focus:outline-none focus:border-accent px-1 py-0.5 min-w-[120px] w-auto"
+              maxlength="40"
+            />
+            <span>,</span>
+          </div>
+        </div>
+
+        <!-- Letter Body — Stationery Lines -->
+        <div class="relative mb-8">
+          <!-- Stationery lines background -->
+          <div class="absolute inset-0 pointer-events-none stationery-lines"></div>
+
+          <div class="relative">
+            <textarea
+              id="letter-body"
+              maxlength="1000"
+              placeholder="Escreva aqui o seu desabafo, suas saudades, suas lembranças..."
+              class="w-full min-h-[320px] md:min-h-[400px] bg-transparent font-body text-ink/90 text-base leading-8 resize-none focus:outline-none placeholder:text-gray-400/60 py-1 relative z-10"
+            ></textarea>
+          </div>
+
+          <!-- Character Counter -->
+          <div class="flex justify-between items-center mt-1 px-1">
+            <span class="text-[11px] text-gray-400 font-sans">
+              <i class="fa-regular fa-heart mr-1"></i> Suas palavras vão direto para o céu
+            </span>
+            <span class="text-xs font-sans text-gray-400">
+              <span id="char-count" class="font-semibold text-ink/60">0</span>/1000
+            </span>
+          </div>
+        </div>
+
+        <!-- Signature -->
+        <div class="flex items-baseline gap-1 font-serif text-lg text-ink/70 mb-8">
+          <span>Com amor,</span>
+          <input
+            type="text"
+            id="tutor-name-input"
+            placeholder="seu nome"
+            value={user ? user.name : ""}
+            class="border-b-2 border-dashed border-accent/40 bg-transparent font-serif text-lg text-accent font-semibold focus:outline-none focus:border-accent px-1 py-0.5 min-w-[100px]"
+            maxlength="60"
+          />
+        </div>
+
+        <!-- Decorative Postmark -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-[0.04]">
+          <div class="w-64 h-64 border-[8px] border-accent rounded-full flex items-center justify-center">
+            <div class="w-56 h-56 border-2 border-accent rounded-full flex items-center justify-center">
+              <div class="text-center font-serif">
+                <p class="text-2xl font-black text-accent">CORREIO</p>
+                <p class="text-xs text-accent mt-1">DO</p>
+                <p class="text-2xl font-black text-accent mt-1">CORAÇÃO</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Controls (below on mobile, side on desktop) -->
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Controls Panel -->
+        <div class="md:col-span-1 space-y-5">
+          <!-- Privacy Toggle -->
+          <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+            <h3 class="flex items-center gap-2 font-serif font-bold text-ink mb-3">
+              <i class="fa-solid fa-lock text-accent text-sm"></i> Privacidade
+            </h3>
+            <div class="flex items-center justify-between">
+              <div class="text-sm text-gray-600 font-sans">
+                <span id="privacy-label">Privada</span>
+                <p class="text-xs text-gray-400 mt-0.5" id="privacy-hint">Só você pode ler</p>
+              </div>
+              <button
+                id="privacy-toggle"
+                type="button"
+                class="relative w-12 h-7 rounded-full bg-accent cursor-pointer transition-colors duration-200 focus:outline-none"
+              >
+                <span class="absolute left-1 top-1 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200" id="privacy-knob"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Postage Stamp -->
+          <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm text-center">
+            <h3 class="flex items-center justify-center gap-2 font-serif font-bold text-ink mb-3">
+              <i class="fa-solid fa-envelope text-accent text-sm"></i> Selo Celestial
+            </h3>
+            <div class="inline-block gift-card-stamp px-6 py-4 rounded-lg">
+              <p class="font-serif font-black text-accent text-2xl">R$ 2,99</p>
+              <p class="text-[10px] text-gray-500 font-sans uppercase tracking-wider mt-1">Postagem Única</p>
+            </div>
+            <p class="text-xs text-gray-400 font-sans mt-3">Incluído no seu plano</p>
+          </div>
+
+          <!-- Send Button -->
+          <button
+            id="send-btn"
+            class="w-full bg-accent text-white px-6 py-4 rounded-2xl font-serif font-bold text-lg hover:bg-ink transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i class="fa-solid fa-paper-plane"></i> Enviar Carta
+          </button>
+        </div>
+
+        <!-- Live Preview -->
+        <div class="md:col-span-2">
+          <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm h-full">
+            <h3 class="flex items-center gap-2 font-serif font-bold text-ink mb-4 text-sm uppercase tracking-wider">
+              <i class="fa-regular fa-newspaper text-accent"></i> Preview no Jornal
+            </h3>
+            <div class="newspaper-container rounded-lg p-6" style="min-height: 280px;">
+              <div class="border-b-2 border-ink/20 pb-3 mb-4">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-accent mb-1">Coluna: Cartas para o Céu</p>
+                <h4 class="font-serif text-xl font-black text-ink uppercase" id="preview-headline">
+                  MENSAGEM DE AMOR PARA <span id="preview-pet-name" class="text-accent">{pet ? pet.name.toUpperCase() : "SEU PET"}</span>
+                </h4>
+                <p class="text-[10px] text-gray-500 font-sans mt-1" id="preview-date"></p>
+              </div>
+              <div class="font-body text-sm text-ink/80 leading-relaxed whitespace-pre-wrap min-h-[80px]" id="preview-body">
+                <span class="text-gray-400 italic">A carta aparecerá aqui conforme você escreve...</span>
+              </div>
+              <div class="mt-4 pt-3 border-t border-ink/10">
+                <p class="font-serif text-sm text-ink/60 italic" id="preview-signature">De: {user ? user.name : '...'}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Step 2: Confirmation -->
+  <main id="step-2" class="step-content min-h-screen pt-24 pb-16 bg-gradient-to-b from-paper/40 to-white flex items-center justify-center">
+    <div class="max-w-lg mx-auto px-4 text-center">
+      <div class="newspaper-container border-double-gold rounded-sm p-10 bg-white">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-accent/10 rounded-full mb-6">
+          <i class="fa-solid fa-check text-4xl text-accent"></i>
+        </div>
+
+        <h2 class="font-serif text-3xl font-black text-ink mb-3">Carta Enviada ao Céu!</h2>
+        <p class="font-body text-gray-600 mb-2">Sua carta para <strong id="confirm-pet-name" class="text-accent"></strong> foi postada com sucesso.</p>
+        <p class="font-body text-sm text-gray-500 mb-8">O selo celestial já fez a entrega. Seu pet recebeu suas palavras de amor.</p>
+
+        <div class="separator-line white-bg mb-8"></div>
+
+        <!-- Summary Card -->
+        <div class="text-left bg-paper/30 rounded-xl p-5 mb-8">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-accent mb-2">Resumo</p>
+          <p class="font-body text-sm text-ink/70 leading-relaxed whitespace-pre-wrap" id="confirm-body"></p>
+          <p class="font-serif text-sm text-ink/50 mt-3 italic" id="confirm-signature"></p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a
+            href="/letter"
+            class="bg-accent text-white px-6 py-3 rounded-full font-serif font-bold text-sm hover:bg-ink transition-all shadow-md inline-flex items-center justify-center gap-2"
+          >
+            <i class="fa-solid fa-pen-fancy"></i> Escrever Outra
+          </a>
+          <a
+            href="/dashboard"
+            class="bg-white text-ink border-2 border-ink px-6 py-3 rounded-full font-serif font-bold text-sm hover:bg-gray-50 transition-all inline-flex items-center justify-center gap-2"
+          >
+            <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* Stationery lines */
+  .stationery-lines {
+    background-image: repeating-linear-gradient(
+      transparent,
+      transparent 31px,
+      rgba(197, 160, 89, 0.15) 31px,
+      rgba(197, 160, 89, 0.15) 32px
+    );
+    background-position: 0 8px;
+  }
+
+  /* Gold border for letter paper */
+  .border-double-gold {
+    border-style: double;
+    border-width: 6px;
+    border-color: #c5a059;
+    box-shadow:
+      0 10px 30px rgba(139, 90, 43, 0.2),
+      inset 0 0 50px rgba(197, 160, 89, 0.08);
+  }
+</style>
+
+<script>
+  // === State ===
+  let isPrivate = true;
+
+  // === DOM Elements ===
+  const petNameInput = document.getElementById('pet-name-input');
+  const tutorNameInput = document.getElementById('tutor-name-input');
+  const letterBody = document.getElementById('letter-body');
+  const charCount = document.getElementById('char-count');
+  const privacyToggle = document.getElementById('privacy-toggle');
+  const privacyKnob = document.getElementById('privacy-knob');
+  const privacyLabel = document.getElementById('privacy-label');
+  const privacyHint = document.getElementById('privacy-hint');
+  const sendBtn = document.getElementById('send-btn');
+  const toast = document.getElementById('toast');
+  const toastMessage = document.getElementById('toast-message');
+
+  // Preview elements
+  const previewPetName = document.getElementById('preview-pet-name');
+  const previewBody = document.getElementById('preview-body');
+  const previewSignature = document.getElementById('preview-signature');
+  const previewHeadline = document.getElementById('preview-headline');
+
+  // Confirm elements
+  const confirmPetName = document.getElementById('confirm-pet-name');
+  const confirmBody = document.getElementById('confirm-body');
+  const confirmSignature = document.getElementById('confirm-signature');
+
+  // === Date ===
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('pt-BR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  document.getElementById('current-date').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+  document.getElementById('preview-date').textContent = now.toLocaleDateString('pt-BR');
+
+  // === Toast ===
+  let toastTimeout;
+  function showToast(msg, type = 'success') {
+    toastMessage.textContent = msg;
+    toast.className = 'toast show ' + type;
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 4000);
+  }
+
+  // === Privacy Toggle ===
+  privacyToggle?.addEventListener('click', () => {
+    isPrivate = !isPrivate;
+    if (isPrivate) {
+      privacyToggle.classList.remove('bg-gray-300');
+      privacyToggle.classList.add('bg-accent');
+      privacyKnob.style.transform = 'translateX(0)';
+      privacyLabel.textContent = 'Privada';
+      privacyHint.textContent = 'Só você pode ler';
+    } else {
+      privacyToggle.classList.remove('bg-accent');
+      privacyToggle.classList.add('bg-gray-300');
+      privacyKnob.style.transform = 'translateX(20px)';
+      privacyLabel.textContent = 'Pública';
+      privacyHint.textContent = 'Aparece no memorial do pet';
+    }
+  });
+
+  // === Character Counter ===
+  letterBody?.addEventListener('input', () => {
+    const len = letterBody.value.length;
+    charCount.textContent = len;
+    if (len >= 900) {
+      charCount.classList.add('text-red-500');
+    } else {
+      charCount.classList.remove('text-red-500');
+    }
+    updatePreview();
+  });
+
+  // === Live Preview ===
+  function updatePreview() {
+    const petVal = petNameInput.value.trim();
+    const bodyVal = letterBody.value.trim();
+    const tutorVal = tutorNameInput.value.trim();
+
+    if (petVal) {
+      previewPetName.textContent = petVal.toUpperCase();
+      previewHeadline.innerHTML = 'MENSAGEM DE AMOR PARA <span class="text-accent">' + petVal.toUpperCase() + '</span>';
+    }
+
+    if (bodyVal) {
+      previewBody.textContent = bodyVal;
+    } else {
+      previewBody.innerHTML = '<span class="text-gray-400 italic">A carta aparecerá aqui conforme você escreve...</span>';
+    }
+
+    if (tutorVal) {
+      previewSignature.textContent = 'De: ' + tutorVal;
+    }
+  }
+
+  petNameInput?.addEventListener('input', updatePreview);
+  tutorNameInput?.addEventListener('input', updatePreview);
+
+  // === Send Letter ===
+  sendBtn?.addEventListener('click', async () => {
+    const petName = petNameInput.value.trim();
+    const tutorName = tutorNameInput.value.trim();
+    const body = letterBody.value.trim();
+
+    if (!petName) {
+      showToast('Informe o nome do pet.', 'error');
+      petNameInput.focus();
+      return;
+    }
+
+    if (!body) {
+      showToast('Escreva alguma coisa na carta.', 'error');
+      letterBody.focus();
+      return;
+    }
+
+    // Loading state
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+
+    try {
+      const res = await fetch('/api/letter/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          petName,
+          tutorName,
+          body,
+          isPrivate
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Erro ao enviar carta.');
+      }
+
+      // Populate confirmation
+      confirmPetName.textContent = petName;
+      confirmBody.textContent = body;
+      confirmSignature.textContent = 'De: ' + tutorName;
+
+      // Switch steps
+      document.getElementById('step-1').classList.remove('active');
+      document.getElementById('step-2').classList.add('active');
+
+      // Save to localStorage history
+      try {
+        const history = JSON.parse(localStorage.getItem('letter-history') || '[]');
+        history.unshift({
+          petName,
+          tutorName,
+          body,
+          isPrivate,
+          date: new Date().toISOString()
+        });
+        localStorage.setItem('letter-history', JSON.stringify(history.slice(0, 20)));
+      } catch (e) { /* ignore */ }
+
+    } catch (err) {
+      console.error('Erro:', err);
+      showToast(err.message || 'Erro ao enviar. Tente novamente.', 'error');
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Carta';
+    }
+  });
+
+  // === Keyboard shortcut: Ctrl+Enter to send ===
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && document.getElementById('step-1').classList.contains('active')) {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  });
+</script>
