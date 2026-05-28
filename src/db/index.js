@@ -1,17 +1,27 @@
-import { drizzle } from 'drizzle-orm/libsql';
-import { createClient } from '@libsql/client';
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from './schema.js';
 
-const url =
-  (typeof process !== 'undefined' ? process.env.TURSO_DATABASE_URL : null) ||
-  (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.TURSO_DATABASE_URL : null) ||
-  'file:local.db';
+let _db = null;
 
-const authToken =
-  (typeof process !== 'undefined' ? process.env.TURSO_AUTH_TOKEN : null) ||
-  (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.TURSO_AUTH_TOKEN : null) ||
-  undefined;
+export function getDb() {
+  if (_db) return _db;
 
-export const client = createClient({ url, authToken });
+  const connectionString =
+    process.env.DATABASE_URL ||
+    (typeof import.meta !== 'undefined' && import.meta.env?.DATABASE_URL);
 
-export const db = drizzle(client, { schema });
+  if (!connectionString) {
+    throw new Error('DATABASE_URL env var is required');
+  }
+
+  _db = drizzle(neon(connectionString), { schema });
+  return _db;
+}
+
+// Convenience proxy — preserves existing `db.select()` usage
+export const db = new Proxy({}, {
+  get(_, prop) {
+    return getDb()[prop];
+  },
+});
