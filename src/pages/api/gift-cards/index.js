@@ -6,7 +6,7 @@ export const prerender = false;
 export async function POST({ request, locals }) {
   try {
     const body = await request.json();
-    const { sender_name, sender_email, recipient_email, recipient_name, pet_name, plan, message, design, status } = body;
+    const { sender_name, sender_email, recipient_email, recipient_name, pet_name, plan, message, status } = body;
 
     // Validation
     if (!sender_name || typeof sender_name !== 'string' || sender_name.trim() === '') {
@@ -51,14 +51,6 @@ export async function POST({ request, locals }) {
       });
     }
 
-    const validDesigns = ['nuvens', 'patinhas', 'estrelas', 'pomba'];
-    if (!validDesigns.includes(design)) {
-      return new Response(JSON.stringify({ error: 'design must be one of: nuvens, patinhas, estrelas, pomba' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-
     // Link buyerId if user is authenticated
     const buyerId = locals.user ? locals.user.id : null;
 
@@ -70,7 +62,6 @@ export async function POST({ request, locals }) {
       pet_name,
       plan,
       message,
-      design,
       status: status || 'pending_payment',
       buyer_id: buyerId
     });

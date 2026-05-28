@@ -28,7 +28,6 @@ function mapToExternal(dbCard) {
     pet_name: dbCard.petName,
     plan: dbCard.plan,
     message: dbCard.message,
-    design: dbCard.design,
     status: dbCard.status,
     created_at: dbCard.createdAt,
     expires_at: dbCard.expiresAt,
@@ -39,7 +38,7 @@ function mapToExternal(dbCard) {
 
 export class GiftCardService {
   static async createGiftCard(data) {
-    const { sender_name, sender_email, recipient_email, recipient_name, pet_name, plan, message, design, status = 'pending_payment', buyer_id = null } = data;
+    const { sender_name, sender_email, recipient_email, recipient_name, pet_name, plan, message, status = 'pending_payment', buyer_id = null } = data;
 
     let code;
     let attempts = 0;
@@ -76,7 +75,6 @@ export class GiftCardService {
       petName: pet_name || null,
       plan,
       message: message || null,
-      design,
       status,
       createdAt: created_at,
       expiresAt: expires_at,

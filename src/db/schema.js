@@ -46,7 +46,6 @@ export const giftCards = pgTable('gift_cards', {
   petName: text('pet_name'),
   plan: text('plan').notNull(), // 'annual' | 'lifetime'
   message: text('message'),
-  design: text('design').notNull(),
   status: text('status').notNull().default('pending_payment'),
   createdAt: text('created_at').notNull(),
   expiresAt: text('expires_at'),

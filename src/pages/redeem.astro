@@ -28,23 +28,6 @@ if (code) {
   }
 }
 
-// Function to get theme info
-function getThemeInfo(design) {
-  switch (design) {
-    case 'nuvens':
-      return { name: 'Nuvens', icon: 'fa-solid fa-cloud' };
-    case 'patinhas':
-      return { name: 'Patinhas', icon: 'fa-solid fa-paw' };
-    case 'estrelas':
-      return { name: 'Estrelas', icon: 'fa-solid fa-star' };
-    case 'pomba':
-      return { name: 'Pomba', icon: 'fa-solid fa-dove' };
-    default:
-      return { name: 'Clássico', icon: 'fa-solid fa-gift' };
-  }
-}
-
-const theme = giftCard ? getThemeInfo(giftCard.design) : null;
 const isLifetime = giftCard ? giftCard.plan === 'lifetime' : false;
 const formattedExpiry = giftCard && giftCard.expires_at 
   ? new Date(giftCard.expires_at).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })

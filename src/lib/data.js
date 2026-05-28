@@ -215,7 +215,6 @@ export const giftCards = {
         petName: data.petName ?? data.pet_name,
         plan: data.plan,
         message: data.message,
-        design: data.design,
         status: data.status ?? 'pending_payment',
         createdAt: data.createdAt ?? data.created_at,
         expiresAt: data.expiresAt ?? data.expires_at,
