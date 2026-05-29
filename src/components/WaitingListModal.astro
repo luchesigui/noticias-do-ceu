@@ -89,12 +89,41 @@
       modal.classList.remove('hidden');
       modal.classList.add('flex');
       document.body.style.overflow = 'hidden'; // prevent scrolling background
+
+      // Track select_plan
+      if (typeof window !== 'undefined' && window.track) {
+        const planId = planName === 'annual' ? 'anual' : 'vitalicio';
+        const planNameFormatted = planName === 'annual' ? 'Plano Anual' : 'Plano Vitalício';
+        const price = planName === 'annual' ? 9.90 : 39.90;
+        const billing = planName === 'annual' ? 'annual' : 'lifetime';
+        window.track({
+          event: 'select_plan',
+          plan_id: planId,
+          plan_name: planNameFormatted,
+          price: price,
+          billing: billing
+        });
+      }
     }
   }
 
   function closeWaitingListModal() {
     const modal = document.getElementById('waiting-list-modal');
-    if (modal) {
+    const successBlock = document.getElementById('waiting-list-success');
+    const planInput = document.getElementById('waiting-list-plan');
+
+    if (modal && modal.classList.contains('flex')) {
+      // Track waitlist_dismiss if they closed without submitting
+      const isSuccessVisible = successBlock && !successBlock.classList.contains('hidden');
+      if (!isSuccessVisible && planInput && typeof window !== 'undefined' && window.track) {
+        const planName = planInput.value;
+        const planId = planName === 'annual' ? 'anual' : 'vitalicio';
+        window.track({
+          event: 'waitlist_dismiss',
+          plan_id: planId
+        });
+      }
+
       modal.classList.add('hidden');
       modal.classList.remove('flex');
       document.body.style.overflow = ''; // restore scrolling
@@ -144,6 +173,17 @@
             if (formBlock) formBlock.classList.add('hidden');
             if (formHeader) formHeader.classList.add('hidden');
             if (successBlock) successBlock.classList.remove('hidden');
+
+            // Track join_waitlist
+            if (typeof window !== 'undefined' && window.track) {
+              const planId = plan === 'annual' ? 'anual' : 'vitalicio';
+              const billing = plan === 'annual' ? 'annual' : 'lifetime';
+              window.track({
+                event: 'join_waitlist',
+                plan_id: planId,
+                billing: billing
+              });
+            }
           } else {
             if (errorEl) {
               errorEl.textContent = data.error || 'Ocorreu um erro ao registrar sua inscrição. Tente novamente.';

@@ -9,7 +9,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
   <Navbar showCreateMemorial={true} />
 
   <!-- Hero Section -->
-  <section class="relative pt-32 pb-16 md:pb-24 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-b from-paper/30 to-white">
+  <section id="hero" class="relative pt-32 pb-16 md:pb-24 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-b from-paper/30 to-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <!-- Text Content -->
@@ -29,12 +29,14 @@ import WaitingListModal from '../components/WaitingListModal.astro';
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
             <a
-              href="#planos"
+              id="hero-cta-primary"
+              href="#demonstracao"
               class="bg-accent text-white px-8 py-4 rounded-full font-serif font-bold text-lg hover:bg-ink transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex justify-center items-center gap-2"
             >
               Começar Homenagem <i class="fa-solid fa-arrow-right"></i>
             </a>
             <a
+              id="hero-cta-secondary"
               href="#demonstracao"
               class="bg-white text-ink border-2 border-ink px-8 py-4 rounded-full font-serif font-bold text-lg hover:bg-gray-50 transition-all flex justify-center items-center gap-2"
             >
@@ -835,6 +837,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
 
 <script>
   import { petData, getNews, getSidebar, renderTemplate, isSunday, getSpecialDate } from '../data/stories.js';
+  import { track, observeSectionView } from '../lib/analytics';
 
   // === SEÇÃO: ESTADO DO SISTEMA ===
   let currentDayIndex = 0;
@@ -1083,6 +1086,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
       localStorage.setItem("currentDayIndex", currentDayIndex.toString());
     }
     updateUI(true);
+    track({ event: "demo_advance", demo_day: currentDayIndex + 1 });
   }
 
   function resetDemo() {
@@ -1094,6 +1098,7 @@ import WaitingListModal from '../components/WaitingListModal.astro';
     localStorage.setItem("demoDateOffset", "0");
     localStorage.setItem("lastAccessDate", todayStr);
     updateUI(true);
+    track({ event: "demo_reset" });
   }
 
   // === SEÇÃO: SELEÇÃO DE PLANO DE PRESENTE NA HOME ===
@@ -1124,10 +1129,54 @@ import WaitingListModal from '../components/WaitingListModal.astro';
   window.resetDemo = resetDemo;
   window.selectGiftHomePlan = selectGiftHomePlan;
 
+  // Setup tracking
+  function setupTracking() {
+    // 1. View section observers
+    const heroEl = document.getElementById('hero');
+    if (heroEl) observeSectionView(heroEl, 'hero');
+
+    const demoEl = document.getElementById('demonstracao');
+    if (demoEl) observeSectionView(demoEl, 'demo');
+
+    const pricingEl = document.getElementById('planos');
+    if (pricingEl) observeSectionView(pricingEl, 'pricing');
+
+    // 2. CTA click listeners
+    const heroPrimary = document.getElementById('hero-cta-primary');
+    if (heroPrimary) {
+      heroPrimary.addEventListener('click', () => {
+        track({
+          event: 'cta_click',
+          cta_location: 'hero_primary',
+          cta_label: 'Começar Homenagem'
+        });
+      });
+    }
+
+    const heroSecondary = document.getElementById('hero-cta-secondary');
+    if (heroSecondary) {
+      heroSecondary.addEventListener('click', () => {
+        track({
+          event: 'cta_click',
+          cta_location: 'hero_secondary',
+          cta_label: 'Ver Exemplo'
+        });
+      });
+    }
+  }
+
+  let initialized = false;
+  function start() {
+    if (initialized) return;
+    initialized = true;
+    initSystem();
+    setupTracking();
+  }
+
   // Initialize
-  document.addEventListener("DOMContentLoaded", initSystem);
+  document.addEventListener("DOMContentLoaded", start);
   // Also run if DOMContentLoaded has already fired (Astro's view transition/client hydration edge cases)
   if (document.readyState === "interactive" || document.readyState === "complete") {
-    initSystem();
+    start();
   }
 </script>
