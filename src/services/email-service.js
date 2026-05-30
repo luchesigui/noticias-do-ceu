@@ -150,4 +150,58 @@ export class EmailService {
       html,
     });
   }
+
+  static async sendWaitingListFeedback(email, plan) {
+    const { siteUrl } = getConfig();
+    const planFormatted = plan === 'lifetime' ? 'Vitalício (R$ 39,90)' : 'Anual (R$ 9,90/ano)';
+    const html = `
+      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #faf9f6; border: 2px solid #2c2c2c; border-radius: 4px; overflow: hidden;">
+        <div style="background: #2c2c2c; padding: 28px 32px; text-align: center;">
+          <p style="margin: 0; color: #d4a97a; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; font-family: sans-serif;">Notícias do Céu</p>
+          <h1 style="margin: 8px 0 0; color: #faf9f6; font-size: 24px; font-weight: bold; letter-spacing: 1px;">Sua vaga na lista de espera está garantida</h1>
+        </div>
+
+        <div style="padding: 36px 32px;">
+          <p style="font-size: 16px; line-height: 1.7; color: #2c2c2c; margin-top: 0;">
+            Olá!
+          </p>
+          <p style="font-size: 15px; line-height: 1.7; color: #444;">
+            Agradecemos o seu interesse no <strong>Notícias do Céu</strong>. Registramos com carinho o seu e-mail na lista de espera para o plano <strong>${planFormatted}</strong>.
+          </p>
+          <p style="font-size: 15px; line-height: 1.7; color: #444;">
+            Nosso objetivo é proporcionar um espaço acolhedor e eterno para preservar as memórias de quem tanto amamos. Estamos trabalhando com muita dedicação para liberar o seu acesso o mais rápido possível.
+          </p>
+          <p style="font-size: 15px; line-height: 1.7; color: #444;">
+            Assim que abrirmos novas vagas, você receberá um e-mail com as instruções para criar o memorial do seu pet.
+          </p>
+          
+          <div style="border-left: 3px solid #d4a97a; padding: 12px 20px; margin: 24px 0; background: #fffbf5; border-radius: 0 4px 4px 0;">
+            <p style="margin: 0; font-size: 14px; color: #5a4a3a; font-style: italic; line-height: 1.7;">
+              "Os olhos de um animal têm o poder de falar uma linguagem extraordinária."
+            </p>
+          </div>
+
+          <p style="font-size: 15px; line-height: 1.7; color: #444;">
+            Se tiver qualquer dúvida ou quiser compartilhar a história do seu pet com a gente, basta responder a este e-mail.
+          </p>
+          
+          <p style="font-size: 15px; line-height: 1.7; color: #2c2c2c; margin-bottom: 0;">
+            Com carinho,<br>
+            <strong>Equipe Notícias do Céu</strong>
+          </p>
+        </div>
+
+        <div style="background: #f0ede6; padding: 16px 32px; text-align: center; border-top: 1px solid #ddd;">
+          <p style="margin: 0; font-size: 11px; color: #999; font-family: sans-serif;">Notícias do Céu · Memórias que ficam para sempre</p>
+        </div>
+      </div>
+    `;
+
+    return sendEmail({
+      to: email,
+      subject: `Sua vaga na lista de espera está garantida ☁️`,
+      html,
+    });
+  }
 }
+

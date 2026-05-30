@@ -1,7 +1,25 @@
+import crypto from 'crypto';
+import { db } from '../db/index.js';
+import { leads as leadsTable } from '../db/schema.js';
 import { EmailService } from './email-service.js';
 
 export class WaitingListService {
   static async addLead(email, plan) {
+    // Save to the database
+    await db.insert(leadsTable).values({
+      id: crypto.randomUUID(),
+      email: email.toLowerCase().trim(),
+      plan,
+      createdAt: new Date().toISOString(),
+    });
+
+    // Send feedback email to lead
+    try {
+      await EmailService.sendWaitingListFeedback(email, plan);
+    } catch (error) {
+      console.error('Failed to send feedback email to lead:', error);
+    }
+
     const ownerEmail =
       (typeof process !== 'undefined' ? process.env.OWNER_EMAIL : null) ||
       (typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.OWNER_EMAIL : null);
