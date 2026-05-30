@@ -99,7 +99,7 @@ import Footer from '../components/Footer.astro';
             <p class="text-xs text-accent font-serif mb-4" id="gift-giver-display">— Seu amigo</p>
             <div class="separator-line"></div>
             <p id="gift-features-display" class="text-[10px] text-gray-500 uppercase tracking-widest">
-              Acesso vitalício • Jornal diário • 1 carta/mês
+              Acesso vitalício • arquivo completo • compilado em PDF
             </p>
           </div>
 
@@ -212,23 +212,23 @@ import Footer from '../components/Footer.astro';
               <ul id="success-features-list" class="space-y-2 text-sm font-body text-gray-700">
                 <li class="flex items-start gap-2">
                   <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                  <span><strong>Plano Vitalício</strong> — acesso para sempre</span>
+                  <span><strong>Plano Vitalício</strong>: acesso para sempre</span>
                 </li>
                 <li class="flex items-start gap-2">
                   <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                  <span><strong>Jornal diário</strong> — nova edição todo dia</span>
+                  <span><strong>Jornal diário</strong>: nova edição todo dia</span>
                 </li>
                 <li class="flex items-start gap-2">
                   <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                  <span><strong>1 Carta para o Céu grátis por mês</strong></span>
+                  <span><strong>Arquivo do Jornal</strong>: releia edições passadas</span>
                 </li>
                 <li class="flex items-start gap-2">
                   <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                  <span><strong>Compartilhamento avançado</strong> — links para edições específicas</span>
+                  <span><strong>Compartilhamento avançado</strong>: links para edições específicas</span>
                 </li>
                 <li class="flex items-start gap-2">
                   <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                  <span><strong>Compilado em PDF</strong> — exporte todas as edições</span>
+                  <span><strong>Compilado em PDF</strong>: exporte todas as edições</span>
                 </li>
               </ul>
             </div>
@@ -385,7 +385,7 @@ import Footer from '../components/Footer.astro';
           if (featuresDisplay) featuresDisplay.textContent = 'Acesso por 1 ano • Jornal diário • compartilhamento';
         } else {
           if (planDisplay) planDisplay.textContent = 'Plano Vitalício';
-          if (featuresDisplay) featuresDisplay.textContent = 'Acesso vitalício • Jornal diário • 1 carta/mês';
+          if (featuresDisplay) featuresDisplay.textContent = 'Acesso vitalício • arquivo completo • compilado em PDF';
         }
 
         goToStep(2);
@@ -434,38 +434,38 @@ import Footer from '../components/Footer.astro';
             successFeaturesList.innerHTML = `
               <li class="flex items-start gap-2">
                 <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                <span><strong>Plano Anual</strong> — acesso por 1 ano</span>
+                <span><strong>Plano Anual</strong>: acesso por 1 ano</span>
               </li>
               <li class="flex items-start gap-2">
                 <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                <span><strong>Jornal diário</strong> — nova edição todo dia</span>
+                <span><strong>Jornal diário</strong>: nova edição todo dia</span>
               </li>
               <li class="flex items-start gap-2">
                 <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                <span><strong>Compartilhamento simples</strong> — link mostra a edição do momento</span>
+                <span><strong>Compartilhamento simples</strong>: link mostra a edição do momento</span>
               </li>
             `;
           } else {
             successFeaturesList.innerHTML = `
               <li class="flex items-start gap-2">
                 <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                <span><strong>Plano Vitalício</strong> — acesso para sempre</span>
+                <span><strong>Plano Vitalício</strong>: acesso para sempre</span>
               </li>
               <li class="flex items-start gap-2">
                 <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                <span><strong>Jornal diário</strong> — nova edição todo dia</span>
+                <span><strong>Jornal diário</strong>: nova edição todo dia</span>
               </li>
               <li class="flex items-start gap-2">
                 <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                <span><strong>1 Carta para o Céu grátis por mês</strong></span>
+                <span><strong>Arquivo do Jornal</strong>: releia edições passadas</span>
               </li>
               <li class="flex items-start gap-2">
                 <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                <span><strong>Compartilhamento avançado</strong> — links para edições específicas</span>
+                <span><strong>Compartilhamento avançado</strong>: links para edições específicas</span>
               </li>
               <li class="flex items-start gap-2">
                 <i class="fa-solid fa-check text-green-600 mt-0.5"></i>
-                <span><strong>Compilado em PDF</strong> — exporte todas as edições</span>
+                <span><strong>Compilado em PDF</strong>: exporte todas as edições</span>
               </li>
             `;
           }

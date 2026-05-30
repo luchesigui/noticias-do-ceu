@@ -59,7 +59,7 @@ export class EmailService {
             Olá, <strong>${card.recipient_name}</strong>!
           </p>
           <p style="font-size: 15px; line-height: 1.7; color: #444;">
-            <strong>${card.sender_name}</strong> enviou para você um gift card do <strong>Plano ${planLabel(card.plan)}</strong> do Notícias do Céu — um memorial digital onde as histórias do seu pet continuam vivas para sempre.
+            <strong>${card.sender_name}</strong> enviou para você um gift card do <strong>Plano ${planLabel(card.plan)}</strong> do Notícias do Céu, um memorial digital onde as histórias do seu pet continuam vivas para sempre.
           </p>
 
           ${card.message ? `
