@@ -15,6 +15,7 @@ initialFormattedDate =
 <Layout title="Notícias do Céu | O Jornal Diário do Seu Pet">
   <Navbar showCreateMemorial={true} />
 
+  <main id="main-content" tabindex="-1" class="focus:outline-none">
   <!-- Hero Section -->
   <section id="hero" class="relative pt-32 pb-16 md:pb-24 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-b from-paper/30 to-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -426,9 +427,12 @@ initialFormattedDate =
               <p class="font-serif italic text-accent text-sm mb-2">Acesso por um ano</p>
               <h3 class="text-2xl font-serif font-semibold uppercase tracking-[0.18em] text-ink mb-5">Plano Anual</h3>
               <div class="flex items-baseline justify-center gap-1">
-                <span class="font-serif text-sm text-ink/60 self-start mt-2">R$</span>
-                <span class="font-serif font-black text-6xl leading-none">9</span>
-                <span class="font-serif text-2xl text-ink/70">,90</span>
+                <span class="sr-only">9 reais e 90 centavos por ano</span>
+                <div class="flex items-baseline justify-center gap-1" aria-hidden="true">
+                  <span class="font-serif text-sm text-ink/60 self-start mt-2">R$</span>
+                  <span class="font-serif font-black text-6xl leading-none">9</span>
+                  <span class="font-serif text-2xl text-ink/70">,90</span>
+                </div>
               </div>
               <p class="font-body text-xs text-ink/55 mt-2">por ano</p>
             </div>
@@ -467,9 +471,12 @@ initialFormattedDate =
               <p class="font-serif italic text-accent text-sm mb-2 mt-2">Acesso para sempre</p>
               <h3 class="text-2xl font-serif font-semibold uppercase tracking-[0.18em] text-accent mb-5">Plano Vitalício</h3>
               <div class="flex items-baseline justify-center gap-1 text-accent">
-                <span class="font-serif text-sm self-start mt-2 text-accent/80">R$</span>
-                <span class="font-serif font-black text-6xl leading-none">39</span>
-                <span class="font-serif text-2xl text-accent/80">,90</span>
+                <span class="sr-only">39 reais e 90 centavos, pagamento único</span>
+                <div class="flex items-baseline justify-center gap-1 text-accent" aria-hidden="true">
+                  <span class="font-serif text-sm self-start mt-2 text-accent/80">R$</span>
+                  <span class="font-serif font-black text-6xl leading-none">39</span>
+                  <span class="font-serif text-2xl text-accent/80">,90</span>
+                </div>
               </div>
               <p class="font-body text-xs text-ink/55 mt-2">pagamento único</p>
             </div>
@@ -713,6 +720,7 @@ initialFormattedDate =
       </div>
     </div>
   </section>
+  </main>
 
   <WaitingListModal />
   <Footer />

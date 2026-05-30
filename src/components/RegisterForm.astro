@@ -22,6 +22,7 @@ const code = giftCard ? giftCard.code : '';
       required
       value={prefillName}
       placeholder="Seu nome"
+      autocomplete="name"
       class="w-full px-4 py-3 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl font-sans text-sm"
     />
   </div>
@@ -35,6 +36,7 @@ const code = giftCard ? giftCard.code : '';
       required
       value={prefillEmail}
       placeholder="seuemail@exemplo.com"
+      autocomplete="email"
       class="w-full px-4 py-3 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl font-sans text-sm"
     />
   </div>
@@ -47,14 +49,15 @@ const code = giftCard ? giftCard.code : '';
       name="password" 
       required 
       placeholder="••••••••"
+      autocomplete="new-password"
       class="w-full px-4 py-3 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl font-sans text-sm"
     />
   </div>
 
   <!-- Plan selector, only visible if registering normally (without valid gift card) -->
   {!giftCard ? (
-    <div class="space-y-3">
-      <label class="block text-xs font-bold uppercase tracking-wider">Escolha o seu Plano</label>
+    <fieldset class="space-y-3 border-0 p-0 m-0">
+      <legend class="block text-xs font-bold uppercase tracking-wider">Escolha o seu Plano</legend>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         
         <!-- Annual Plan Card -->
@@ -70,14 +73,17 @@ const code = giftCard ? giftCard.code : '';
               class="h-4 w-4 text-accent border-gray-300 focus:ring-accent"
             />
           </div>
-          <span class="text-2xl font-serif font-black text-accent mb-2">R$ 9,90<span class="text-xs font-sans text-gray-500 font-normal"> / ano</span></span>
+          <span class="text-2xl font-serif font-black text-accent mb-2">
+            <span class="sr-only">9 reais e 90 centavos por ano</span>
+            <span aria-hidden="true">R$ 9,90<span class="text-xs font-sans text-gray-500 font-normal"> / ano</span></span>
+          </span>
           <ul class="text-[11px] text-gray-600 space-y-1 mt-1 font-sans">
             <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Edição diária do jornal por 1 ano</li>
             <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Até 5 fotos no memorial</li>
             <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Personalização com detalhes do pet</li>
           </ul>
         </label>
-
+ 
         <!-- Lifetime Plan Card -->
         <label class="relative flex flex-col p-5 border-2 border-ink rounded-2xl bg-white cursor-pointer hover:bg-paper/10 transition-colors select-none">
           <div class="absolute -top-3 right-4 bg-accent text-white text-[9px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm">
@@ -92,7 +98,10 @@ const code = giftCard ? giftCard.code : '';
               class="h-4 w-4 text-accent border-gray-300 focus:ring-accent"
             />
           </div>
-          <span class="text-2xl font-serif font-black text-accent mb-2">R$ 39,90<span class="text-xs font-sans text-gray-500 font-normal"> pagamento único</span></span>
+          <span class="text-2xl font-serif font-black text-accent mb-2">
+            <span class="sr-only">39 reais e 90 centavos, pagamento único</span>
+            <span aria-hidden="true">R$ 39,90<span class="text-xs font-sans text-gray-500 font-normal"> pagamento único</span></span>
+          </span>
           <ul class="text-[11px] text-gray-600 space-y-1 mt-1 font-sans">
             <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Memorial ativo para sempre</li>
             <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Acesso permanente ao arquivo</li>
@@ -100,9 +109,9 @@ const code = giftCard ? giftCard.code : '';
             <li><i class="fa-solid fa-check text-green-600 mr-1"></i> Compartilhamento avançado</li>
           </ul>
         </label>
-
+ 
       </div>
-    </div>
+    </fieldset>
   ) : (
     <input type="hidden" name="plan" value={giftCard.plan} />
   )}

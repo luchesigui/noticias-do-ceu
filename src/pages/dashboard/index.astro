@@ -64,7 +64,7 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
 <Layout title="Meu Painel | Notícias do Céu">
   <Navbar showCreateMemorial={false} />
 
-  <main class="flex-grow pt-32 pb-20 bg-gradient-to-b from-paper/30 to-white text-ink">
+  <main id="main-content" tabindex="-1" class="focus:outline-none flex-grow pt-32 pb-20 bg-gradient-to-b from-paper/30 to-white text-ink">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <!-- Top Greetings Header -->
@@ -453,7 +453,6 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
     }
   });
 
-<<<<<<< Updated upstream
   // Handle cancel subscription dialog trigger
   document.getElementById('open-cancel-dialog-btn')?.addEventListener('click', () => {
     document.getElementById('cancel-dialog')?.showModal();
@@ -471,7 +470,26 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
       const res = await fetch('/api/subscription/cancel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
-=======
+      });
+      
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Erro ao cancelar a assinatura.');
+      }
+      
+      // Close dialog and reload page
+      document.getElementById('cancel-dialog')?.close();
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `Confirmar`;
+      }
+    }
+  });
+
   function formatCodeInput(input) {
     let val = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (val.length > 8) {
@@ -512,28 +530,10 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: userId })
->>>>>>> Stashed changes
       });
       
       const data = await res.json();
       if (!res.ok) {
-<<<<<<< Updated upstream
-        throw new Error(data.error || 'Erro ao cancelar a assinatura.');
-      }
-      
-      // Close dialog and reload page
-      document.getElementById('cancel-dialog')?.close();
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = `Confirmar`;
-      }
-    }
-  });
-=======
         throw new Error(data.error || 'Erro ao resgatar o presente.');
       }
 
@@ -555,5 +555,4 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
     }
   }
   window.handleQuickRedeem = handleQuickRedeem;
->>>>>>> Stashed changes
 </script>

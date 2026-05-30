@@ -3,14 +3,11 @@
 ---
 
 <!-- Modal Wrapper -->
-<div id="waiting-list-modal" class="fixed inset-0 z-50 items-center justify-center hidden">
-  <!-- Semi-transparent Backdrop with blur -->
-  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="waiting-list-modal-backdrop"></div>
-  
+<dialog id="waiting-list-modal" class="backdrop:bg-black/60 backdrop:backdrop-blur-sm bg-transparent p-0 border-none max-w-lg w-full mx-auto focus:outline-none z-50">
   <!-- Dialog Paper Card -->
-  <div class="relative z-10 w-full max-w-lg mx-4 newspaper-container border-double-thick p-8 text-ink shadow-2xl">
+  <div class="relative w-full newspaper-container border-double-thick p-8 text-ink shadow-2xl bg-[#f4eadd]">
     <!-- Close Button -->
-    <button id="waiting-list-modal-close" class="absolute top-4 right-4 text-ink/60 hover:text-ink text-xl cursor-pointer" aria-label="Fechar">
+    <button id="waiting-list-modal-close" class="absolute top-4 right-4 text-ink/60 hover:text-ink text-xl cursor-pointer bg-transparent border-none" aria-label="Fechar">
       <i class="fa-solid fa-xmark"></i>
     </button>
     
@@ -37,6 +34,7 @@
       <div>
         <label for="waiting-list-email" class="block text-xs font-bold uppercase tracking-wider mb-2">Seu melhor e-mail</label>
         <input type="email" id="waiting-list-email" required placeholder="seu@email.com" 
+          autocomplete="email"
           class="w-full text-center font-body text-lg py-3.5 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl" />
       </div>
       <div id="waiting-list-error" class="hidden text-red-700 bg-red-50 border border-red-200 px-4 py-2.5 rounded-xl text-sm text-center font-medium"></div>
@@ -78,7 +76,7 @@
       <p class="font-serif font-bold text-ink">Registrando sua inscrição...</p>
     </div>
   </div>
-</div>
+</dialog>
 
 <script is:inline>
   function openWaitingListModal(planName) {
@@ -98,8 +96,7 @@
       if (formHeader) formHeader.classList.remove('hidden');
       if (successBlock) successBlock.classList.add('hidden');
       
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      modal.showModal();
       document.body.style.overflow = 'hidden'; // prevent scrolling background
 
       // Track select_plan
@@ -121,36 +118,49 @@
 
   function closeWaitingListModal() {
     const modal = document.getElementById('waiting-list-modal');
-    const successBlock = document.getElementById('waiting-list-success');
-    const planInput = document.getElementById('waiting-list-plan');
-
-    if (modal && modal.classList.contains('flex')) {
-      // Track waitlist_dismiss if they closed without submitting
-      const isSuccessVisible = successBlock && !successBlock.classList.contains('hidden');
-      if (!isSuccessVisible && planInput && typeof window !== 'undefined' && window.track) {
-        const planName = planInput.value;
-        const planId = planName === 'annual' ? 'anual' : 'vitalicio';
-        window.track({
-          event: 'waitlist_dismiss',
-          plan_id: planId
-        });
-      }
-
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-      document.body.style.overflow = ''; // restore scrolling
+    if (modal && modal.open) {
+      modal.close();
     }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('waiting-list-modal');
     const closeBtn = document.getElementById('waiting-list-modal-close');
-    const backdrop = document.getElementById('waiting-list-modal-backdrop');
     
     if (closeBtn) {
       closeBtn.addEventListener('click', closeWaitingListModal);
     }
-    if (backdrop) {
-      backdrop.addEventListener('click', closeWaitingListModal);
+
+    if (modal) {
+      // Close on clicking backdrop
+      modal.addEventListener('click', (e) => {
+        const rect = modal.getBoundingClientRect();
+        const isInDialog = (
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom
+        );
+        if (!isInDialog) {
+          closeWaitingListModal();
+        }
+      });
+
+      // Handle native close event for GTM tracking and styling cleanup
+      modal.addEventListener('close', () => {
+        const successBlock = document.getElementById('waiting-list-success');
+        const planInput = document.getElementById('waiting-list-plan');
+        const isSuccessVisible = successBlock && !successBlock.classList.contains('hidden');
+        if (!isSuccessVisible && planInput && typeof window !== 'undefined' && window.track) {
+          const planName = planInput.value;
+          const planId = planName === 'annual' ? 'anual' : 'vitalicio';
+          window.track({
+            event: 'waitlist_dismiss',
+            plan_id: planId
+          });
+        }
+        document.body.style.overflow = ''; // restore scrolling
+      });
     }
 
     const form = document.getElementById('waiting-list-form');

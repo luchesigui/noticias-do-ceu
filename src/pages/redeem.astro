@@ -38,7 +38,7 @@ const formattedExpiry = giftCard && giftCard.expires_at
   <Navbar showCreateMemorial={false} />
 
   <!-- Main Container -->
-  <main class="flex-grow pt-32 pb-20 px-4 flex items-center justify-center bg-gradient-to-b from-paper/30 to-white relative overflow-hidden min-h-[70vh]">
+  <main id="main-content" tabindex="-1" class="focus:outline-none flex-grow pt-32 pb-20 px-4 flex items-center justify-center bg-gradient-to-b from-paper/30 to-white relative overflow-hidden min-h-[70vh]">
     <!-- Background decorations -->
     <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -top-10 -left-10 opacity-30 pointer-events-none animate-cloud-slow-1"></i>
     <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -bottom-10 -right-10 opacity-30 pointer-events-none animate-cloud-slow-2"></i>
@@ -162,94 +162,15 @@ const formattedExpiry = giftCard && giftCard.expires_at
 
   function handleCodeSubmit(e) {
     e.preventDefault();
-<<<<<<< Updated upstream
-    const code = (document.getElementById('gift-code'))?.value.trim() || '';
-=======
     const codeInput = document.getElementById('gift-code');
     const code = codeInput ? codeInput.value.trim().toUpperCase() : '';
->>>>>>> Stashed changes
     if (/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
       window.location.href = `/redeem?code=${code}`;
     } else {
-<<<<<<< Updated upstream
-      showError('O código deve conter 12 caracteres alfanuméricos formatados (XXXX-XXXX-XXXX).', 'input');
-    }
-  }
-
-  async function handleRedeemClick() {
-    if (!currentCode || !currentCardDetails) return;
-
-    const redeemBtn = document.getElementById('redeem-btn');
-    const originalContent = redeemBtn ? redeemBtn.innerHTML : '';
-    if (redeemBtn) {
-      redeemBtn.disabled = true;
-      redeemBtn.innerHTML = `<span>Processando...</span> <i class="fa-solid fa-spinner fa-spin"></i>`;
-    }
-
-    hideError();
-
-    try {
-      const myUserId = getOrCreateUserId();
-      const res = await fetch(`${API_BASE_URL}/gift-cards/${currentCode}/redeem`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: myUserId })
-      });
-
-      if (!res.ok) {
-        let errMsg = 'Erro ao resgatar o cartão. Tente novamente mais tarde.';
-        try {
-          const errData = await res.json();
-          if (errData && errData.error) {
-            errMsg = errData.error;
-          }
-        } catch (_) {}
-        showError(errMsg, 'details');
-
-        if (redeemBtn) {
-          redeemBtn.disabled = false;
-          redeemBtn.innerHTML = originalContent;
-        }
-        return;
-      }
-
-      goToSuccess(currentCode, currentCardDetails, false);
-    } catch (err) {
-      showError('Erro de conexão ao servidor. Por favor, tente novamente mais tarde.', 'details');
-      if (redeemBtn) {
-        redeemBtn.disabled = false;
-        redeemBtn.innerHTML = originalContent;
-      }
-    }
-  }
-
-  function goToSuccess(code, card, alreadyRedeemed = false) {
-    window.location.href = `/redeem-success?code=${code}&sender=${encodeURIComponent(card.sender_name)}&recipient=${encodeURIComponent(card.recipient_name)}&plan=${card.plan}&pet=${encodeURIComponent(card.pet_name || '')}${alreadyRedeemed ? '&already=true' : ''}`;
-  }
-
-  // Expose functions globally for inline HTML handlers
-  window.formatCodeInput = formatCodeInput;
-  window.handleCodeSubmit = handleCodeSubmit;
-  window.handleRedeemClick = handleRedeemClick;
-
-  // Check on load
-  function initPage() {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    if (code) {
-      const cleanCode = code.trim().toUpperCase();
-      if (/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(cleanCode)) {
-        const input = document.getElementById('gift-code');
-        if (input) {
-          input.value = cleanCode;
-        }
-        checkCode(cleanCode);
-=======
       const errorEl = document.getElementById('input-error');
       if (errorEl) {
         errorEl.innerText = 'O código deve conter 12 caracteres alfanuméricos formatados (XXXX-XXXX-XXXX).';
         errorEl.classList.remove('hidden');
->>>>>>> Stashed changes
       } else {
         alert('O código deve conter 12 caracteres alfanuméricos formatados (XXXX-XXXX-XXXX).');
       }
