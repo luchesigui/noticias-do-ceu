@@ -13,9 +13,21 @@ const posts = import.meta.glob('./*.md', { eager: true });
 const sortedPosts = Object.values(posts)
   .filter(post => post.frontmatter?.pubDate)
   .sort((a, b) => new Date(b.frontmatter.pubDate).getTime() - new Date(a.frontmatter.pubDate).getTime());
+// Schema de CollectionPage para catalogação estruturada do blog
+const collectionSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "O Diário do Luto Pet | Blog Notícias do Céu",
+  "description": "Conselhos, reflexões e homenagens para te ajudar a lidar com a dor da perda e a saudade do seu cão ou gato querido. Aqui, o amor vira lembrança viva.",
+  "url": Astro.url.href
+};
 ---
 
-<Layout title="O Diário do Luto Pet | Blog Notícias do Céu" description="Conselhos, reflexões e homenagens para te ajudar a lidar com a dor da perda e a saudade do seu cão ou gato querido. Aqui, o amor vira lembrança viva.">
+<Layout 
+  title="O Diário do Luto Pet | Blog Notícias do Céu" 
+  description="Conselhos, reflexões e homenagens para te ajudar a lidar com a dor da perda e a saudade do seu cão ou gato querido. Aqui, o amor vira lembrança viva."
+  schema={collectionSchema}
+>
   <Navbar showCreateMemorial={false} />
   
   <main class="pt-32 pb-20 bg-gradient-to-b from-paper/30 to-white min-h-screen">

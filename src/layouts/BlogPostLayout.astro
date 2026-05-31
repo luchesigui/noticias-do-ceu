@@ -10,9 +10,41 @@ const pubDateFormatted = new Date(frontmatter.pubDate).toLocaleDateString('pt-BR
   month: 'long',
   year: 'numeric'
 });
+
+// JSON-LD Article/BlogPosting Schema for AEO engines
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": frontmatter.title,
+  "description": frontmatter.description,
+  "image": frontmatter.image || "https://noticias-do-ceu.com/og-image-default.png",
+  "datePublished": frontmatter.pubDate,
+  "author": {
+    "@type": "Person",
+    "name": frontmatter.author || "Redação Notícias do Céu"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Notícias do Céu",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://noticias-do-ceu.com/og-image-default.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": Astro.url.href
+  }
+};
 ---
 
-<Layout title={`${frontmatter.title} | Blog Notícias do Céu`} description={frontmatter.description}>
+<Layout 
+  title={`${frontmatter.title} | Blog Notícias do Céu`} 
+  description={frontmatter.description}
+  ogImage={frontmatter.image}
+  ogType="article"
+  schema={articleSchema}
+>
   <Navbar showCreateMemorial={false} />
   
   <main class="pt-32 pb-20 bg-gradient-to-b from-paper/30 to-white min-h-screen">

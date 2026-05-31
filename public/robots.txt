@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /m/
+Allow: /blog/
+Disallow: /dashboard/
+Disallow: /checkout/
+Disallow: /api/
+
+Sitemap: https://noticias-do-ceu.com/sitemap.xml

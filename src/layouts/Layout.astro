@@ -4,12 +4,33 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article' | 'profile';
+  robots?: string;
+  schema?: Record<string, any> | Record<string, any>[];
 }
 
 const { 
   title = "Notícias do Céu | O Jornal Diário do Seu Pet", 
-  description = "Esqueça os quadros empoeirados. Transforme a saudade do seu pet em uma página web exclusiva e interativa." 
+  description = "Esqueça os quadros empoeirados. Transforme a saudade do seu pet em uma página web exclusiva e interativa.",
+  canonicalUrl = Astro.url.href,
+  ogImage = "https://noticias-do-ceu.com/og-image-default.png",
+  ogType = "website",
+  robots = "index, follow",
+  schema
 } = Astro.props;
+
+// Build default schema if none is provided to ensure baseline AEO semantic data
+const defaultSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Notícias do Céu",
+  "url": "https://noticias-do-ceu.com",
+  "description": "Transforme a saudade do seu pet em uma página web exclusiva e interativa de jornal diário."
+};
+
+const schemasToRender = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultSchema];
 ---
 
 <!doctype html>
@@ -19,6 +40,29 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="Notícias do Céu" />
+    <meta property="og:locale" content="pt_BR" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Structured Data (JSON-LD) for SEO / AEO -->
+    {schemasToRender.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 import { PetService } from '../../services/pet-service.js';
+import { LetterService } from '../../services/letter-service.js';
 
 export const prerender = false;
 
@@ -18,9 +19,47 @@ const pet = await PetService.getPetWithDay(slug);
 if (!pet) {
   return Astro.redirect('/');
 }
+
+// Fetch public letters for this pet
+const letters = await LetterService.getPublicLettersByPet(pet.id);
+
+// Custom meta description for SEO
+const pageDescription = `Homenagem celestial para o pet ${pet.name} (${pet.breed}). Veja seus apelidos carinhosos, personalidade e leia as cartas de amor enviadas ao paraíso.`;
+
+// OpenGraph Image (first photo of the pet or default fallback)
+const ogImage = pet.photos && pet.photos.length > 0 ? pet.photos[0] : 'https://noticias-do-ceu.com/og-image-default.png';
+
+// Dynamic Schema for AEO and Search engines
+const petSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "mainEntity": {
+    "@type": "CreativeWork",
+    "name": `Memorial de ${pet.name}`,
+    "description": pageDescription,
+    "image": ogImage,
+    "dateCreated": pet.createdAt,
+    "genre": "Luto Pet",
+    "comment": letters.map(letter => ({
+      "@type": "Comment",
+      "text": letter.body,
+      "dateCreated": letter.createdAt,
+      "author": {
+        "@type": "Person",
+        "name": letter.tutorName || "Anônimo"
+      }
+    }))
+  }
+};
 ---
 
-<Layout title={`${pet.name} — Memorial | Notícias do Céu`}>
+<Layout 
+  title={`${pet.name} — Memorial | Notícias do Céu`} 
+  description={pageDescription} 
+  ogImage={ogImage}
+  ogType="profile"
+  schema={petSchema}
+>
   <Navbar showCreateMemorial={false} />
 
   <main class="flex-grow pt-32 pb-20 bg-gradient-to-b from-paper/30 to-white text-ink">
@@ -125,6 +164,37 @@ if (!pet) {
           </a>
         </div>
       </div>
+
+      <!-- Letters Section -->
+      {letters && letters.length > 0 && (
+        <div class="newspaper-container border-double-thick p-8 bg-white mb-8">
+          <h3 class="font-serif font-bold text-xl uppercase mb-6 pb-2 border-b border-gray-200 text-ink">
+            <i class="fa-solid fa-feather-pointed text-accent mr-2"></i> Cartas do Coração
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {letters.map((letter, idx) => (
+              <div key={idx} class="bg-[#FFFDF8] border-2 border-vintage rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between" style="background-color: #FFFDF8;">
+                <div class="absolute top-2 right-2 text-accent/5 pointer-events-none">
+                  <i class="fa-solid fa-dove text-4xl"></i>
+                </div>
+                
+                <div class="border-b border-vintage/40 pb-2 mb-3">
+                  <p class="text-[10px] font-bold uppercase tracking-wider text-accent">Para: {pet.name}</p>
+                </div>
+                
+                <p class="font-body text-sm text-ink/90 leading-relaxed italic whitespace-pre-wrap flex-grow">
+                  "{letter.body}"
+                </p>
+                
+                <div class="mt-4 pt-2 border-t border-vintage/20 flex justify-between items-center text-xs text-gray-500">
+                  <span class="font-serif font-semibold text-ink/75">Com amor, {letter.tutorName || 'Anônimo'}</span>
+                  <span>{new Date(letter.createdAt).toLocaleDateString('pt-BR')}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <!-- Footer Info -->
       <div class="text-center text-xs text-gray-500 mt-8">
