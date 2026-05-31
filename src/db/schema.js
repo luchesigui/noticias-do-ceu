@@ -94,8 +94,10 @@ export const letters = pgTable('letters', {
 // Leads table for waiting list
 export const leads = pgTable('leads', {
   id: text('id').primaryKey(),
+  name: text('name'),
   email: text('email').notNull(),
   plan: text('plan').notNull(),
   createdAt: text('created_at').notNull(),
 });
+
 

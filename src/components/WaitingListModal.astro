@@ -32,6 +32,12 @@
     <form id="waiting-list-form" class="space-y-5">
       <input type="hidden" id="waiting-list-plan" name="plan" value="lifetime" />
       <div>
+        <label for="waiting-list-name" class="block text-xs font-bold uppercase tracking-wider mb-2">Seu nome</label>
+        <input type="text" id="waiting-list-name" required placeholder="Como prefere ser chamado?" 
+          autocomplete="name"
+          class="w-full text-center font-body text-lg py-3.5 border-2 border-ink bg-white/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/50 rounded-xl" />
+      </div>
+      <div>
         <label for="waiting-list-email" class="block text-xs font-bold uppercase tracking-wider mb-2">Seu melhor e-mail</label>
         <input type="email" id="waiting-list-email" required placeholder="seu@email.com" 
           autocomplete="email"
@@ -82,6 +88,7 @@
   function openWaitingListModal(planName) {
     const modal = document.getElementById('waiting-list-modal');
     const planInput = document.getElementById('waiting-list-plan');
+    const nameInput = document.getElementById('waiting-list-name');
     const emailInput = document.getElementById('waiting-list-email');
     const errorEl = document.getElementById('waiting-list-error');
     const formBlock = document.getElementById('waiting-list-form');
@@ -90,7 +97,8 @@
 
     if (modal && planInput) {
       planInput.value = planName || 'lifetime';
-      emailInput.value = '';
+      if (nameInput) nameInput.value = '';
+      if (emailInput) emailInput.value = '';
       if (errorEl) errorEl.classList.add('hidden');
       if (formBlock) formBlock.classList.remove('hidden');
       if (formHeader) formHeader.classList.remove('hidden');
@@ -168,6 +176,7 @@
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        const name = document.getElementById('waiting-list-name').value.trim();
         const email = document.getElementById('waiting-list-email').value.trim();
         const plan = document.getElementById('waiting-list-plan').value;
         const errorEl = document.getElementById('waiting-list-error');
@@ -185,7 +194,7 @@
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email, plan })
+            body: JSON.stringify({ name, email, plan })
           });
 
           const data = await response.json();

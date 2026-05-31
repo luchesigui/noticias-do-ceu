@@ -151,9 +151,10 @@ export class EmailService {
     });
   }
 
-  static async sendWaitingListFeedback(email, plan) {
+  static async sendWaitingListFeedback(email, plan, name) {
     const { siteUrl } = getConfig();
     const planFormatted = plan === 'lifetime' ? 'Vitalício (R$ 39,90)' : 'Anual (R$ 9,90/ano)';
+    const greetingName = name ? `, <strong>${name.trim()}</strong>` : '';
     const html = `
       <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #faf9f6; border: 2px solid #2c2c2c; border-radius: 4px; overflow: hidden;">
         <div style="background: #2c2c2c; padding: 28px 32px; text-align: center;">
@@ -163,7 +164,7 @@ export class EmailService {
 
         <div style="padding: 36px 32px;">
           <p style="font-size: 16px; line-height: 1.7; color: #2c2c2c; margin-top: 0;">
-            Olá!
+            Olá${greetingName}!
           </p>
           <p style="font-size: 15px; line-height: 1.7; color: #444;">
             Agradecemos o seu interesse no <strong>Notícias do Céu</strong>. Registramos com carinho o seu e-mail na lista de espera para o plano <strong>${planFormatted}</strong>.

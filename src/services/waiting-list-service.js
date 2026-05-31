@@ -4,10 +4,11 @@ import { leads as leadsTable } from '../db/schema.js';
 import { EmailService } from './email-service.js';
 
 export class WaitingListService {
-  static async addLead(email, plan) {
+  static async addLead(email, plan, name) {
     // Save to the database
     await db.insert(leadsTable).values({
       id: crypto.randomUUID(),
+      name: name ? name.trim() : null,
       email: email.toLowerCase().trim(),
       plan,
       createdAt: new Date().toISOString(),
@@ -15,7 +16,7 @@ export class WaitingListService {
 
     // Send feedback email to lead
     try {
-      await EmailService.sendWaitingListFeedback(email, plan);
+      await EmailService.sendWaitingListFeedback(email, plan, name);
     } catch (error) {
       console.error('Failed to send feedback email to lead:', error);
     }
@@ -40,7 +41,11 @@ export class WaitingListService {
         </p>
         <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
           <tr>
-            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9; width: 30%;">E-mail:</td>
+            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9; width: 30%;">Nome:</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">${name || 'Não fornecido'}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;">E-mail:</td>
             <td style="padding: 10px; border: 1px solid #ddd;">${email}</td>
           </tr>
           <tr>
@@ -60,7 +65,7 @@ export class WaitingListService {
 
     return EmailService.send({
       to: ownerEmail,
-      subject: `☁️ Lead Lista de Espera: ${email} (${plan})`,
+      subject: `☁️ Lead Lista de Espera: ${name || email} (${plan})`,
       html,
     });
   }
