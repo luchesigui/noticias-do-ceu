@@ -9,6 +9,68 @@ const celestialFoods = [
   "pãezinhos de queijo celestes bem quentinhos"
 ];
 
+// Helper to get variables mapping for the templates
+export function getPetVars(pet, journeyDay) {
+  const gender = pet.gender || "Macho";
+  const isFemale = gender === "Fêmea";
+  
+  const nome = pet.name;
+  
+  // Pick nickname deterministically
+  let apelido = nome;
+  if (pet.nicknames && pet.nicknames.length > 0) {
+    apelido = pet.nicknames[journeyDay % pet.nicknames.length];
+  }
+  
+  // Pick personality deterministically
+  let personalidade = isFemale ? "brincalhona e dócil" : "brincalhão e dócil";
+  if (pet.personalities && pet.personalities.length > 0) {
+    personalidade = pet.personalities[(journeyDay + 2) % pet.personalities.length].toLowerCase();
+  }
+
+  // Fallbacks for place and object
+  const lugar = pet.favoritePlace ? pet.favoritePlace.trim() : (isFemale ? "sua nuvenzinha macia" : "seu cantinho quentinho");
+  const brinquedo = pet.favoriteObject ? pet.favoriteObject.trim() : (isFemale ? "sua bolinha invisível" : "seu brinquedo de vento");
+  
+  const raca = pet.breed || "Cãozinho";
+  const comida = celestialFoods[journeyDay % celestialFoods.length];
+
+  return {
+    nome,
+    apelido,
+    raca,
+    genero: gender,
+    personalidade,
+    lugar,
+    brinquedo,
+    comida,
+    artigo: isFemale ? "a" : "o",
+    artigoCapital: isFemale ? "A" : "O",
+    pronome: isFemale ? "ela" : "ele",
+    pronomeCapital: isFemale ? "Ela" : "Ele",
+    artigoObjeto: isFemale ? "uma" : "um",
+    artigoObjetoCapital: isFemale ? "Uma" : "Um"
+  };
+}
+
+// Substitui os placeholders {variavel} no template de string
+export function interpolate(template, vars) {
+  // Tratamento especial para iniciais capitulares (drop caps) que envolvem chaves
+  let rendered = template.replace(/<span([^>]*)\s*>\s*\{\s*<\/span\s*>\s*([a-zA-Z0-9_]+)\s*\}/g, (match, attrs, key) => {
+    const val = vars[key.trim()];
+    if (val !== undefined && val.length > 0) {
+      const firstChar = val.charAt(0).toUpperCase();
+      const rest = val.slice(1);
+      return `<span${attrs}>${firstChar}</span>${rest}`;
+    }
+    return match;
+  });
+
+  return rendered.replace(/\{([^}]+)\}/g, (match, key) => {
+    return vars[key.trim()] !== undefined ? vars[key.trim()] : match;
+  });
+}
+
 // 23 Canon Milestones of the celestial dog space
 export const canonStories = {
   1: {
