@@ -14,16 +14,28 @@ function parsePet(row) {
 }
 
 export class PetService {
-  static generateSlug(name) {
+  static async generateSlug(name) {
     const base = name
       .toLowerCase()
       .normalize('NFD')
       .replace(/[̀-ͯ]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
-    const hash = crypto.randomBytes(4).toString('hex');
-    return `${base}-${hash}`;
+    
+    const slugBase = base || 'pet';
+    let slug = slugBase;
+    let counter = 1;
+
+    while (true) {
+      const existing = await this.getPetBySlug(slug);
+      if (!existing) {
+        return slug;
+      }
+      slug = `${slugBase}-${counter}`;
+      counter++;
+    }
   }
+
 
   static async getPetByUserId(userId) {
     const rows = await db.select().from(petsTable)
@@ -58,7 +70,7 @@ export class PetService {
 
   static async createPet(userId, data) {
     const petId = crypto.randomUUID();
-    const slug = this.generateSlug(data.name);
+    const slug = await this.generateSlug(data.name);
     const seed = crypto.randomBytes(32).toString('hex');
     const { name, breed, gender, nicknames, favoritePlace, favoriteObject, personalities, photos } = data;
 
