@@ -1,4 +1,4 @@
-import { pgTable, text, integer, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, text, integer, boolean, timestamp, bigint } from 'drizzle-orm/pg-core';
 
 // Users table
 export const users = pgTable('users', {
@@ -10,13 +10,15 @@ export const users = pgTable('users', {
   status: text('status').notNull().default('pending_payment'), // 'pending_payment' | 'active'
   pendingRenewal: boolean('pending_renewal').notNull().default(false),
   createdAt: text('created_at').notNull(),
+  journeyDay: integer('journey_day').notNull().default(1),
+  lastJourneyIncrementAt: text('last_journey_increment_at'),
 });
 
 // Sessions table for custom cookie-based auth
 export const sessions = pgTable('sessions', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  expiresAt: integer('expires_at').notNull(), // Unix timestamp in ms
+  expiresAt: bigint('expires_at', { mode: 'number' }).notNull(), // Unix timestamp in ms
 });
 
 // Pets table

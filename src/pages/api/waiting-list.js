@@ -1,4 +1,5 @@
 import { WaitingListService } from '../../services/waiting-list-service.js';
+import { apiErrorResponse } from '../../lib/errors.js';
 
 export const prerender = false;
 
@@ -37,9 +38,6 @@ export async function POST({ request }) {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return apiErrorResponse(error);
   }
 }

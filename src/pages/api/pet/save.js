@@ -1,5 +1,6 @@
 import { PetService } from '../../../services/pet-service.js';
 import { StorageService } from '../../../services/storage-service.js';
+import { apiErrorResponse } from '../../../lib/errors.js';
 import * as yup from 'yup';
 
 export const prerender = false;
@@ -104,9 +105,6 @@ export async function POST({ request, locals }) {
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return apiErrorResponse(error);
   }
 }

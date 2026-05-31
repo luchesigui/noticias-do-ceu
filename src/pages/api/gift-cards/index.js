@@ -1,4 +1,5 @@
 import { GiftCardService } from '../../../services/gift-card-service.js';
+import { apiErrorResponse } from '../../../lib/errors.js';
 
 export const prerender = false;
 
@@ -72,10 +73,7 @@ export async function POST({ request, locals }) {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return apiErrorResponse(error);
   }
 }
 
@@ -104,9 +102,6 @@ export async function GET({ url }) {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return apiErrorResponse(error);
   }
 }

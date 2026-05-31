@@ -24,6 +24,8 @@ export const users = {
         status: data.status ?? 'pending_payment',
         pendingRenewal: data.pendingRenewal ?? false,
         createdAt: data.createdAt,
+        journeyDay: data.journeyDay ?? 1,
+        lastJourneyIncrementAt: data.lastJourneyIncrementAt ?? null,
       }).returning();
       return { data: rows[0] ?? null, error: null };
     } catch (error) {
@@ -62,6 +64,8 @@ export const users = {
       if (updateData.plan !== undefined) set.plan = updateData.plan;
       if (updateData.status !== undefined) set.status = updateData.status;
       if (updateData.pendingRenewal !== undefined) set.pendingRenewal = updateData.pendingRenewal;
+      if (updateData.journeyDay !== undefined) set.journeyDay = updateData.journeyDay;
+      if (updateData.lastJourneyIncrementAt !== undefined) set.lastJourneyIncrementAt = updateData.lastJourneyIncrementAt;
       const rows = await db.update(usersTable).set(set)
         .where(eq(usersTable.id, id))
         .returning();

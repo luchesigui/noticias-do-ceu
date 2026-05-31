@@ -1,5 +1,6 @@
 import { AuthService } from '../../../services/auth-service.js';
 import { GiftCardService } from '../../../services/gift-card-service.js';
+import { apiErrorResponse } from '../../../lib/errors.js';
 import * as yup from 'yup';
 
 export const prerender = false;
@@ -101,9 +102,6 @@ export async function POST({ request, cookies }) {
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return apiErrorResponse(error);
   }
 }

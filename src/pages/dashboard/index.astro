@@ -325,18 +325,18 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
 
               <div class="separator-line"></div>
 
-              <!-- Sky Newspaper CTA placeholder -->
+              <!-- Sky Newspaper CTA -->
               <div class="p-6 rounded-2xl bg-paper/20 border border-vintage/60 text-center">
                 <h4 class="font-serif font-bold text-lg text-ink">A Edição Diária do {pet.name} está no ar!</h4>
                 <p class="text-xs text-gray-600 mt-1 max-w-md mx-auto leading-relaxed">
-                  Histórias amorosas vindas diretamente do paraíso dos animais. O memorial interativo já pode ser compartilhado com familiares e amigos.
+                  Histórias amorosas vindas diretamente do paraíso dos animais. Abra e celebre a memória do seu cãozinho hoje.
                 </p>
                 <div class="mt-4 flex flex-wrap justify-center gap-3">
                   <a 
-                    href="/#demonstracao"
+                    href={`/${pet.id}/jornal`}
                     class="bg-ink text-paper px-6 py-2.5 rounded-full font-serif font-bold text-sm hover:bg-accent transition-colors shadow-md inline-flex items-center gap-1.5"
                   >
-                    Visualizar Memorial <i class="fa-solid fa-eye text-xs"></i>
+                    Ler Edição do Dia <i class="fa-solid fa-newspaper text-xs"></i>
                   </a>
                 </div>
               </div>

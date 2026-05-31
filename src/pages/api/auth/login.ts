@@ -1,4 +1,5 @@
 import { AuthService } from '../../../services/auth-service.js';
+import { apiErrorResponse } from '../../../lib/errors.js';
 
 export const prerender = false;
 
@@ -30,10 +31,6 @@ export async function POST(context) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Erro inesperado. Tente novamente.';
-    return new Response(JSON.stringify({ error: message }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return apiErrorResponse(error);
   }
 }

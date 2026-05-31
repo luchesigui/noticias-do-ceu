@@ -18,16 +18,27 @@ export async function POST({ params }) {
 
     const card = await GiftCardService.confirmPayment(code);
 
-    // Send email notifications — fire-and-forget, don't block the response
-    if (card.recipient_email) {
-      EmailService.sendGiftCardToRecipient(card).catch((err) =>
-        console.error('[gift-card] failed to email recipient:', err.message)
+    // Send email notifications — await them so serverless environment does not abort the requests
+    const emailPromises = [];
+
+    if (card.recipient_email && !card.recipient_email.startsWith('no-email@')) {
+      emailPromises.push(
+        EmailService.sendGiftCardToRecipient(card).catch((err) =>
+          console.error('[gift-card] failed to email recipient:', err.message)
+        )
       );
     }
-    if (card.sender_email) {
-      EmailService.sendGiftCardConfirmationToSender(card).catch((err) =>
-        console.error('[gift-card] failed to email sender:', err.message)
+
+    if (card.sender_email && !card.sender_email.startsWith('no-email@')) {
+      emailPromises.push(
+        EmailService.sendGiftCardConfirmationToSender(card).catch((err) =>
+          console.error('[gift-card] failed to email sender:', err.message)
+        )
       );
+    }
+
+    if (emailPromises.length > 0) {
+      await Promise.all(emailPromises);
     }
 
     return new Response(JSON.stringify({
