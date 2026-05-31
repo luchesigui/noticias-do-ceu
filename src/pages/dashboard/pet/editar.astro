@@ -306,6 +306,78 @@ const suggestedPersonalities = [
     "Preguiçoso", "Carismático", "Teimoso", "Espevitado"
   ];
 
+  function getSelectedGender() {
+    const radio = document.querySelector('input[name="gender"]:checked');
+    return radio ? radio.value : 'Macho';
+  }
+
+  function convertAdjective(adj, toGender) {
+    if (!adj) return "";
+    const lowerAdj = adj.trim().toLowerCase();
+    
+    const map = {
+      "carinhoso": "carinhosa",
+      "carinhosa": "carinhoso",
+      "brincalhão": "brincalhona",
+      "brincalhona": "brincalhão",
+      "dorminhoco": "dorminhoca",
+      "dorminhoca": "dorminhoco",
+      "protetor": "protetora",
+      "protetora": "protetor",
+      "guloso": "gulosa",
+      "gulosa": "guloso",
+      "preguiçoso": "preguiçosa",
+      "preguiçosa": "preguiçoso",
+      "carismático": "carismática",
+      "carismática": "carismático",
+      "teimoso": "teimosa",
+      "teimosa": "teimoso",
+      "espevitado": "espevitada",
+      "espevitada": "espevitado"
+    };
+    
+    if (map[lowerAdj]) {
+      const target = map[lowerAdj];
+      if (adj[0] === adj[0].toUpperCase()) {
+        return target.charAt(0).toUpperCase() + target.slice(1);
+      }
+      return target;
+    }
+    
+    if (toGender === 'Fêmea') {
+      if (adj.endsWith('o')) {
+        return adj.slice(0, -1) + 'a';
+      }
+      if (adj.endsWith('ão')) {
+        return adj.slice(0, -2) + 'ona';
+      }
+    } else {
+      if (adj.endsWith('a')) {
+        return adj.slice(0, -1) + 'o';
+      }
+      if (adj.endsWith('ona')) {
+        return adj.slice(0, -3) + 'ão';
+      }
+    }
+    return adj;
+  }
+
+  function adjustPersonalitiesToGender() {
+    const gender = getSelectedGender();
+    
+    // Update selected personalities
+    for (let i = 0; i < personalities.length; i++) {
+      personalities[i] = convertAdjective(personalities[i], gender);
+    }
+    
+    // Update suggestions
+    for (let i = 0; i < suggestedPersonalities.length; i++) {
+      suggestedPersonalities[i] = convertAdjective(suggestedPersonalities[i], gender);
+    }
+    
+    updatePersonalitiesUI();
+  }
+
   function updatePersonalitiesUI() {
     const container = document.getElementById('personality-tags-container');
     const suggestionsContainer = document.getElementById('suggested-personalities-container');
@@ -359,8 +431,11 @@ const suggestedPersonalities = [
     const input = document.getElementById('personality-input');
     if (!input) return;
     
-    const value = input.value.trim();
+    let value = input.value.trim();
     if (!value) return;
+
+    const gender = getSelectedGender();
+    value = convertAdjective(value, gender);
 
     if (!personalities.includes(value)) {
       personalities.push(value);
@@ -540,9 +615,17 @@ const suggestedPersonalities = [
 
   // Drag and drop setup
   document.addEventListener('DOMContentLoaded', () => {
+    // Initial UI updates
     updateNicknamesUI();
-    updatePersonalitiesUI();
+    adjustPersonalitiesToGender();
     updatePhotosUI();
+
+    // Listen to gender radio changes
+    document.querySelectorAll('input[name="gender"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        adjustPersonalitiesToGender();
+      });
+    });
 
     const dropzone = document.getElementById('dropzone');
     if (dropzone) {

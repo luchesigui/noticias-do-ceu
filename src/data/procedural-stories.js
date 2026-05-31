@@ -9,6 +9,76 @@ const celestialFoods = [
   "pãezinhos de queijo celestes bem quentinhos"
 ];
 
+function convertAdjective(adj, toGender) {
+  if (!adj) return "";
+  const lowerAdj = adj.trim().toLowerCase();
+  
+  const mapToFem = {
+    "carinhoso": "carinhosa",
+    "brincalhão": "brincalhona",
+    "dorminhoco": "dorminhoca",
+    "protetor": "protetora",
+    "guloso": "gulosa",
+    "preguiçoso": "preguiçosa",
+    "carismático": "carismática",
+    "teimoso": "teimosa",
+    "espevitado": "espevitada"
+  };
+
+  const mapToMasc = {
+    "carinhosa": "carinhoso",
+    "brincalhona": "brincalhão",
+    "dorminhoca": "dorminhoco",
+    "protetora": "protetor",
+    "gulosa": "guloso",
+    "preguiçosa": "preguiçoso",
+    "carismática": "carismático",
+    "teimosa": "teimoso",
+    "espevitada": "espevitado"
+  };
+  
+  if (toGender === 'Fêmea') {
+    if (mapToFem[lowerAdj]) {
+      const target = mapToFem[lowerAdj];
+      if (adj[0] === adj[0].toUpperCase()) {
+        return target.charAt(0).toUpperCase() + target.slice(1);
+      }
+      return target;
+    }
+    if (adj.endsWith('o')) {
+      return adj.slice(0, -1) + 'a';
+    }
+    if (adj.endsWith('ão')) {
+      return adj.slice(0, -2) + 'ona';
+    }
+  } else {
+    if (mapToMasc[lowerAdj]) {
+      const target = mapToMasc[lowerAdj];
+      if (adj[0] === adj[0].toUpperCase()) {
+        return target.charAt(0).toUpperCase() + target.slice(1);
+      }
+      return target;
+    }
+    if (adj.endsWith('a')) {
+      return adj.slice(0, -1) + 'o';
+    }
+    if (adj.endsWith('ona')) {
+      return adj.slice(0, -3) + 'ão';
+    }
+  }
+  return adj;
+}
+
+function convertAdjectivephrase(phrase, toGender) {
+  if (!phrase) return "";
+  return phrase.split(/\s+/).map(word => {
+    if (word.toLowerCase() === "e" || word.toLowerCase() === "ou" || word.toLowerCase() === "mas") {
+      return word;
+    }
+    return convertAdjective(word, toGender);
+  }).join(" ");
+}
+
 // Helper to get variables mapping for the templates
 export function getPetVars(pet, journeyDay) {
   const gender = pet.gender || "Macho";
@@ -23,10 +93,14 @@ export function getPetVars(pet, journeyDay) {
   }
   
   // Pick personality deterministically
-  let personalidade = isFemale ? "brincalhona e dócil" : "brincalhão e dócil";
+  let personalidadeBase = isFemale ? "brincalhona e dócil" : "brincalhão e dócil";
   if (pet.personalities && pet.personalities.length > 0) {
-    personalidade = pet.personalities[(journeyDay + 2) % pet.personalities.length].toLowerCase();
+    personalidadeBase = pet.personalities[(journeyDay + 2) % pet.personalities.length];
   }
+
+  const personalidade = convertAdjectivephrase(personalidadeBase, isFemale ? "Fêmea" : "Macho").toLowerCase();
+  const personalidadeMasc = convertAdjectivephrase(personalidadeBase, "Macho").toLowerCase();
+  const personalidadeFem = convertAdjectivephrase(personalidadeBase, "Fêmea").toLowerCase();
 
   // Fallbacks for place and object
   const lugar = pet.favoritePlace ? pet.favoritePlace.trim() : (isFemale ? "sua nuvenzinha macia" : "seu cantinho quentinho");
@@ -41,6 +115,8 @@ export function getPetVars(pet, journeyDay) {
     raca,
     genero: gender,
     personalidade,
+    personalidadeMasc,
+    personalidadeFem,
     lugar,
     brinquedo,
     comida,
@@ -78,7 +154,7 @@ export const canonStories = {
     headline: "O GRANDE PORTAL SE ABRE: INAUGURADO O NOVO ESPAÇO DOS PETS NO CÉU",
     subheadline: "Um reino mágico projetado para a alegria infinita dos cães começa a funcionar hoje.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">{artigoCapital}</span> valente {nome} fez sua estreia oficial hoje no novíssimo Espaço Celestial dos Cães. O grande portal dourado abriu suas portas logo ao amanhecer, recebendo centenas de patinhas felizes em uma festa com grama fofa e vento morno.</p>
-    <p class="mb-3">Sem coleiras, cercas ou limites, os cães correram livres para explorar os campos infinitos. {nome} foi visto(a) logo na frente, liderando a exploração e mostrando que seu espírito {personalidade} continua contagiando a todos. Os anjos anunciaram que este espaço foi criado com muito amor para celebrar a presença alegre de cada companheiro terrestre.</p>
+    <p class="mb-3">Sem coleiras, cercas ou limites, os cães correram livres para explorar os campos infinitos. {nome} foi visto(a) logo na frente, liderando a exploração e mostrando que seu espírito {personalidadeMasc} continua contagiando a todos. Os anjos anunciaram que este espaço foi criado com muito amor para celebrar a presença alegre de cada companheiro terrestre.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"A inauguração de um lar de paz, onde o amor verdadeiro nunca termina."</p>`,
     caption: "{nome} entrando com passos leves no portal do novo parque."
   },
@@ -96,7 +172,7 @@ export const canonStories = {
     headline: "O REFEITÓRIO CELESTIAL ABRE COM BANQUETE EM HONRA A {apelido}",
     subheadline: "Quitutes frescos e petiscos deliciosos são servidos sem restrições a todos os pets.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">{artigoCapital}</span> novo refeitório das patinhas foi inaugurado hoje com um banquete espetacular. {nome} foi o(a) convidado(a) de honra e pôde se deliciar com pratos celestes deliciosos, incluindo {comida}.</p>
-    <p class="mb-3">Mostrando todo o seu lado {personalidade}, {nome} conquistou os cozinheiros com aquela carinha fofa de quem quer mais, garantindo porções extras sob aplausos dos outros pets da mesa. Os querubins chefs garantiram que o refeitório funcionará todos os dias, servindo receitas que aquecem a alma.</p>
+    <p class="mb-3">Mostrando todo o seu lado {personalidadeMasc}, {nome} conquistou os cozinheiros com aquela carinha fofa de quem quer mais, garantindo porções extras sob aplausos dos outros pets da mesa. Os querubins chefs garantiram que o refeitório funcionará todos os dias, servindo receitas que aquecem a alma.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"No banquete celeste, a barriguinha está sempre cheia e o coração feliz."</p>`,
     caption: "{nome} deliciando-se no grande banquete de boas-vindas."
   },
@@ -105,7 +181,7 @@ export const canonStories = {
     headline: "ABERTO O BOSQUE DOS BRINQUEDOS E ITENS PERDIDOS",
     subheadline: "{nome} reencontra seu item favorito em uma versão mágica e cintilante.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">O</span> Bosque Encantado dos Brinquedos abriu suas trilhas hoje. Para a surpresa geral, os pets descobriram que o bosque reúne réplicas luminosas de suas coisas terrestres preferidas. {nome} foi correndo encontrar o seu item inseparável: {brinquedo}.</p>
-    <p class="mb-3">A versão celestial do objeto flutua levemente e faz cócegas nas patinhas quando é alcançado. Com seu jeito {personalidade}, {nome} brincou de buscar por horas seguidas, dividindo a diversão com os anjos e provando que a alegria de brincar permanece intacta nas colinas do céu.</p>
+    <p class="mb-3">A versão celestial do objeto flutua levemente e faz cócegas nas patinhas quando é alcançado. Com seu jeito {personalidadeMasc}, {nome} brincou de buscar por horas seguidas, dividindo a diversão com os anjos e provando que a alegria de brincar permanece intacta nas colinas do céu.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Os pequenos tesouros da Terra continuam trazendo sorrisos aqui em cima."</p>`,
     caption: "{nome} orgulhoso(a) com seu brinquedo mágico."
   },
@@ -114,7 +190,7 @@ export const canonStories = {
     headline: "PRIMEIRA GRANDE EXPEDIÇÃO DE MATILHAS CELESTES",
     subheadline: "Pets da raça {raca} correm juntos pelas pradarias do sol eterno.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">{artigoCapital}</span> manhã de hoje foi marcada pela primeira corrida coletiva organizada no parque. Um grupo animado de cãezinhos da raça {raca} saiu em patrulha de diversão. {nome} correu à frente, aproveitando o fôlego infinito do corpo de luz.</p>
-    <p class="mb-3">Companheiros de matilha elogiaram o temperamento {personalidade} de {nome}, que ajudou os cães mais novos a subirem as rampas de nuvens. Ao final da expedição, todos deitaram na grama dourada para descansar e sentir a brisa suave que separa o céu e a Terra.</p>
+    <p class="mb-3">Companheiros de matilha elogiaram o temperamento {personalidadeMasc} de {nome}, que ajudou os cães mais novos a subirem as rampas de nuvens. Ao final da expedição, todos deitaram na grama dourada para descansar e sentir a brisa suave que separa o céu e a Terra.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Correr livre e sem cansaço é a melodia das patinhas celestes."</p>`,
     caption: "{nome} liderando a divertida corrida de cães nas pradarias."
   },
@@ -141,7 +217,7 @@ export const canonStories = {
     headline: "BIBLIOTECA DOS LATIDOS DE OURO É INAUGURADA NO ESPAÇO CELESTIAL",
     subheadline: "O grande salão guarda livros mágicos com as memórias felizes de cada cão.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">A</span> grande biblioteca do parque abriu suas portas douradas hoje. {nome} foi correndo conhecer o acervo e encontrou seu próprio livro de ouro, cujas páginas descrevem como {pronome} amava o/a {lugar} e guardava com afeto o seu item predileto: {brinquedo}.</p>
-    <p class="mb-3">Com seu espírito {personalidade}, {nome} latiu de orgulho ao ver suas fotos terrestres registradas com letras douradas. Os anjos explicam que esses livros servem para inspirar novas brincadeiras e eternizar cada carinho trocado na Terra.</p>
+    <p class="mb-3">Com seu espírito {personalidadeMasc}, {nome} latiu de orgulho ao ver suas fotos terrestres registradas com letras douradas. Os anjos explicam que esses livros servem para inspirar novas brincadeiras e eternizar cada carinho trocado na Terra.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"A biografia mais nobre é escrita com patas, lambidas e amor sincero."</p>`,
     caption: "{nome} orgulhoso(a) ao lado de seu livro de memórias celestes."
   },
@@ -149,7 +225,7 @@ export const canonStories = {
     isCanon: true,
     headline: "O MEMORIAL DO ARCO-ÍRIS ABRE SEUS JARDINS FLORIDOS",
     subheadline: "Um bosque de cores vibrantes celebra a transição serena dos pets para o céu.",
-    text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">{artigoCapital}</span> inauguração dos Jardins do Arco-Íris coloriu o firmamento hoje. {nome} foi visto(a) correndo de flor em flor, descobrindo que as pétalas brilham nas cores exatas do afeto de sua família. Com seu temperamento {personalidade}, {pronome} divertiu a todos pulando pelas nuvens coloridas.</p>
+    text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">{artigoCapital}</span> | inauguração dos Jardins do Arco-Íris coloriu o firmamento hoje. {nome} foi visto(a) correndo de flor em flor, descobrindo que as pétalas brilham nas cores exatas do afeto de sua família. Com seu temperamento {personalidadeMasc}, {pronome} divertiu a todos pulando pelas nuvens coloridas.</p>
     <p class="mb-3">O memorial oferece um ponto de encontro pacífico para os cães dividirem histórias e descansarem sob a brisa suave. {nome} deitou-se na beira do gramado azul e suspirou feliz, sabendo que cumpriu sua linda missão de espalhar alegria.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"A transição deixa de ser dor e vira arco-íris de recordações felizes."</p>`,
     caption: "{nome} brincando sob as cores do arco-íris celestial."
@@ -158,8 +234,8 @@ export const canonStories = {
     isCanon: true,
     headline: "OS JOGOS CELESTIAIS DO CASTELO DE NUVENS COMEÇAM HOJE",
     subheadline: "Cães competem de forma amigável em rampas de vento e piscinas de bolinhas.",
-    text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">O</span> grande Castelo de Nuvens sediou hoje a rodada de abertura dos Jogos de Patinhas. {nome} se destacou na prova de corrida de vento, usando sua agilidade característica de cãozinho da raça {raca} para descer as rampas em velocidade recorde.</p>
-    <p class="mb-3">Mostrando todo o seu lado {personalidade}, {nome} fez questão de empurrar as bolinhas coloridas para os outros participantes brincarem, garantindo a medalha de simpatia do dia. A premiação no final do evento contou com uma porção generosa de {comida} para todos os participantes.</p>
+    text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">O</span> grande Castelo de Nuvens sediou hoje a rodada de abertura dos Jogos de Patinhas. {nome} se destacou na prova de corrida de vento, usando sua agilidade characteristic de cãozinho da raça {raca} para descer as rampas em velocidade recorde.</p>
+    <p class="mb-3">Mostrando todo o seu lado {personalidadeMasc}, {nome} fez questão de empurrar as bolinhas coloridas para os outros participantes brincarem, garantindo a medalha de simpatia do dia. A premiação no final do evento contou com uma porção generosa de {comida} para todos os participantes.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"A única competição no céu é para ver quem abana o rabo com mais alegria."</p>`,
     caption: "{nome} se divertindo nas piscinas de bolinhas do castelo."
   },
@@ -167,7 +243,7 @@ export const canonStories = {
     isCanon: true,
     headline: "CONCERTO DAS FLORES CANTANTES ATRAI MULTIDÕES NO VALE",
     subheadline: "As flores gigantes emitem notas musicais suaves conforme o toque do focinho dos pets.",
-    text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">U</span>ma sinfonia mágica preencheu o Vale das Margaridas hoje. {nome} foi um(a) dos solistas convidados para a abertura do Concerto das Flores. Cada flor gigante emite uma melodia harmoniosa quando {nome} passa seu focinho de forma {personalidade}.</p>
+    text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">U</span>ma sinfonia mágica preencheu o Vale das Margaridas hoje. {nome} foi um(a) dos solistas convidados para a abertura do Concerto das Flores. Cada flor gigante emite uma melodia harmoniosa quando {nome} passa seu focinho de forma {personalidadeFem}.</p>
     <p class="mb-3">Com a ajuda do Canarinho guia, {nome} compôs uma música alegre e reconfortante dedicada à sua família. Os anjos recolheram a harmonia e a enviaram em forma de brisa calma para consolar o coração de quem ficou na Terra.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"A música do céu é feita das notas puras do amor incondicional dos animais."</p>`,
     caption: "{nome} cheirando as flores musicais do vale celeste."
@@ -177,7 +253,7 @@ export const canonStories = {
     headline: "PIQUENIQUE SOB A CHUVA DE ESTRELAS DOURADAS",
     subheadline: "Pets deitam nas colinas sob um espetáculo de luzes brilhantes no firmamento.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">H</span>oje à noite, os pets se reuniram para o Piquenique das Luzes. Sentado(a) no seu cantinho especial que recria a paz de seu lugar favorito na Terra, o/a {lugar}, {nome} saboreou porções especiais de {comida} enquanto observava o espetáculo estelar.</p>
-    <p class="mb-3">As estrelas cadentes riscam o céu em silêncio, deixando trilhas brilhantes de luz morna. Com seu jeito {personalidade}, {nome} tentou pegar os raios brilhantes com as patinhas, divertindo todos os querubins que passavam para dar carinho na barriga.</p>
+    <p class="mb-3">As estrelas cadentes riscam o céu em silêncio, deixando trilhas brilhantes de luz morna. Com seu jeito {personalidadeMasc}, {nome} tentou pegar os raios brilhantes com as patinhas, divertindo todos os querubins que passavam para dar carinho na barriga.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"A luz que brilha no céu é o reflexo da alegria infinita das almas puras."</p>`,
     caption: "{nome} deitado(a) sob o céu estrelado de outono."
   },
@@ -186,7 +262,7 @@ export const canonStories = {
     headline: "CONCURSO DE CULINÁRIA CELESTIAL AGITA O GRANDE VALE",
     subheadline: "Pets participam como jurados oficiais na escolha do melhor biscoito do paraíso.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">O</span> Concurso Anual de Quitutes Celestiais abriu hoje. {nome} atuou como jurado de honra no júri dos cães. A prova envolveu escolher o melhor petisco, e {nome} provou ser especialista ao saborear com alegria cada amostra de {comida}.</p>
-    <p class="mb-3">Com seu espírito {personalidade}, {pronome} abanou o rabo vigorosamente para todos os concorrentes, decidindo que todos mereciam o prêmio máximo. Os anjos chefs parabenizaram {nome} pela bondade e o presentearam com uma caixa dourada cheia de petiscos saborosos.</p>
+    <p class="mb-3">Com seu espírito {personalidadeMasc}, {pronome} abanou o rabo vigorosamente para todos os concorrentes, decidindo que todos mereciam o prêmio máximo. Os anjos chefs parabenizaram {nome} pela bondade e o presentearam com uma caixa dourada cheia de petiscos saborosos.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Saborear a bondade sem pressa é a receita do banquete eterno."</p>`,
     caption: "{nome} testando quitutes como jurado do concurso."
   },
@@ -195,7 +271,7 @@ export const canonStories = {
     headline: "EXPEDIÇÃO AO RIO DE CRISTAL REFRESCANTE",
     subheadline: "Pets descobrem que a correnteza mágica flutua sem arrastar as patinhas.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">{artigoCapital}</span> margem do Rio de Cristal foi o destino da grande expedição de hoje. {nome} e outros cães da raça {raca} foram explorar as águas brilhantes, que refrescam suavemente sem deixar o pelo molhado ou pesado.</p>
-    <p class="mb-3">Com seu jeito {personalidade}, {nome} pulou nas pequenas ondas de luz, correndo atrás de peixinhos coloridos feitos de vento e dividindo a diversão com seu amado item: {brinquedo}. O passeio foi considerado um sucesso absoluto de alegria e companheirismo.</p>
+    <p class="mb-3">Com seu jeito {personalidadeMasc}, {nome} pulou nas pequenas ondas de luz, correndo atrás de peixinhos coloridos feitos de vento e dividindo a diversão com seu amado item: {brinquedo}. O passeio foi considerado um sucesso absoluto de alegria e companheirismo.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"As correntes do céu trazem apenas frescor e diversão sem fim."</p>`,
     caption: "{nome} correndo alegremente nas margens do rio celestial."
   },
@@ -204,7 +280,7 @@ export const canonStories = {
     headline: "AULA DE ESCULTURA EM NUVENS DIVERTE OS PETS NO CASTELO",
     subheadline: "Cães aprendem a moldar nuvens fofas no formato de suas memórias felizes.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">O</span> Palácio das Artes celestes sediou hoje a oficina de moldar nuvens. {nome} participou com muita animação, usando as patinhas para dar forma a uma nuvem especial que recriou a paz de seu lugar favorito: {lugar}.</p>
-    <p class="mb-3">A escultura flutuou no ar brilhando suavemente. Com sua energia {personalidade}, {nome} latiu alegremente ao ver o resultado final. O Querubim da Guarda elogiou o talento artístico de {nome} e fixou a escultura no céu do vale para todos admirarem.</p>
+    <p class="mb-3">A escultura flutuou no ar brilhando suavemente. Com sua energia {personalidadeFem}, {nome} latiu alegremente ao ver o resultado final. O Querubim da Guarda elogiou o talento artístico de {nome} e fixou a escultura no céu do vale para todos admirarem.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Moldar sonhos com algodão é a brincadeira mais doce do paraíso."</p>`,
     caption: "{nome} criando esculturas fofas nas nuvens."
   },
@@ -213,7 +289,7 @@ export const canonStories = {
     headline: "A GRANDE CAÇA AO BRINQUEDO DOURADO NO BOSQUE",
     subheadline: "Pets usam o olfato afinado para encontrar itens brilhantes escondidos nas nuvens.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">O</span> Bosque Encantado foi palco de uma divertida caça ao tesouro hoje. Os anjos esconderam pequenos objetos reluzentes. {nome} usou todo o seu faro e agilidade de {raca} para procurar, encontrando rapidamente uma réplica dourada de {brinquedo}.</p>
-    <p class="mb-3">Com seu espírito {personalidade}, {nome} não apenas comemorou a descoberta, como também ajudou seus amigos peludos que ainda estavam procurando. Todos os participantes ganharam um prêmio especial de {comida} no final da tarde.</p>
+    <p class="mb-3">Com seu espírito {personalidadeMasc}, {nome} não apenas comemorou a descoberta, como também ajudou seus amigos peludos que ainda estavam procurando. Todos os participantes ganharam um prêmio especial de {comida} no final da tarde.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Brincar juntos e ajudar os amigos é o maior troféu celestial."</p>`,
     caption: "{nome} correndo com seu brinquedo reluzente no bosque."
   },
@@ -221,7 +297,7 @@ export const canonStories = {
     isCanon: true,
     headline: "FESTIVAL DAS LUZES DO ARCO-ÍRIS ILUMINA A NOITE CELESTE",
     subheadline: "O céu inteiro ganha faixas brilhantes de cores em homenagem à fidelidade dos pets.",
-    text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">U</span>m espetáculo inesquecível de cores e luzes cobriu o firmamento hoje. O Festival das Cores foi dedicado ao espírito fiel de {nome}. Faixas de luz lilás e azul riscaram o céu, brilhando intensamente refletindo sua personalidade {personalidade}.</p>
+    text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">U</span>m espetáculo inesquecível de cores e luzes cobriu o firmamento hoje. O Festival das Cores foi dedicado ao espírito fiel de {nome}. Faixas de luz lilás e azul riscaram o céu, brilhando intensamente refletindo sua personalidade {personalidadeFem}.</p>
     <p class="mb-3">{nome} assistiu a tudo deitado(a) no seu cantinho especial que lembra o/a {lugar}, cercado(a) por amigos peludos e sentindo uma onda de amor quentinha vinda diretamente das lembranças de sua família na Terra.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Quem ama com pureza brilha como um farol eterno no firmamento celestial."</p>`,
     caption: "{nome} admirando o céu iluminado pelas luzes coloridas."
@@ -231,7 +307,7 @@ export const canonStories = {
     headline: "CONSELHO DA GRANDE ÁRVORE REÚNE PETS PARA CONTAR HISTÓRIAS",
     subheadline: "Pets deitam sob a sombra da árvore sagrada para compartilhar memórias felizes.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">S</span>ob a copa imensa da Árvore da Sabedoria, {nome} foi um(a) dos palestrantes do conselho de hoje. {pronomeCapital} contou como adorava deitar no/a {lugar} e correr atrás de seu amado brinquedo: {brinquedo}.</p>
-    <p class="mb-3">A plateia de anjos e pets ouviu com carinho as crônicas do amor puro de {nome}. Com seu temperamento {personalidade}, {pronome} fez com que todos sorrissem, confirmando que a lembrança do amor terrestre é o maior tesouro celestial.</p>
+    <p class="mb-3">A plateia de anjos e pets ouviu com carinho as crônicas do amor puro de {nome}. Com seu temperamento {personalidadeMasc}, {pronome} fez com que todos sorrissem, confirmando que a lembrança do amor terrestre é o maior tesouro celestial.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"As histórias de afeto contadas pelos pets enchem o céu de perfume de flor."</p>`,
     caption: "{nome} deitado(a) sob a copa da grande árvore sagrada."
   },
@@ -258,7 +334,7 @@ export const canonStories = {
     headline: "ABERTO O PORTAL DO APANHADOR DE SONHOS CELESTIAL",
     subheadline: "Pets podem visitar os sonhos felizes de seus familiares terrestres.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">U</span>ma ponte de conexão mágica foi ativada hoje: o Portal dos Sonhos. {nome} foi convidado(a) a passar pelo portal de luz suave, permitindo-lhe levar um sopro de paz e consolo direto para o sono de sua família.</p>
-    <p class="mb-3">Com seu temperamento {personalidade}, {nome} apareceu em um sonho lindo correndo livre no/a {lugar} e trazendo um sorriso ao rosto de quem sente tanto sua falta. Os querubins afirmam que esse portal conecta os corações mesmo durante a noite.</p>
+    <p class="mb-3">Com seu temperamento {personalidadeMasc}, {nome} apareceu em um sonho lindo correndo livre no/a {lugar} e trazendo um sorriso ao rosto de quem sente tanto sua falta. Os querubins afirmam que esse portal conecta os corações mesmo durante a noite.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Nos sonhos mais doces, a distância desaparece e o carinho se faz presente."</p>`,
     caption: "{nome} deitando-se para conectar-se aos sonhos da família."
   },
@@ -267,7 +343,7 @@ export const canonStories = {
     headline: "GRANDE CORRIDA DAS CONSTELAÇÕES DE PATINHAS",
     subheadline: "Pets correm desenhando novas formas luminosas no céu de veludo.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">O</span> céu de veludo escuro foi a pista de corrida de hoje. {nome} e seus companheiros de matelha da raça {raca} participaram da Corrida das Estrelas, correndo de estrela em estrela e desenhando no firmamento a forma de seu brinquedo predileto: {brinquedo}.</p>
-    <p class="mb-3">Com seu jeito {personalidade}, {nome} pulou de constelação em constelação com leveza. O Querubim da Guarda assistiu a tudo com orgulho, distribuindo pratos de {comida} saborosos para repor as energias de todos os corredores celestes.</p>
+    <p class="mb-3">Com seu jeito {personalidadeMasc}, {nome} pulou de constelação em constelação com leveza. O Querubim da Guarda assistiu a tudo com orgulho, distribuindo pratos de {comida} saborosos para repor as energias de todos os corredores celestes.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Desenhar luzes no céu é o uivo de felicidade dos cães do paraíso."</p>`,
     caption: "{nome} saltando entre constelações brilhantes no céu."
   },
@@ -276,7 +352,7 @@ export const canonStories = {
     headline: "ANIVERSÁRIO DE 1 ANO DO ESPAÇO CELESTIAL PARA CÃES",
     subheadline: "O parque celebra 365 dias de pura alegria, amizade e memórias inestimáveis.",
     text: `<p class="mb-3"><span class="float-left text-5xl font-serif font-black leading-none pr-2 pt-1">{artigoCapital}</span> grande festa de aniversário de 1 ano do parque celestial aconteceu hoje. {nome} foi coroado(a) como o(a) morador(a) mais simpático(a) do setor das nuvens douradas. {pronomeCapital} desfilou com orgulho sob aplausos de anjos, querubins e todos os seus amigos peludos.</p>
-    <p class="mb-3">Com seu coração {personalidade}, {nome} celebrou correndo no seu cantinho preferido que lembra o/a {lugar} e brincando com o seu brinquedo predileto: {brinquedo}. Os anjos confirmaram que esse primeiro ano foi repleto de luz, e que a história de amor eterno de vocês continuará brilhando por toda a eternidade.</p>
+    <p class="mb-3">Com seu coração {personalidadeMasc}, {nome} celebrou correndo no seu cantinho preferido que lembra o/a {lugar} e brincando com o seu brinquedo predileto: {brinquedo}. Os anjos confirmaram que esse primeiro ano foi repleto de luz, e que a história de amor eterno de vocês continuará brilhando por toda a eternidade.</p>
     <p class="font-bold font-serif text-center mt-4 text-accent border-t border-ink/20 pt-4">"Um ano de paz, brincadeiras e a certeza absoluta de que o amor nunca termina."</p>`,
     caption: "{nome} comemorando com sua coroa de dentes-de-leão o aniversário do parque."
   }
@@ -302,9 +378,9 @@ const fillerHeadlines = [
 ];
 
 const fillerSubheadlines = [
-  "Com seu temperamento {personalidade}, o pet da raça {raca} fez a festa no paraíso.",
+  "Com seu temperamento {personalidadeMasc}, o pet da raça {raca} fez a festa no paraíso.",
   "Quitutes celestes e correria sem limites agitam as colinas douradas hoje.",
-  "O pet reencontrou brinquedos terrestres em uma versão feita de vento e luz.",
+  "O pet reencontrou brinquedos terrestres em uma version feita de vento e luz.",
   "Uma tarde repleta de sonecas, afeto e carinho extra dos anjos da guarda.",
   "Latidos de saudade viram brisa morna para abraçar a família na Terra.",
   "O anjinho de quatro patas lidera a patrulha da simpatia no novo espaço.",
@@ -338,21 +414,21 @@ const fillerIntroductions = [
 ];
 
 const fillerActions = [
-  "Os anjos contam que {pronome} usou todo o seu jeito {personalidade} para organizar uma gincana de corrida livre, brincando alegremente e se divertindo com o seu brinquedo ou objeto predileto: {brinquedo}.",
+  "Os anjos contam que {pronome} usou todo o seu jeito {personalidadeMasc} para organizar uma gincana de corrida livre, brincando alegremente e se divertindo com o seu brinquedo ou objeto predileto: {brinquedo}.",
   "Mostrando ser muito {personalidade}, {pronome} chamou a atenção de todos ao fazer acrobacias aéreas no meio das nuvens fofas, segurando com carinho seu companheiro inseparável: {brinquedo}.",
   "Durante a tarde, {pronome} encontrou um cantinho aconchegante que recria a paz do seu lugar favorito na Terra, o/a {lugar}, e passou horas deitado(a) ali, relaxando com seu amado {brinquedo}.",
   "Sempre muito {personalidade}, {nome} decidiu ajudar a decorar as árvores de biscoito do parque, usando seu item favorito, o/a {brinquedo}, para alcançar os galhos mais altos e distribuir guloseimas celestes.",
-  "Com seu espírito {personalidade}, {pronome} fez amizade com três cãezinhos recém-chegados, convidando-os para correr até o bosque e dividindo com eles seu amado item: {brinquedo}.",
+  "Com seu espírito {personalidadeMasc}, {pronome} fez amizade com três cãezinhos recém-chegados, convidando-os para correr até o bosque e dividindo com eles seu amado item: {brinquedo}.",
   "O grande evento do dia foi quando {nome} fez aquela famosa carinha de pidão para o Querubim da Guarda, ganhando uma porção extra de {comida} e carinho especial na orelha.",
   "{pronomeCapital} passou a tarde testando diferentes formatos de nuvens, criando uma réplica divertida que recria a sensação de paz do seu lugar favorito: {lugar}.",
-  "No refeitório, {nome} mostrou seu lado {personalidade} ao guiar a matilha até a mesa de doces, onde todos ganharam porções generosas de {comida} sob o olhar carinhoso dos anjos.",
+  "No refeitório, {nome} mostrou seu lado {personalidadeMasc} ao guiar a matilha até a mesa de doces, onde todos ganharam porções generosas de {comida} sob o olhar carinhoso dos anjos.",
   "Com muita diversão, {pronome} correu atrás de borboletas de luz pelo bosque, pulando de nuvem em nuvem junto com seu companheiro inseparável: {brinquedo}.",
-  "Aproveitando o fôlego infinito do céu, {nome} deu saltos incríveis sobre o gramado de luz, mostrando toda a sua energia {personalidade} e brincando com o seu brinquedo ou objeto predileto: {brinquedo}.",
-  "Os correspondentes celestes relatam que {nome} organizou uma patrulha divertida de farejar rastros de arco-íris, liderando os outros pets com seu jeito {personalidade} e alegre.",
+  "Aproveitando o fôlego infinito do céu, {nome} deu saltos incríveis sobre o gramado de luz, mostrando toda a sua energia {personalidadeFem} e brincando with seu brinquedo ou objeto predileto: {brinquedo}.",
+  "Os correspondentes celestes relatam que {nome} organized uma patrulha divertida de farejar rastros de arco-íris, liderando os outros pets com seu jeito {personalidadeMasc} e alegre.",
   "Para comemorar o dia ensolarado, {nome} levou seu brinquedo predileto, o/a {brinquedo}, para as colinas de vento e brincou de correr na velocidade da luz.",
   "{pronomeCapital} passou horas no Bosque dos Sons, fazendo com que cada flor emitisse uma nota alegre ao ser tocada por seu companheiro inseparável: {brinquedo}.",
-  "{nome} deitou-se de barriga para cima sob o sol celestial no/a {lugar}, ganhando massagem na orelha de dois querubins e mostrando seu lado {personalidade} e mimado.",
-  "Com seu temperamento {personalidade}, {nome} ajudou os querubins a recolher folhas douradas no bosque, ganhando como recompensa uma tigela dourada cheia de {comida}."
+  "{nome} deitou-se de barriga para cima sob o sol celestial no/a {lugar}, ganhando massagem na orelha de dois querubins e mostrando seu lado {personalidadeMasc} e mimado.",
+  "Com seu temperamento {personalidadeMasc}, {nome} ajudou os querubins a recolher folhas douradas no bosque, ganhando como recompensa uma tigela dourada cheia de {comida}."
 ];
 
 const fillerConclusions = [
