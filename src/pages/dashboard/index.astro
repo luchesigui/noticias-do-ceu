@@ -329,15 +329,29 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
               <div class="p-6 rounded-2xl bg-paper/20 border border-vintage/60 text-center">
                 <h4 class="font-serif font-bold text-lg text-ink">A Edição Diária do {pet.name} está no ar!</h4>
                 <p class="text-xs text-gray-600 mt-1 max-w-md mx-auto leading-relaxed">
-                  Histórias amorosas vindas diretamente do paraíso dos animais. O memorial interativo já pode ser compartilhado com familiares e amigos.
+                  Histórias amorosas vindas diretamente do paraíso dos animais. Uma nova edição todos os dias.
                 </p>
                 <div class="mt-4 flex flex-wrap justify-center gap-3">
-                  <a 
-                    href="/#demonstracao"
+                  <a
+                    href={`/${pet.slug}/jornal`}
                     class="bg-ink text-paper px-6 py-2.5 rounded-full font-serif font-bold text-sm hover:bg-accent transition-colors shadow-md inline-flex items-center gap-1.5"
                   >
-                    Visualizar Memorial <i class="fa-solid fa-eye text-xs"></i>
+                    Ler edição do dia <i class="fa-solid fa-newspaper text-xs"></i>
                   </a>
+                </div>
+
+                <!-- Visibilidade do jornal (público/privado) -->
+                <div class="mt-4 pt-4 border-t border-vintage/40 flex items-center justify-center gap-3">
+                  <span class="text-xs text-gray-600 font-body">Jornal:</span>
+                  <button
+                    id="journal-visibility-toggle"
+                    type="button"
+                    data-visibility={pet.journalVisibility || 'public'}
+                    class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors"
+                  >
+                    <i class="fa-solid fa-eye text-[10px]"></i>
+                    <span data-label></span>
+                  </button>
                 </div>
               </div>
 
@@ -555,4 +569,45 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
     }
   }
   window.handleQuickRedeem = handleQuickRedeem;
+
+  // Toggle de visibilidade do jornal (público/privado)
+  (function () {
+    const toggle = document.getElementById('journal-visibility-toggle');
+    if (!toggle) return;
+
+    function paint() {
+      const v = toggle.getAttribute('data-visibility');
+      const isPublic = v !== 'private';
+      const label = toggle.querySelector('[data-label]');
+      const icon = toggle.querySelector('i');
+      if (label) label.textContent = isPublic ? 'Público' : 'Privado';
+      if (icon) icon.className = (isPublic ? 'fa-solid fa-eye' : 'fa-solid fa-lock') + ' text-[10px]';
+      toggle.className = 'inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors cursor-pointer '
+        + (isPublic
+          ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
+          : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200');
+    }
+    paint();
+
+    toggle.addEventListener('click', async () => {
+      const current = toggle.getAttribute('data-visibility') === 'private' ? 'private' : 'public';
+      const next = current === 'private' ? 'public' : 'private';
+      toggle.setAttribute('disabled', 'true');
+      try {
+        const res = await fetch('/api/pet/journal-visibility', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ visibility: next }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao atualizar a visibilidade.');
+        toggle.setAttribute('data-visibility', data.journalVisibility);
+        paint();
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        toggle.removeAttribute('disabled');
+      }
+    });
+  })();
 </script>

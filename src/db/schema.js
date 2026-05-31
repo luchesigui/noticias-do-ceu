@@ -9,6 +9,9 @@ export const users = pgTable('users', {
   plan: text('plan').notNull(), // 'annual' | 'lifetime'
   status: text('status').notNull().default('pending_payment'), // 'pending_payment' | 'active'
   pendingRenewal: boolean('pending_renewal').notNull().default(false),
+  // Jornada do jornal: dia atual da edição (começa em 1, +1 por dia ao visualizar)
+  journeyDay: integer('journey_day').notNull().default(1),
+  lastJourneyIncrementAt: text('last_journey_increment_at'), // 'YYYY-MM-DD' local, null = nunca visualizou
   createdAt: text('created_at').notNull(),
 });
 
@@ -33,6 +36,7 @@ export const pets = pgTable('pets', {
   photos: text('photos').notNull(), // JSON string
   slug: text('slug').unique(),
   seed: text('seed'),
+  journalVisibility: text('journal_visibility').notNull().default('public'), // 'public' | 'private'
   createdAt: text('created_at').notNull(),
 });
 

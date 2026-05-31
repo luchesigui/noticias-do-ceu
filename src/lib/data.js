@@ -62,6 +62,8 @@ export const users = {
       if (updateData.plan !== undefined) set.plan = updateData.plan;
       if (updateData.status !== undefined) set.status = updateData.status;
       if (updateData.pendingRenewal !== undefined) set.pendingRenewal = updateData.pendingRenewal;
+      if (updateData.journeyDay !== undefined) set.journeyDay = updateData.journeyDay;
+      if (updateData.lastJourneyIncrementAt !== undefined) set.lastJourneyIncrementAt = updateData.lastJourneyIncrementAt;
       const rows = await db.update(usersTable).set(set)
         .where(eq(usersTable.id, id))
         .returning();
@@ -70,7 +72,63 @@ export const users = {
       return { data: null, error };
     }
   },
+
+  /**
+   * Avança o dia da jornada do usuário.
+   * - cap=true (visualização): incrementa no máximo 1x por dia local. A primeira
+   *   visualização apenas registra a data e mantém o dia 1.
+   * - cap=false (botão de teste): incrementa sempre +1, sem limite diário.
+   * Retorna { data: { journeyDay }, error }.
+   */
+  async advanceJourneyDay(id, { cap = true } = {}) {
+    try {
+      const rows = await db.select().from(usersTable)
+        .where(eq(usersTable.id, id))
+        .limit(1);
+      const user = rows[0];
+      if (!user) return { data: null, error: new Error('Usuário não encontrado.') };
+
+      const today = localDateString();
+      let journeyDay = user.journeyDay ?? 1;
+
+      if (!cap) {
+        journeyDay += 1;
+        const updated = await db.update(usersTable)
+          .set({ journeyDay, lastJourneyIncrementAt: today })
+          .where(eq(usersTable.id, id)).returning();
+        return { data: { journeyDay: updated[0]?.journeyDay ?? journeyDay }, error: null };
+      }
+
+      const last = user.lastJourneyIncrementAt;
+      if (!last) {
+        // Primeira visualização: registra hoje, mantém o dia 1.
+        await db.update(usersTable)
+          .set({ lastJourneyIncrementAt: today })
+          .where(eq(usersTable.id, id));
+        return { data: { journeyDay }, error: null };
+      }
+      if (last < today) {
+        journeyDay += 1;
+        const updated = await db.update(usersTable)
+          .set({ journeyDay, lastJourneyIncrementAt: today })
+          .where(eq(usersTable.id, id)).returning();
+        return { data: { journeyDay: updated[0]?.journeyDay ?? journeyDay }, error: null };
+      }
+      // Já avançou hoje: sem mudança.
+      return { data: { journeyDay }, error: null };
+    } catch (error) {
+      return { data: null, error };
+    }
+  },
 };
+
+// Data local no formato YYYY-MM-DD (fuso do servidor)
+function localDateString(date = new Date()) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
 
 // ─── Sessions ─────────────────────────────────────────────────────────────────
 
@@ -161,7 +219,7 @@ export const pets = {
   async update(userId, updateData) {
     try {
       const set = {};
-      const fields = ['name', 'breed', 'gender', 'nicknames', 'favoritePlace', 'favoriteObject', 'personalities', 'photos', 'slug'];
+      const fields = ['name', 'breed', 'gender', 'nicknames', 'favoritePlace', 'favoriteObject', 'personalities', 'photos', 'slug', 'journalVisibility'];
       for (const f of fields) {
         if (updateData[f] !== undefined) set[f] = updateData[f];
       }

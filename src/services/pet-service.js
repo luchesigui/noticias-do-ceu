@@ -100,4 +100,12 @@ export class PetService {
 
     return this.getPetByUserId(userId);
   }
+
+  static async setJournalVisibility(userId, visibility) {
+    const value = visibility === 'private' ? 'private' : 'public';
+    await db.update(petsTable)
+      .set({ journalVisibility: value })
+      .where(eq(petsTable.userId, userId));
+    return this.getPetByUserId(userId);
+  }
 }
