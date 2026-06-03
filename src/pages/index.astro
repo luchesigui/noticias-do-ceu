@@ -694,9 +694,9 @@ const homeSchemas = [
           </div>
 
           <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-            <a id="gift-home-cta" href="/gift-card?plan=lifetime" class="bg-accent text-white px-8 py-4 rounded-full font-serif font-bold text-lg hover:bg-ink transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex justify-center items-center gap-2">
+            <button id="gift-home-cta" onclick="openGiftWaitingListModalFromHome()" class="bg-accent text-white px-8 py-4 rounded-full font-serif font-bold text-lg hover:bg-ink transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex justify-center items-center gap-2 cursor-pointer border-none">
               Presentear um Amigo <i class="fa-solid fa-gift"></i>
-            </a>
+            </button>
           </div>
         </div>
 
@@ -851,6 +851,7 @@ const homeSchemas = [
   let currentDayIndex = 0;
   let lastAccessDate = "";
   let demoDateOffset = 0;
+  let selectedGiftPlan = "lifetime";
 
   // Formata data como YYYY-MM-DD local
   function getLocalDateString(date) {
@@ -1111,24 +1112,28 @@ const homeSchemas = [
 
   // === SEÇÃO: SELEÇÃO DE PLANO DE PRESENTE NA HOME ===
   function selectGiftHomePlan(plan) {
+    selectedGiftPlan = plan;
     const btnLifetime = document.getElementById("toggle-gift-lifetime");
     const btnAnnual = document.getElementById("toggle-gift-annual");
     const cardTitle = document.getElementById("gift-home-title");
     const cardFeatures = document.getElementById("gift-home-features");
-    const ctaBtn = document.getElementById("gift-home-cta");
 
     if (plan === "lifetime") {
       if (btnLifetime) btnLifetime.className = "px-5 py-2.5 rounded-full font-serif font-bold text-xs md:text-sm border-2 border-accent bg-accent text-white transition-all shadow-sm cursor-pointer";
       if (btnAnnual) btnAnnual.className = "px-5 py-2.5 rounded-full font-serif font-bold text-xs md:text-sm border-2 border-transparent text-ink hover:text-accent transition-all cursor-pointer";
       if (cardTitle) cardTitle.innerText = "Plano Vitalício";
       if (cardFeatures) cardFeatures.innerText = "Acesso vitalício • arquivo completo • compilado em PDF";
-      if (ctaBtn) ctaBtn.setAttribute("href", "/gift-card?plan=lifetime");
     } else {
       if (btnLifetime) btnLifetime.className = "px-5 py-2.5 rounded-full font-serif font-bold text-xs md:text-sm border-2 border-transparent text-ink hover:text-accent transition-all cursor-pointer";
       if (btnAnnual) btnAnnual.className = "px-5 py-2.5 rounded-full font-serif font-bold text-xs md:text-sm border-2 border-accent bg-accent text-white transition-all shadow-sm cursor-pointer";
       if (cardTitle) cardTitle.innerText = "Plano Anual";
       if (cardFeatures) cardFeatures.innerText = "Acesso por 1 ano • edição do dia atual • compartilhamento simples";
-      if (ctaBtn) ctaBtn.setAttribute("href", "/gift-card?plan=annual");
+    }
+  }
+
+  function openGiftWaitingListModalFromHome() {
+    if (window.openWaitingListModal) {
+      window.openWaitingListModal(`gift-${selectedGiftPlan}`);
     }
   }
 
@@ -1136,6 +1141,7 @@ const homeSchemas = [
   window.simulateNextDay = simulateNextDay;
   window.resetDemo = resetDemo;
   window.selectGiftHomePlan = selectGiftHomePlan;
+  window.openGiftWaitingListModalFromHome = openGiftWaitingListModalFromHome;
 
   // Setup tracking
   function setupTracking() {

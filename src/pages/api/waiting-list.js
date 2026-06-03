@@ -23,8 +23,9 @@ export async function POST({ request }) {
       });
     }
 
-    if (plan !== 'annual' && plan !== 'lifetime') {
-      return new Response(JSON.stringify({ error: 'Plano inválido. Escolha "annual" ou "lifetime".' }), {
+    const validPlans = ['annual', 'lifetime', 'gift-annual', 'gift-lifetime'];
+    if (!validPlans.includes(plan)) {
+      return new Response(JSON.stringify({ error: 'Plano inválido.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });

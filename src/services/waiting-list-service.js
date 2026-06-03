@@ -31,13 +31,18 @@ export class WaitingListService {
 
     const timestamp = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
 
+    const isGift = plan && plan.startsWith('gift-');
+    const basePlan = isGift ? plan.substring(5) : plan;
+
     const html = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
         <h2 style="color: #8B5A2B; font-family: serif; border-bottom: 2px solid #8B5A2B; padding-bottom: 10px; text-transform: uppercase;">
           ☁️ Novo Lead - Notícias do Céu
         </h2>
         <p style="font-size: 16px; line-height: 1.6;">
-          Um novo usuário demonstrou interesse em criar um memorial e entrou na lista de espera!
+          ${isGift 
+            ? 'Um novo usuário demonstrou interesse em presentear com um Gift Card e entrou na lista de espera!'
+            : 'Um novo usuário demonstrou interesse em criar um memorial e entrou na lista de espera!'}
         </p>
         <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
           <tr>
@@ -50,7 +55,9 @@ export class WaitingListService {
           </tr>
           <tr>
             <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;">Plano Escolhido:</td>
-            <td style="padding: 10px; border: 1px solid #ddd; text-transform: uppercase;">${plan === 'lifetime' ? 'Vitalício (R$ 39,90)' : 'Anual (R$ 9,90/ano)'}</td>
+            <td style="padding: 10px; border: 1px solid #ddd; text-transform: uppercase;">
+              ${isGift ? '🎁 GIFT CARD - ' : ''}${basePlan === 'lifetime' ? 'Vitalício (R$ 39,90)' : 'Anual (R$ 9,90/ano)'}
+            </td>
           </tr>
           <tr>
             <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; background-color: #f9f9f9;">Data/Hora:</td>

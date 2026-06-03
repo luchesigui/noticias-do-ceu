@@ -19,11 +19,11 @@
 
     <!-- Active Form View Block -->
     <div class="text-center mb-6" id="waiting-list-form-header">
-      <h3 class="font-serif text-2xl font-semibold mb-3 text-ink">Estamos aquecendo as impressoras celestiais! ☁️</h3>
-      <p class="text-sm font-body leading-relaxed text-ink/80">
+      <h3 id="waiting-list-modal-title" class="font-serif text-2xl font-semibold mb-3 text-ink">Estamos aquecendo as impressoras celestiais! ☁️</h3>
+      <p id="waiting-list-modal-desc-1" class="text-sm font-body leading-relaxed text-ink/80">
         Estamos finalizando os últimos detalhes e liberando o acesso em lotes para garantir que cada pet receba uma edição de jornal diária impecável.
       </p>
-      <p class="text-sm font-body leading-relaxed text-ink/80 mt-2">
+      <p id="waiting-list-modal-desc-2" class="text-sm font-body leading-relaxed text-ink/80 mt-2">
         Insira seu e-mail abaixo para garantir sua vaga na lista de espera prioritária e ser avisado assim que liberarmos o acesso do seu lote.
       </p>
     </div>
@@ -94,6 +94,10 @@
     const formBlock = document.getElementById('waiting-list-form');
     const formHeader = document.getElementById('waiting-list-form-header');
     const successBlock = document.getElementById('waiting-list-success');
+    
+    const titleEl = document.getElementById('waiting-list-modal-title');
+    const desc1El = document.getElementById('waiting-list-modal-desc-1');
+    const desc2El = document.getElementById('waiting-list-modal-desc-2');
 
     if (modal && planInput) {
       planInput.value = planName || 'lifetime';
@@ -103,19 +107,32 @@
       if (formBlock) formBlock.classList.remove('hidden');
       if (formHeader) formHeader.classList.remove('hidden');
       if (successBlock) successBlock.classList.add('hidden');
+
+      const isGift = planName && planName.startsWith('gift-');
+      const basePlan = isGift ? planName.substring(5) : planName;
+
+      if (isGift) {
+        if (titleEl) titleEl.innerHTML = 'Estamos preparando os cartões de presente! 🎁';
+        if (desc1El) desc1El.innerText = 'Estamos finalizando os últimos detalhes para o lançamento do Gift Card do Notícias do Céu, permitindo que você envie um gesto de carinho inestimável para apoiar um amigo no momento da perda.';
+        if (desc2El) desc2El.innerText = 'Insira seu e-mail abaixo para entrar na nossa lista de espera prioritária de presentes e ser avisado em primeira mão assim que liberarmos o recurso.';
+      } else {
+        if (titleEl) titleEl.innerHTML = 'Estamos aquecendo as impressoras celestiais! ☁️';
+        if (desc1El) desc1El.innerText = 'Estamos finalizando os últimos detalhes e liberando o acesso em lotes para garantir que cada pet receba uma edição de jornal diária impecável.';
+        if (desc2El) desc2El.innerText = 'Insira seu e-mail abaixo para garantir sua vaga na lista de espera prioritária e ser avisado assim que liberarmos o acesso do seu lote.';
+      }
       
       modal.showModal();
       document.body.style.overflow = 'hidden'; // prevent scrolling background
 
       // Track select_plan
       if (typeof window !== 'undefined' && window.track) {
-        const planId = planName === 'annual' ? 'anual' : 'vitalicio';
-        const planNameFormatted = planName === 'annual' ? 'Plano Anual' : 'Plano Vitalício';
-        const price = planName === 'annual' ? 9.90 : 39.90;
-        const billing = planName === 'annual' ? 'annual' : 'lifetime';
+        const planId = basePlan === 'annual' ? 'anual' : 'vitalicio';
+        const planNameFormatted = (isGift ? 'Gift Card ' : 'Plano ') + (basePlan === 'annual' ? 'Anual' : 'Vitalício');
+        const price = basePlan === 'annual' ? 9.90 : 39.90;
+        const billing = basePlan === 'annual' ? 'annual' : 'lifetime';
         window.track({
           event: 'select_plan',
-          plan_id: planId,
+          plan_id: (isGift ? 'gift-' : '') + planId,
           plan_name: planNameFormatted,
           price: price,
           billing: billing
@@ -205,16 +222,18 @@
             if (formHeader) formHeader.classList.add('hidden');
             if (successBlock) successBlock.classList.remove('hidden');
 
-            // Track join_waitlist
-            if (typeof window !== 'undefined' && window.track) {
-              const planId = plan === 'annual' ? 'anual' : 'vitalicio';
-              const billing = plan === 'annual' ? 'annual' : 'lifetime';
-              window.track({
-                event: 'join_waitlist',
-                plan_id: planId,
-                billing: billing
-              });
-            }
+             // Track join_waitlist
+             if (typeof window !== 'undefined' && window.track) {
+               const isGift = plan && plan.startsWith('gift-');
+               const basePlan = isGift ? plan.substring(5) : plan;
+               const planId = (isGift ? 'gift-' : '') + (basePlan === 'annual' ? 'anual' : 'vitalicio');
+               const billing = basePlan === 'annual' ? 'annual' : 'lifetime';
+               window.track({
+                 event: 'join_waitlist',
+                 plan_id: planId,
+                 billing: billing
+               });
+             }
           } else {
             if (errorEl) {
               errorEl.textContent = data.error || 'Ocorreu um erro ao registrar sua inscrição. Tente novamente.';

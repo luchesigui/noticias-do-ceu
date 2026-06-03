@@ -153,7 +153,11 @@ export class EmailService {
 
   static async sendWaitingListFeedback(email, plan, name) {
     const { siteUrl } = getConfig();
-    const planFormatted = plan === 'lifetime' ? 'Vitalício (R$ 39,90)' : 'Anual (R$ 9,90/ano)';
+    const isGift = plan && plan.startsWith('gift-');
+    const basePlan = isGift ? plan.substring(5) : plan;
+    const planFormatted = isGift
+      ? `Gift Card - ${basePlan === 'lifetime' ? 'Vitalício (R$ 39,90)' : 'Anual (R$ 9,90/ano)'}`
+      : (basePlan === 'lifetime' ? 'Vitalício (R$ 39,90)' : 'Anual (R$ 9,90/ano)');
     const greetingName = name ? `, <strong>${name.trim()}</strong>` : '';
     const html = `
       <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #faf9f6; border: 2px solid #2c2c2c; border-radius: 4px; overflow: hidden;">
@@ -170,10 +174,14 @@ export class EmailService {
             Agradecemos o seu interesse no <strong>Notícias do Céu</strong>. Registramos com carinho o seu e-mail na lista de espera para o plano <strong>${planFormatted}</strong>.
           </p>
           <p style="font-size: 15px; line-height: 1.7; color: #444;">
-            Nosso objetivo é proporcionar um espaço acolhedor e eterno para preservar as memórias de quem tanto amamos. Estamos trabalhando com muita dedicação para liberar o seu acesso o mais rápido possível.
+            ${isGift 
+              ? 'O Gift Card é um gesto inestimável de acolhimento para apoiar um amigo que perdeu um pet. Estamos preparando os últimos detalhes do lançamento dos cartões de presente.'
+              : 'Nosso objetivo é proporcionar um espaço acolhedor e eterno para preservar as memórias de quem tanto amamos. Estamos trabalhando com muita dedicação para liberar o seu acesso o mais rápido possível.'}
           </p>
           <p style="font-size: 15px; line-height: 1.7; color: #444;">
-            Assim que abrirmos novas vagas, você receberá um e-mail com as instruções para criar o memorial do seu pet.
+            ${isGift
+              ? 'Assim que o recurso for liberado, você receberá um e-mail com as instruções para presentear seu amigo com o Gift Card.'
+              : 'Assim que abrirmos novas vagas, você receberá um e-mail com as instruções para criar o memorial do seu pet.'}
           </p>
           
           <div style="border-left: 3px solid #d4a97a; padding: 12px 20px; margin: 24px 0; background: #fffbf5; border-radius: 0 4px 4px 0;">
