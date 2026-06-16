@@ -3,13 +3,14 @@ interface Props {
   giftCard?: any;
   prefillName?: string;
   prefillEmail?: string;
+  pricingEnabled?: boolean;
 }
 
-const { giftCard = null, prefillName = '', prefillEmail = '' } = Astro.props;
+const { giftCard = null, prefillName = '', prefillEmail = '', pricingEnabled = true } = Astro.props;
 const code = giftCard ? giftCard.code : '';
 ---
 
-<form id="register-form" class="space-y-6" onsubmit="handleRegister(event)">
+<form id="register-form" class="space-y-6" onsubmit="handleRegister(event)" data-pricing-enabled={pricingEnabled.toString()}>
   <!-- Hidden inputs to submit code -->
   <input type="hidden" name="code" value={code} />
 
@@ -55,7 +56,7 @@ const code = giftCard ? giftCard.code : '';
   </div>
 
   <!-- Plan selector, only visible if registering normally (without valid gift card) -->
-  {!giftCard ? (
+  {!giftCard && pricingEnabled ? (
     <fieldset class="space-y-3 border-0 p-0 m-0">
       <legend class="block text-xs font-bold uppercase tracking-wider">Escolha o seu Plano</legend>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -113,7 +114,7 @@ const code = giftCard ? giftCard.code : '';
       </div>
     </fieldset>
   ) : (
-    <input type="hidden" name="plan" value={giftCard.plan} />
+    <input type="hidden" name="plan" value={giftCard ? giftCard.plan : 'lifetime'} />
   )}
 
   <!-- Error Alert -->
@@ -124,7 +125,7 @@ const code = giftCard ? giftCard.code : '';
     id="submit-btn" 
     class="w-full bg-accent text-white py-4 rounded-xl font-serif font-bold text-lg hover:bg-ink transition-colors shadow-lg flex justify-center items-center gap-2 cursor-pointer"
   >
-    <span>{giftCard ? 'Ativar Presente e Cadastrar' : 'Continuar para Pagamento'}</span> <i class="fa-solid fa-arrow-right"></i>
+    <span>{giftCard ? 'Ativar Presente e Cadastrar' : (pricingEnabled ? 'Continuar para Pagamento' : 'Criar Conta Grátis')}</span> <i class="fa-solid fa-arrow-right"></i>
   </button>
 </form>
 
@@ -133,6 +134,7 @@ const code = giftCard ? giftCard.code : '';
     e.preventDefault();
     
     const form = e.target;
+    const pricingEnabled = form.getAttribute('data-pricing-enabled') === 'true';
     const submitBtn = document.getElementById('submit-btn');
     const errorEl = document.getElementById('error-message');
     
@@ -172,6 +174,9 @@ const code = giftCard ? giftCard.code : '';
       if (code && data.user.status === 'active') {
         // Gift card automatically activated the account, redirect to success screen
         window.location.href = `/redeem-success?code=${code}&recipient=${encodeURIComponent(name)}&plan=${data.user.plan}&already=false`;
+      } else if (data.user.status === 'active') {
+        // Free account activation, redirect to dashboard directly
+        window.location.href = '/dashboard';
       } else {
         // Normal flow, redirect to simulated checkout
         window.location.href = '/checkout';
@@ -183,7 +188,7 @@ const code = giftCard ? giftCard.code : '';
       }
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>${code ? 'Ativar Presente e Cadastrar' : 'Continuar para Pagamento'}</span> <i class="fa-solid fa-arrow-right"></i>`;
+        submitBtn.innerHTML = `<span>${code ? 'Ativar Presente e Cadastrar' : (pricingEnabled ? 'Continuar para Pagamento' : 'Criar Conta Grátis')}</span> <i class="fa-solid fa-arrow-right"></i>`;
       }
     }
   }

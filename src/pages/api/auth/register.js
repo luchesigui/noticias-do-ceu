@@ -1,6 +1,7 @@
 import { AuthService } from '../../../services/auth-service.js';
 import { GiftCardService } from '../../../services/gift-card-service.js';
 import { apiErrorResponse } from '../../../lib/errors.js';
+import { isPricingEnabled } from '../../../lib/flags.js';
 import * as yup from 'yup';
 
 export const prerender = false;
@@ -13,7 +14,9 @@ const registerSchema = yup.object({
   code: yup.string().trim().nullable(),
   plan: yup.string().trim().when('code', {
     is: (val) => !val || val === '',
-    then: (schema) => schema.required('Selecione um plano válido (anual ou vitalício).').oneOf(['annual', 'lifetime'], 'Selecione um plano válido (anual ou vitalício).'),
+    then: (schema) => isPricingEnabled()
+      ? schema.required('Selecione um plano válido (anual ou vitalício).').oneOf(['annual', 'lifetime'], 'Selecione um plano válido (anual ou vitalício).')
+      : schema.notRequired(),
     otherwise: (schema) => schema.notRequired()
   })
 });
@@ -27,7 +30,11 @@ export async function POST({ request, cookies }) {
     const { name, email, password, plan, code } = validatedData;
 
     let finalPlan = plan;
-    let initialStatus = 'pending_payment';
+    let initialStatus = isPricingEnabled() ? 'pending_payment' : 'active';
+
+    if (!isPricingEnabled() && !code) {
+      finalPlan = 'lifetime';
+    }
 
     // If a gift code is provided, validate it first on the backend
     if (code) {

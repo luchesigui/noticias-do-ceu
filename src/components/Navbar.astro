@@ -1,10 +1,13 @@
 ---
+import { isPricingEnabled } from '../lib/flags.js';
+
 interface Props {
   showCreateMemorial?: boolean;
 }
 
 const { showCreateMemorial = true } = Astro.props;
 const user = Astro.locals.user;
+const pricingEnabled = isPricingEnabled();
 ---
 
 <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200 transition-all duration-300" aria-label="Navegação principal">
@@ -31,9 +34,20 @@ const user = Astro.locals.user;
           </>
         ) : (
           <>
-            <a href="/login" class="bg-ink text-paper px-6 py-2 rounded-full font-semibold hover:bg-accent transition-colors shadow-md text-sm">
-              Entrar
-            </a>
+            {pricingEnabled ? (
+              <a href="/login" class="bg-ink text-paper px-6 py-2 rounded-full font-semibold hover:bg-accent transition-colors shadow-md text-sm">
+                Entrar
+              </a>
+            ) : (
+              <>
+                <a href="/login" class="text-gray-650 hover:text-accent text-sm font-medium transition-colors">
+                  Entrar
+                </a>
+                <a href="/cadastro" class="bg-accent text-white px-5 py-2 rounded-full font-semibold hover:bg-ink transition-colors shadow-md text-sm">
+                  Criar Memorial
+                </a>
+              </>
+            )}
           </>
         )}
       </div>
@@ -69,9 +83,20 @@ const user = Astro.locals.user;
       </>
     ) : (
       <>
-        <a href="/login" class="block text-center bg-ink text-paper px-6 py-3 rounded-full font-sans font-semibold hover:bg-accent transition-colors shadow-md mobile-link">
-          Entrar
-        </a>
+        {pricingEnabled ? (
+          <a href="/login" class="block text-center bg-ink text-paper px-6 py-3 rounded-full font-sans font-semibold hover:bg-accent transition-colors shadow-md mobile-link">
+            Entrar
+          </a>
+        ) : (
+          <div class="flex flex-col gap-2">
+            <a href="/login" class="block text-center bg-white text-ink border-2 border-ink px-6 py-3 rounded-full font-sans font-semibold hover:bg-gray-50 transition-colors shadow-sm mobile-link">
+              Entrar
+            </a>
+            <a href="/cadastro" class="block text-center bg-accent text-white px-6 py-3 rounded-full font-sans font-semibold hover:bg-ink transition-colors shadow-md mobile-link">
+              Criar Memorial
+            </a>
+          </div>
+        )}
       </>
     )}
   </div>

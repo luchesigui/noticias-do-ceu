@@ -7,8 +7,11 @@ import { orders as ordersApi } from '../../lib/data.js';
 import { db } from '../../db/index.js';
 import { giftCards } from '../../db/schema.js';
 import { eq } from 'drizzle-orm';
+import { isPricingEnabled } from '../../lib/flags.js';
 
 export const prerender = false;
+
+const pricingEnabled = isPricingEnabled();
 
 // Middleware guarantees that context.locals.user is defined and active
 const user = Astro.locals.user;
@@ -70,7 +73,7 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
       <!-- Top Greetings Header -->
       <div class="flex flex-col md:flex-row md:justify-between md:items-end border-b-2 border-ink pb-6 mb-8 gap-4">
         <div>
-          <span class="text-xs font-bold uppercase tracking-widest text-accent">Leitor Autenticado</span>
+          <span class="text-xs font-bold uppercase tracking-widest text-accent">Área do Tutor</span>
           <h1 class="font-serif text-4xl font-black mt-1">Olá, {user.name}</h1>
           <p class="text-sm text-gray-600 mt-1">Bem-vindo à sua central de memórias do céu.</p>
         </div>
@@ -99,18 +102,21 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
                 <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">E-mail</span>
                 <span class="font-medium text-ink">{user.email}</span>
               </div>
-              
-              <div>
-                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Assinatura</span>
-                <span class="font-serif font-bold text-accent">{planLabel}</span>
-              </div>
+                      {pricingEnabled && (
+                <div>
+                  <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Assinatura</span>
+                  <span class="font-serif font-bold text-accent">{planLabel}</span>
+                </div>
+              )}
 
               <div>
-                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Início da Assinatura</span>
+                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">
+                  {pricingEnabled ? "Início da Assinatura" : "Membro Desde"}
+                </span>
                 <span class="font-medium text-ink">{formatDate(startDateStr)}</span>
               </div>
 
-              {!isLifetime && (
+              {pricingEnabled && !isLifetime && (
                 <div>
                   <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">
                     {user.subscriptionStatus === 'cancelled' ? 'Expira em' : 'Próxima Renovação'}
@@ -119,20 +125,22 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
                 </div>
               )}
 
-              <div>
-                <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Status da Assinatura</span>
-                {user.subscriptionStatus === 'cancelled' ? (
-                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                    <i class="fa-solid fa-ban text-[10px]"></i> Cancelada
-                  </span>
-                ) : (
-                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200">
-                    <i class="fa-solid fa-circle-check text-[10px]"></i> Ativa
-                  </span>
-                )}
-              </div>
+              {pricingEnabled && (
+                <div>
+                  <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Status da Assinatura</span>
+                  {user.subscriptionStatus === 'cancelled' ? (
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                      <i class="fa-solid fa-ban text-[10px]"></i> Cancelada
+                    </span>
+                  ) : (
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200">
+                      <i class="fa-solid fa-circle-check text-[10px]"></i> Ativa
+                    </span>
+                  )}
+                </div>
+              )}
 
-              {user.pendingRenewal && (
+              {pricingEnabled && user.pendingRenewal && (
                 <div>
                   <div class="flex items-center gap-1.5 mb-1">
                     <span class="block text-[10px] font-bold uppercase text-gray-400 tracking-wider">Origem</span>
@@ -153,35 +161,36 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
                 </div>
               )}
 
-              <div class="pt-2">
-                {isLifetime ? (
-                  <p class="text-[11px] text-amber-800 bg-amber-50 p-3 rounded-lg border border-amber-200/50 leading-relaxed">
-                    <i class="fa-solid fa-star mr-1"></i> Você possui acesso permanente. Sem cobranças ou renovações adicionais.
-                  </p>
-                ) : user.subscriptionStatus === 'cancelled' ? (
-                  <p class="text-[11px] text-amber-800 bg-amber-50/50 p-3 rounded-lg border border-amber-250 leading-relaxed">
-                    <i class="fa-solid fa-info-circle mr-1"></i> Assinatura cancelada. O memorial continuará disponível até a data de expiração acima.
-                  </p>
-                ) : (
-                  <div class="space-y-3">
-                    <p class="text-[11px] text-gray-500 leading-relaxed">
-                      Renovação anual correspondente a R$ 9,90.
+              {pricingEnabled && (
+                <div class="pt-2">
+                  {isLifetime ? (
+                    <p class="text-[11px] text-amber-800 bg-amber-50 p-3 rounded-lg border border-amber-200/50 leading-relaxed">
+                      <i class="fa-solid fa-star mr-1"></i> Você possui acesso permanente. Sem cobranças ou renovações adicionais.
                     </p>
-                    <button 
-                      type="button"
-                      id="open-cancel-dialog-btn"
-                      class="w-full bg-white hover:bg-red-50 text-red-650 hover:text-red-700 border border-red-200 hover:border-red-300 py-2 rounded-xl text-xs font-semibold font-sans transition-all cursor-pointer text-center"
-                    >
-                      Cancelar Assinatura
-                    </button>
-                  </div>
-                )}
+                  ) : user.subscriptionStatus === 'cancelled' ? (
+                    <p class="text-[11px] text-amber-800 bg-amber-50/50 p-3 rounded-lg border border-amber-250 leading-relaxed">
+                      <i class="fa-solid fa-info-circle mr-1"></i> Assinatura cancelada. O memorial continuará disponível até a data de expiração acima.
+                    </p>
+                  ) : (
+                    <div class="space-y-3">
+                      <p class="text-[11px] text-gray-500 leading-relaxed">
+                        Renovação anual correspondente a R$ 9,90.
+                      </p>
+                      <button 
+                        type="button"
+                        id="open-cancel-dialog-btn"
+                        class="w-full bg-white hover:bg-red-50 text-red-650 hover:text-red-700 border border-red-200 hover:border-red-300 py-2 rounded-xl text-xs font-semibold font-sans transition-all cursor-pointer text-center"
+                      >
+                        Cancelar Assinatura
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
               </div>
             </div>
           </div>
 
-
-        </div>
 
         <!-- Pet Memorial Content (2 Columns) -->
         <div class="lg:col-span-2 space-y-6">
@@ -315,7 +324,7 @@ const formattedGiftExpiry = redeemedGift?.expiresAt
           )}
 
           <!-- Purchased Gift Cards (Only if any exist) -->
-          {purchasedGifts.length > 0 && (
+          {pricingEnabled && purchasedGifts.length > 0 && (
             <div class="newspaper-container border-double-thick p-8 bg-white space-y-6">
               <h3 class="font-serif font-bold text-xl uppercase pb-2 border-b border-gray-200 text-ink">
                 <i class="fa-solid fa-gift mr-2 text-accent"></i> Presentes Enviados

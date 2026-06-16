@@ -1,4 +1,6 @@
 ---
+import { isPricingEnabled } from '../lib/flags.js';
+const pricingEnabled = isPricingEnabled();
 ---
 
 <footer class="bg-ink text-paper relative overflow-hidden">
@@ -20,7 +22,9 @@
         <ul class="space-y-2 font-body text-[14px] text-paper/80">
           <li><a href="/#como-funciona" class="hover:text-accent transition-colors">Como Funciona</a></li>
           <li><a href="/#demonstracao" class="hover:text-accent transition-colors">Demonstração</a></li>
-          <li><a href="/#planos" class="hover:text-accent transition-colors">Planos</a></li>
+          {pricingEnabled && (
+            <li><a href="/#planos" class="hover:text-accent transition-colors">Planos</a></li>
+          )}
           <li><a href="/blog" class="hover:text-accent transition-colors">Blog</a></li>
         </ul>
       </div>

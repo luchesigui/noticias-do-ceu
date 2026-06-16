@@ -3,8 +3,11 @@
 import Layout from '../../layouts/Layout.astro';
 import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
+import { isPricingEnabled } from '../../lib/flags.js';
 
-export const prerender = true;
+export const prerender = false;
+
+const pricingEnabled = isPricingEnabled();
 
 // Fetch all markdown files in this directory
 const posts = import.meta.glob('./*.md', { eager: true });
@@ -111,12 +114,14 @@ const collectionSchema = {
           Quer eternizar as memórias do seu melhor amigo de quatro patas em uma página exclusiva de jornal com atualizações diárias direto do paraíso?
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <a href="/#planos" class="bg-accent text-white px-8 py-3.5 rounded-full font-serif font-bold text-base hover:bg-ink transition-colors shadow-md text-center w-full sm:w-auto">
+          <a href={pricingEnabled ? "/#planos" : "/cadastro"} class="bg-accent text-white px-8 py-3.5 rounded-full font-serif font-bold text-base hover:bg-ink transition-colors shadow-md text-center w-full sm:w-auto">
             Começar Homenagem
           </a>
-          <a href="/gift-card" class="bg-white text-ink border-2 border-ink px-8 py-3.5 rounded-full font-serif font-bold text-base hover:bg-gray-50 transition-colors text-center w-full sm:w-auto">
-            Presentear um Amigo
-          </a>
+          {pricingEnabled && (
+            <a href="/gift-card" class="bg-white text-ink border-2 border-ink px-8 py-3.5 rounded-full font-serif font-bold text-base hover:bg-gray-50 transition-colors text-center w-full sm:w-auto">
+              Presentear um Amigo
+            </a>
+          )}
         </div>
       </div>
 

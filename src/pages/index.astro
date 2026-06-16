@@ -3,6 +3,11 @@ import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import WaitingListModal from "../components/WaitingListModal.astro";
+import { isPricingEnabled } from "../lib/flags.js";
+
+export const prerender = false;
+
+const pricingEnabled = isPricingEnabled();
 
 // Data dinâmica para renderização inicial
 const today = new Date();
@@ -110,7 +115,7 @@ const homeSchemas = [
 >
   <Navbar showCreateMemorial={true} />
 
-  <main id="main-content" tabindex="-1" class="focus:outline-none">
+  <main id="main-content" tabindex="-1" class="focus:outline-none" data-pricing-enabled={pricingEnabled.toString()}>
   <!-- Hero Section -->
   <section id="hero" class="relative pt-32 pb-16 md:pb-24 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-b from-paper/30 to-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -133,10 +138,10 @@ const homeSchemas = [
           <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
             <a
               id="hero-cta-primary"
-              href="#demonstracao"
+              href={pricingEnabled ? "#demonstracao" : "/cadastro"}
               class="bg-accent text-white px-8 py-4 rounded-full font-serif font-bold text-lg hover:bg-ink transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex justify-center items-center gap-2"
             >
-              Começar Homenagem <i class="fa-solid fa-arrow-right"></i>
+              {pricingEnabled ? "Começar Homenagem" : "Criar Homenagem Grátis"} <i class="fa-solid fa-arrow-right"></i>
             </a>
             <a
               id="hero-cta-secondary"
@@ -426,13 +431,23 @@ const homeSchemas = [
   <section class="py-12 bg-gray-50 relative overflow-hidden">
     <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
       <h3 class="text-2xl font-serif font-bold text-ink mb-3">Pronto para transformar a saudade em uma lembrança viva?</h3>
-      <p class="text-gray-650 font-body text-sm mb-6 max-w-lg mx-auto">Escolha o plano ideal e crie uma homenagem que trará um sorriso ao seu rosto todos os dias.</p>
-      <a
-        href="#planos"
-        class="inline-flex items-center gap-2 bg-accent text-white px-8 py-4 rounded-full font-serif font-bold text-lg hover:bg-ink transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-      >
-        Ver Planos Disponíveis <i class="fa-solid fa-arrow-right"></i>
-      </a>
+      {pricingEnabled ? (
+        <p class="text-gray-650 font-body text-sm mb-6 max-w-lg mx-auto">Escolha o plano ideal e crie uma homenagem que trará um sorriso ao seu rosto todos os dias.</p>
+        <a
+          href="#planos"
+          class="inline-flex items-center gap-2 bg-accent text-white px-8 py-4 rounded-full font-serif font-bold text-lg hover:bg-ink transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+        >
+          Ver Planos Disponíveis <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      ) : (
+        <p class="text-gray-650 font-body text-sm mb-6 max-w-lg mx-auto">Crie uma homenagem gratuita e guarde para sempre a memória do seu melhor amigo.</p>
+        <a
+          href="/cadastro"
+          class="inline-flex items-center gap-2 bg-accent text-white px-8 py-4 rounded-full font-serif font-bold text-lg hover:bg-ink transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+        >
+          Criar Homenagem Grátis <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      )}
     </div>
   </section>
 
@@ -487,7 +502,7 @@ const homeSchemas = [
             </div>
             <div class="pt-6 flex justify-center md:justify-start">
               <a
-                href="#planos"
+                href={pricingEnabled ? "#planos" : "/cadastro"}
                 class="bg-accent text-white px-8 py-4 rounded-full font-serif font-bold text-lg hover:bg-ink transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex justify-center items-center gap-2"
               >
                 Eternizar Meu Pet <i class="fa-solid fa-arrow-right"></i>
@@ -499,6 +514,7 @@ const homeSchemas = [
     </div>
   </section>
 
+  {pricingEnabled && (
   <!-- Pricing -->
   <section id="planos" class="py-16 md:py-24 bg-gray-50 relative overflow-hidden">
     <!-- Background decorations -->
@@ -645,7 +661,9 @@ const homeSchemas = [
       </div>
     </div>
   </section>
+  )}
 
+  {pricingEnabled && (
   <!-- Gift Card Promo Section -->
   <section id="presentear" class="py-16 md:py-24 bg-white relative overflow-hidden">
     <i class="fa-solid fa-cloud text-gray-200 text-9xl absolute -top-10 -right-10 opacity-30 pointer-events-none animate-cloud-slow-1"></i>
@@ -731,6 +749,7 @@ const homeSchemas = [
       </div>
     </div>
   </section>
+  )}
 
   <!-- FAQ Section (Accordion) -->
   <section class="py-16 md:py-24 bg-gray-50 border-t border-ink/10 relative overflow-hidden">
@@ -774,6 +793,7 @@ const homeSchemas = [
 
 
 
+        {pricingEnabled && (
         <!-- FAQ 4 -->
         <details class="group border border-ink/10 rounded-2xl bg-white p-5 font-sans" name="faq-accordion">
           <summary class="flex justify-between items-center font-serif font-bold text-lg md:text-xl text-ink cursor-pointer list-none focus:outline-none select-none">
@@ -786,6 +806,7 @@ const homeSchemas = [
             Ao final de um ano, você poderá renovar a assinatura ou migrar para o Plano Vitalício. Caso opte por não renovar, a página do memorial ficará congelada na última edição gerada, mantendo todo o histórico seguro e disponível para leitura.
           </div>
         </details>
+        )}
 
         <!-- FAQ 5 -->
         <details class="group border border-ink/10 rounded-2xl bg-white p-5 font-sans" name="faq-accordion">
@@ -800,6 +821,7 @@ const homeSchemas = [
           </div>
         </details>
 
+        {pricingEnabled && (
         <!-- FAQ 6 -->
         <details class="group border border-ink/10 rounded-2xl bg-white p-5 font-sans" name="faq-accordion">
           <summary class="flex justify-between items-center font-serif font-bold text-lg md:text-xl text-ink cursor-pointer list-none focus:outline-none select-none">
@@ -812,6 +834,7 @@ const homeSchemas = [
             O Gift Card é um gesto inestimável de acolhimento para apoiar um amigo que perdeu um pet. Ao comprar, você recebe um código de ativação exclusivo (e nós também enviamos por e-mail para seu amigo, se desejar). Ele poderá ativar o plano correspondente sem custos e criar o memorial.
           </div>
         </details>
+        )}
       </div>
     </div>
   </section>
@@ -835,10 +858,10 @@ const homeSchemas = [
       </div>
     </div>
     <a
-      href="#planos"
+      href={pricingEnabled ? "#planos" : "/cadastro"}
       class="bg-accent text-white px-6 py-3 rounded-full font-serif font-bold text-sm hover:bg-ink transition-colors shadow-md flex items-center gap-2 whitespace-nowrap"
     >
-      Ver Planos <i class="fa-solid fa-arrow-right"></i>
+      {pricingEnabled ? "Ver Planos" : "Criar Memorial"} <i class="fa-solid fa-arrow-right"></i>
     </a>
   </div>
 </Layout>
@@ -1184,14 +1207,17 @@ const homeSchemas = [
     const stickyCta = document.getElementById('sticky-cta-bar');
     const demoSection = document.getElementById('demonstracao');
     const plansSection = document.getElementById('planos');
+    const footerEl = document.querySelector('footer');
 
-    if (stickyCta && demoSection && plansSection) {
+    const endElement = plansSection || footerEl;
+
+    if (stickyCta && demoSection && endElement) {
       window.addEventListener('scroll', () => {
-        const plansTop = plansSection.getBoundingClientRect().top + window.scrollY;
+        const endTop = endElement.getBoundingClientRect().top + window.scrollY;
         const currentScroll = window.scrollY + window.innerHeight;
 
-        // Mostra a barra após passar pela demonstração e esconde ao chegar nos planos
-        if (window.scrollY > demoSection.offsetTop + demoSection.offsetHeight && currentScroll < plansTop + 100) {
+        // Mostra a barra após passar pela demonstração e esconde ao chegar nos planos ou rodapé
+        if (window.scrollY > demoSection.offsetTop + demoSection.offsetHeight && currentScroll < endTop + 100) {
           stickyCta.classList.remove('translate-y-full');
         } else {
           stickyCta.classList.add('translate-y-full');

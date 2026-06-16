@@ -1,10 +1,12 @@
 import { defineMiddleware } from 'astro:middleware';
 import { AuthService } from './services/auth-service.js';
+import { isPricingEnabled } from './lib/flags.js';
 
 const PUBLIC_PATHS = ['/login', '/cadastro', '/redeem', '/blog', '/waiting-list', '/'];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname } = context.url;
+  const pricingEnabled = isPricingEnabled();
 
   context.locals.user = null;
   context.locals.session = null;
@@ -31,17 +33,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   if (pathname.startsWith('/dashboard')) {
     if (!context.locals.user) return context.redirect('/login');
-    if (context.locals.user.status === 'pending_payment') return context.redirect('/checkout');
+    if (pricingEnabled && context.locals.user.status === 'pending_payment') return context.redirect('/checkout');
   }
 
   if (pathname === '/checkout' || pathname === '/checkout/') {
+    if (!pricingEnabled) return context.redirect('/dashboard');
     if (!context.locals.user) return context.redirect('/login');
     if (context.locals.user.status === 'active') return context.redirect('/dashboard');
   }
 
   if (pathname === '/login' || pathname === '/login/' || pathname === '/cadastro' || pathname === '/cadastro/') {
     if (context.locals.user) {
-      if (context.locals.user.status === 'pending_payment') return context.redirect('/checkout');
+      if (pricingEnabled && context.locals.user.status === 'pending_payment') return context.redirect('/checkout');
       return context.redirect('/dashboard');
     }
   }

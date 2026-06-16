@@ -3,11 +3,13 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { PetService } from '../services/pet-service.js';
+import { isPricingEnabled } from '../lib/flags.js';
 
 export const prerender = false;
 
 const user = Astro.locals.user;
 const pet = user ? await PetService.getPetByUserId(user.id) : null;
+const pricingEnabled = isPricingEnabled();
 
 // Redirect to login if not authenticated
 if (!user) {
@@ -15,7 +17,7 @@ if (!user) {
 }
 
 // If user hasn't paid yet, redirect to checkout
-if (user.status === 'pending_payment') {
+if (pricingEnabled && user.status === 'pending_payment') {
   return Astro.redirect('/checkout');
 }
 ---
@@ -153,13 +155,21 @@ if (user.status === 'pending_payment') {
               <i class="fa-solid fa-envelope text-accent text-sm"></i> Selo Celestial
             </h3>
             <div class="inline-block gift-card-stamp px-6 py-4 rounded-lg">
-              <p class="font-serif font-black text-accent text-2xl">
-                <span class="sr-only">2 reais e 99 centavos</span>
-                <span aria-hidden="true">R$ 2,99</span>
-              </p>
+              {pricingEnabled ? (
+                <p class="font-serif font-black text-accent text-2xl">
+                  <span class="sr-only">2 reais e 99 centavos</span>
+                  <span aria-hidden="true">R$ 2,99</span>
+                </p>
+              ) : (
+                <p class="font-serif font-black text-accent text-2xl">
+                  <span>Grátis</span>
+                </p>
+              )}
               <p class="text-[10px] text-gray-500 font-sans uppercase tracking-wider mt-1">Postagem Única</p>
             </div>
-            <p class="text-xs text-gray-400 font-sans mt-3">Incluído no seu plano</p>
+            <p class="text-xs text-gray-400 font-sans mt-3">
+              {pricingEnabled ? "Incluído no seu plano" : "Envio ilimitado"}
+            </p>
           </div>
 
           <!-- Send Button -->

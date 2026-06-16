@@ -4,8 +4,11 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { GiftCardService } from '../services/gift-card-service.js';
 import RegisterForm from '../components/RegisterForm.astro';
+import { isPricingEnabled } from '../lib/flags.js';
 
 export const prerender = false;
+
+const pricingEnabled = isPricingEnabled();
 
 // SSR query param check
 const code = Astro.url.searchParams.get('code') || '';
@@ -61,7 +64,12 @@ if (code) {
             <i class="fa-solid fa-circle-exclamation text-red-600 mt-0.5"></i>
             <div>
               <p class="font-bold">Aviso sobre o código de presente:</p>
-              <p class="mt-0.5">{giftError} Você ainda pode se cadastrar normalmente selecionando um dos planos abaixo.</p>
+              <p class="mt-0.5">
+                {giftError} 
+                {pricingEnabled 
+                  ? " Você ainda pode se cadastrar normalmente selecionando um dos planos abaixo." 
+                  : " Você ainda pode se cadastrar normalmente para criar sua conta gratuita."}
+              </p>
             </div>
           </div>
         )}
@@ -76,6 +84,7 @@ if (code) {
           giftCard={giftCard && !giftError ? giftCard : null} 
           prefillName={giftCard && !giftError ? giftCard.recipient_name : ''} 
           prefillEmail={giftCard && !giftError ? giftCard.recipient_email : ''} 
+          pricingEnabled={pricingEnabled}
         />
 
         <div class="separator-line my-6"></div>
